@@ -1,5 +1,6 @@
 import sentinel_api as s3api
 from datetime import datetime
+from osgeo import ogr
 
 
 def copernicus_download(copernicus_username, copernicus_password, download_directory, api_url, satellite, min_overlap,
@@ -33,8 +34,8 @@ def copernicus_download(copernicus_username, copernicus_password, download_direc
     s3.set_download_dir(download_directory)
 
     # Set bounding box for area of investigation
-    # polygon = misc_functions.get_extent(shapefile=orig_shape)[0]
-    # s3.set_geometries(polygon)
+    polygon = get_extent(shapefile=orig_shape)[0]
+    s3.set_geometries(polygon)
 
     # Search for corresponding data scenes via api
     s3.search(satellite, min_overlap, download_directory, start_date, end_date, producttype=product,
@@ -46,3 +47,33 @@ def copernicus_download(copernicus_username, copernicus_password, download_direc
 
     download_time = datetime.now()
     print("Copernicus_Download-time = ", download_time - start_time, "Hr:min:sec")
+
+
+def get_extent(shapefile):
+    """
+    This function takes the original shapefile defining the ROI as input and extracts the extent
+    Args:
+        shapefile: Path to shapefile (string)
+    Returns:
+        extent_copernicus: Extent of the shapefile formatted to work with the Copernicus API (string)
+        extent_dias: Extent of the shapefile formatted to work with the DIAS API (string)
+    """
+
+    driver = ogr.GetDriverByName("ESRI Shapefile")
+    dataSource = driver.Open(shapefile, 1)
+    inLayer = dataSource.GetLayer()
+    for feature in inLayer:
+        geom = feature.GetGeometryRef()
+    raw_extent = geom.GetEnvelope()
+
+    # Each corner of the extent for Copernicus style
+    lower_left_c = str(raw_extent[0]) + " " + str(raw_extent[2]) + ","
+    upper_left_c = str(raw_extent[0]) + " " + str(raw_extent[3]) + ","
+    upper_right_c = str(raw_extent[1]) + " " + str(raw_extent[3]) + ","
+    lower_right_c = str(raw_extent[1]) + " " + str(raw_extent[2]) + ","
+
+    # Build string needed for the Copernicus download
+    extent_copernicus = "POLYGON ((" + lower_left_c + upper_left_c + upper_right_c + lower_right_c + \
+                        lower_left_c[0:len(lower_left_c) - 1] + "))"
+
+    return extent_copernicus

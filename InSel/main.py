@@ -11,12 +11,17 @@ import os
 import json
 from datetime import datetime
 import sentinel_api
+from InSel.sentinel_download import *
 
 
 def main():
 
-
+    download_dir = "F:/GEO410/download"
+    shapefile_dir = "F:/GEO410/shapefile"
     print("Hello!")
+
+    copernicus_download(copernicus_username, copernicus_password, download_directory, api_url, satellite, min_overlap,
+                        timeliness, start_date, end_date, product, orig_shape)
 
 
 if __name__ == '__main__':
