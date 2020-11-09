@@ -4,7 +4,7 @@ from osgeo import ogr
 
 
 def copernicus_download(copernicus_username, copernicus_password, download_directory, api_url, satellite, min_overlap,
-                        timeliness, start_date, end_date, product, orig_shape):
+                        start_date, end_date, product, orig_shape):
     """
     This function takes the user input to create a API call for the Copernicus Hub and downloads the specified data.
     Args:
@@ -24,6 +24,11 @@ def copernicus_download(copernicus_username, copernicus_password, download_direc
     """
 
     start_time = datetime.now()
+    print(api_url)
+    print(satellite)
+    print(min_overlap)
+    print(download_directory)
+    print(orig_shape)
 
     ############## Sentinel Download ##############
 
@@ -34,12 +39,12 @@ def copernicus_download(copernicus_username, copernicus_password, download_direc
     s3.set_download_dir(download_directory)
 
     # Set bounding box for area of investigation
-    polygon = get_extent(shapefile=orig_shape)[0]
+    polygon = get_extent(shapefile=orig_shape)
+    print(polygon)
     s3.set_geometries(polygon)
 
     # Search for corresponding data scenes via api
-    s3.search(satellite, min_overlap, download_directory, start_date, end_date, producttype=product,
-              timeliness=timeliness)
+    s3.search(satellite, min_overlap, download_directory, start_date, end_date, producttype=product)
 
     # Download data - returns dictionary of downloaded data scenes
     # (Format: {'failed': ['', '', ..], 'success': ['', '', '', ..]})
