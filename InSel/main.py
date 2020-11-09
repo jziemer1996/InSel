@@ -10,9 +10,12 @@ Authors: Marlin Mueller <marlin.markus.mueller@uni-jena.de>, Jonas Ziemer <jonas
 import os
 import json
 from datetime import datetime
+import sentinel_api
 
 
 def main():
+
+
     print("Hello!")
 
 
