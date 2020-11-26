@@ -15,14 +15,13 @@ from InSel.sentinel_download import *
 
 
 def main():
-
-    download_dir = "F:/GEO410/download"
-    shapefile_dir = "F:/GEO410/shapefile/thuringia.shp"
+    download_dir = ""
+    shapefile_dir = ""
     username = ""
     password = ""
     api_url = "https://scihub.copernicus.eu/apihub/"
-    start_date = "2020-06-01"
-    end_date = "2020-06-16"
+    start_date = "2018-06-01"
+    end_date = "2018-06-16"
 
     # s1 = SentinelDownloader(username, password, api_url='https://scihub.copernicus.eu/apihub/')
     # s1.set_geometries(
@@ -47,7 +46,6 @@ def main():
     # s1.search('S1A*', 0.8, productType='GRD', sensoroperationalmode='IW')
     # s1.write_results(file_type='wget', filename='sentinel_api_download.sh')  # use wget, urls or json as type
     # s1.download_all()
-
 
     copernicus_download(copernicus_username=username, copernicus_password=password, download_directory=download_dir,
                         api_url=api_url, satellite="S1A*", min_overlap=0.1, start_date=start_date, end_date=end_date,
