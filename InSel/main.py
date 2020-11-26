@@ -7,16 +7,16 @@ Authors: Marlin Mueller <marlin.markus.mueller@uni-jena.de>, Jonas Ziemer <jonas
 # imports
 ###########################################################
 
-import os
-import json
-from datetime import datetime
-import sentinel_api
-from InSel.sentinel_download import *
+import sentinel_download
 
 
 def main():
-    download_dir = ""
-    shapefile_dir = ""
+    home_path = "/home/ki73did"
+    # home_path = "/home/ni82xoj"
+
+    download_dir = home_path + "/GEO410/Scripts/InSel/downloads/"
+    shapefile_dir = home_path + "/GEO410/Scripts/InSel/shapefiles/thuringia.shp"
+
     username = ""
     password = ""
     api_url = "https://scihub.copernicus.eu/apihub/"
