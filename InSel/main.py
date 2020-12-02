@@ -23,8 +23,8 @@ def main():
     username = "marlinmm2"
     password = "8DH5BkEre5kykXG"
     api_url = "https://scihub.copernicus.eu/apihub/"
-    start_date = "2018-06-01"
-    end_date = "2018-06-16"
+    start_date = "2020-06-01"
+    end_date = "2020-06-16"
 
     # s1 = SentinelDownloader(username, password, api_url='https://scihub.copernicus.eu/apihub/')
     # s1.set_geometries(
