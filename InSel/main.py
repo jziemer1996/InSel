@@ -6,7 +6,7 @@ Authors: Marlin Mueller <marlin.markus.mueller@uni-jena.de>, Jonas Ziemer <jonas
 ###########################################################
 # imports
 ###########################################################
-
+import os
 import sentinel_download
 
 
@@ -17,8 +17,11 @@ def main():
     download_dir = home_path + "/GEO410/Scripts/InSel/downloads/"
     shapefile_dir = home_path + "/GEO410/Scripts/InSel/shapefiles/thuringia.shp"
 
-    username = ""
-    password = ""
+    if not os.path.exists(download_dir):
+        os.makedirs(download_dir)
+
+    username = "marlinmm2"
+    password = "8DH5BkEre5kykXG"
     api_url = "https://scihub.copernicus.eu/apihub/"
     start_date = "2018-06-01"
     end_date = "2018-06-16"
