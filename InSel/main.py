@@ -55,7 +55,7 @@ def main():
     #                     api_url=api_url, satellite="S1A*", min_overlap=0.1, start_date=start_date, end_date=end_date,
     #                     product="SLC", orig_shape=shapefile_dir)
 
-    display_slc()
+    gamma_function_test.display_slc()
 
 
 if __name__ == '__main__':
