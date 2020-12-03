@@ -8,11 +8,12 @@ Authors: Marlin Mueller <marlin.markus.mueller@uni-jena.de>, Jonas Ziemer <jonas
 ###########################################################
 import os
 import sentinel_download
+import gamma_function_test
 
 
 def main():
-    home_path = "/home/ki73did"
-    # home_path = "/home/ni82xoj"
+    # home_path = "/home/ki73did"
+    home_path = "/home/ni82xoj"
 
     download_dir = home_path + "/GEO410/Scripts/InSel/downloads/"
     shapefile_dir = home_path + "/GEO410/Scripts/InSel/shapefiles/thuringia.shp"
@@ -50,9 +51,11 @@ def main():
     # s1.write_results(file_type='wget', filename='sentinel_api_download.sh')  # use wget, urls or json as type
     # s1.download_all()
 
-    sentinel_download.copernicus_download(copernicus_username=username, copernicus_password=password, download_directory=download_dir,
-                        api_url=api_url, satellite="S1A*", min_overlap=0.1, start_date=start_date, end_date=end_date,
-                        product="SLC", orig_shape=shapefile_dir)
+    # sentinel_download.copernicus_download(copernicus_username=username, copernicus_password=password, download_directory=download_dir,
+    #                     api_url=api_url, satellite="S1A*", min_overlap=0.1, start_date=start_date, end_date=end_date,
+    #                     product="SLC", orig_shape=shapefile_dir)
+
+    display_slc()
 
 
 if __name__ == '__main__':
