@@ -8,7 +8,7 @@ def display_slc():
 def deburst_S1_SLC(path_to_folder, datatype):
     zip_file_list = extract_files_to_list(path_to_folder, datatype)
     print(zip_file_list)
-    os.system("S1_BURST_tab_from_zipfile /home/ni82xoj/GEO410_data/")
+    os.system("S1_BURST_tab_from_zipfile /home/ni82xoj/GEO410_data/datascenes.txt /home/ni82xoj/GEO410_data/S1A_IW_SLC__1SDV_20160507T171853_20160507T171921_011155_010D62_5E69.zip")
 
 
 def extract_files_to_list(path_to_folder, datatype):
@@ -24,10 +24,10 @@ def extract_files_to_list(path_to_folder, datatype):
     new_list = []
     for filename in os.listdir(path_to_folder):
         if filename.endswith(datatype):
-            new_list.append(os.path.join(path_to_folder, filename))
+            new_list.append(os.path.join(path_to_folder, filename[:(len(filename)-4)]))
         else:
             continue
-    with open('your_file.txt', 'w') as f:
+    with open('datascenes.txt', 'w') as f:
         for item in new_list:
             f.write("%s\n" % item)
     return new_list
