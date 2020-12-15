@@ -57,7 +57,7 @@ def main():
 
     # gamma_function_test.display_slc()
 
-    gamma_function_test.deburst_S1_SLC()
+    gamma_function_test.deburst_S1_SLC(path_to_folder=home_path, datatype=".zip")
 
 
 if __name__ == '__main__':
