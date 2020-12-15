@@ -7,6 +7,7 @@ def display_slc():
 
 def deburst_S1_SLC(path_to_folder, datatype):
     zip_file_list = extract_files_to_list(path_to_folder, datatype)
+    print(zip_file_list)
     os.system("S1_BURST_tab_from_zipfile /home/ni82xoj/GEO410_data/")
 
 
