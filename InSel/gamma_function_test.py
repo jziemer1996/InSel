@@ -31,10 +31,17 @@ def deburst_S1_SLC(path_to_folder, datatype):
     datascenes_file = path_to_folder + 'datascenes.asc'
     print(datascenes_file)
     zip_file_list = extract_files_to_list(path_to_folder, datatype, datascenes_file)
+
+    burst_table_folder = path_to_folder + "burst_ref/"
+    if not os.path.exists(burst_table_folder):
+        os.mkdir(burst_table_folder)
+
     for file in zip_file_list:
-        # file = zip_file_list
+        file_name = file[file.find("S1"):len(file)-4] + ".burst_number_table"
         print("Masterfile is...:" + file)
         os.system("S1_BURST_tab_from_zipfile " + "- " + file)
+
+        os.replace(file_name, burst_table_folder + file_name)
 
 
 def SLC_import(path_to_folder, datatype):
