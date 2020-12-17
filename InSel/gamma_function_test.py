@@ -34,7 +34,7 @@ def deburst_S1_SLC(path_to_folder, datatype):
     for file in zip_file_list:
         # file = zip_file_list
         print("Masterfile is...:" + file)
-        os.system("S1_BURST_tab_from_zipfile " + "-" + " " + file)
+        os.system("S1_BURST_tab_from_zipfile " + "- " + file)
 
 
 def SLC_import(path_to_folder, datatype):
