@@ -5,7 +5,7 @@ def display_slc():
     os.system("disSLC /home/ni82xoj/GEO410/DISP/orig/05721.slc 2500")
 
 
-def extract_files_to_list(path_to_folder, datatype):
+def extract_files_to_list(path_to_folder, datatype, datascenes_file):
     """
     function to extract files of given datatype from given directory and return as a list
     :param path_to_folder: string
@@ -21,16 +21,18 @@ def extract_files_to_list(path_to_folder, datatype):
             new_list.append(os.path.join(path_to_folder, filename[:(len(filename)-4)]))
         else:
             continue
-    with open(path_to_folder + 'datascenes.txt', 'w') as f:
+    with open(datascenes_file, 'w') as f:
         for item in new_list:
             f.write("%s\n" % item)
     return new_list
 
 
 def deburst_S1_SLC(path_to_folder, datatype):
-    zip_file_list = extract_files_to_list(path_to_folder, datatype)
-    print(zip_file_list)
-    os.system("S1_BURST_tab_from_zipfile /home/ni82xoj/GEO410_data/datascenes.txt /home/ni82xoj/GEO410_data/S1A_IW_SLC__1SDV_20201001T171926_20201001T171954_034605_040773_7A6A.zip")
+    datascenes_file = path_to_folder + 'datascenes.txt'
+    print(datascenes_file)
+    zip_file_list = extract_files_to_list(path_to_folder, datatype, datascenes_file)
+    master_file = zip_file_list[0]
+    os.system("S1_BURST_tab_from_zipfile " + datascenes_file + " " + master_file + ".zip")
 
 
 
