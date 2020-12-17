@@ -18,7 +18,7 @@ def extract_files_to_list(path_to_folder, datatype, datascenes_file):
     new_list = []
     for filename in os.listdir(path_to_folder):
         if filename.endswith(datatype):
-            new_list.append(os.path.join(path_to_folder, filename[:(len(filename)-4)]))
+            new_list.append(os.path.join(path_to_folder, filename[:(len(filename))]))
         else:
             continue
     with open(datascenes_file, 'w') as f:
@@ -28,11 +28,14 @@ def extract_files_to_list(path_to_folder, datatype, datascenes_file):
 
 
 def deburst_S1_SLC(path_to_folder, datatype):
-    datascenes_file = path_to_folder + 'datascenes.txt'
+    datascenes_file = path_to_folder + 'datascenes.asc'
     print(datascenes_file)
     zip_file_list = extract_files_to_list(path_to_folder, datatype, datascenes_file)
-    master_file = zip_file_list[0]
-    os.system("S1_BURST_tab_from_zipfile " + datascenes_file + " " + master_file + ".zip")
+    for i in range(len(zip_file_list)):
+        master_file = zip_file_list[i]
+        print("Masterfile is...:" + master_file)
+        os.system("S1_BURST_tab_from_zipfile " + "-" + " " + master_file)
 
 
+def SLC_import(path_to_folder, datatype):
 
