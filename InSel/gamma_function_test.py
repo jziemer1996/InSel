@@ -18,13 +18,14 @@ def extract_files_to_list(path_to_folder, datatype, datascenes_file):
     """
     new_list = []
     for filename in os.listdir(path_to_folder):
-        if filename.endswith(datatype):
+        if datatype in filename:
             new_list.append(os.path.join(path_to_folder, filename))
         else:
             continue
-    with open(datascenes_file, 'w') as f:
-        for item in new_list:
-            f.write("%s\n" % item)
+    if datascenes_file is not None:
+        with open(datascenes_file, 'w') as f:
+            for item in new_list:
+                f.write("%s\n" % item)
     return new_list
 
 
@@ -41,12 +42,22 @@ def deburst_S1_SLC(path_to_folder):
         os.replace(file_name, path_to_folder + file_name)
 
 
-def SLC_import(path_to_folder):
+def SLC_import(path_to_folder, slc_dir):
     datascenes_file = path_to_folder + 'datascenes.zipfile_list'
     one_scene_file = path_to_folder + "one_scene.zipfile_list"
+    if not os.path.exists(slc_dir):
+        os.makedirs(slc_dir)
     with open(datascenes_file, "rt") as slc_zip_list:
         for element in slc_zip_list:
             with open(one_scene_file, 'w') as f:
                     f.write(element)
-            os.system("S1_import_SLC_from_zipfiles " + one_scene_file + " " + element[:len(element)-4] + "burst_number_table"
-                      + " - 0 0 . 1")
+            # os.system("S1_import_SLC_from_zipfiles " + one_scene_file + " " + element[:len(element)-4] +
+            #           "burst_number_table" + " - 0 0 . 1")
+        pol_list = [".vh", ".vv"]
+        for pol in pol_list:
+            import_file_list = extract_files_to_list(os.getcwd(), datatype=pol, datascenes_file=None)
+            print(import_file_list)
+            for file in import_file_list:
+                index = file.find(pol)
+                filename = file[index-8:]
+                os.replace(file, slc_dir + filename)
