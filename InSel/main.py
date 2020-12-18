@@ -65,9 +65,11 @@ def main():
     # gamma_function_test.display_slc()
 
     # gamma_function_test.deburst_S1_SLC(processing_dir=processing_dir, download_dir=download_dir, list_dir=list_dir)
-    gamma_function_test.SLC_import(slc_dir=slc_dir, list_dir=list_dir)
-    #
+    # gamma_function_test.SLC_import(slc_dir=slc_dir, list_dir=list_dir)
+
     # gamma_function_test.define_precise_orbits(slc_dir=slc_dir, orbit_dir=orbit_dir)
+
+    gamma_function_test.multilook(slc_dir=slc_dir)
 
 
 if __name__ == '__main__':

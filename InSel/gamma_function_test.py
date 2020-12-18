@@ -70,4 +70,13 @@ def define_precise_orbits(slc_dir, orbit_dir):
     par_file_list = sorted(par_file_list)
 
     for parfile in par_file_list:
-        os.system(os.getcwd() + "/OPOD_vec_lola.pl " + parfile + " " + orbit_dir + " " + nstate)
+        os.system(os.getcwd() + "/OPOD_vec_lola.pl " + parfile + " " + orbit_dir + " " + str(nstate))
+
+
+def multilook(slc_dir):
+    tab_file_list = extract_files_to_list(slc_dir, datatype=".SLC_tab", datascenes_file=None)
+    tab_file_list = sorted(tab_file_list)
+    os.chdir(slc_dir)
+    for tab in tab_file_list:
+        # print(tab[:len(tab)-8])
+        os.system("multi_look_ScanSAR " + tab + " " + tab[:len(tab)-8] + ".mli " + tab[:len(tab)-8] + ".mli.par" + " 5 1 1")
