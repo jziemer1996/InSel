@@ -16,7 +16,7 @@ def main():
     home_path = "/home/ni82xoj/"
 
     download_dir = home_path + "GEO410_data/"
-    shapefile_dir = home_path + "/GEO410/Scripts/InSel/shapefiles/thuringia.shp"
+    shapefile_dir = home_path + "GEO410/Scripts/InSel/shapefiles/thuringia.shp"
 
     if not os.path.exists(download_dir):
         os.makedirs(download_dir)
@@ -58,7 +58,8 @@ def main():
     # gamma_function_test.display_slc()
 
     # gamma_function_test.extract_files_to_list(path_to_folder=home_path, datatype=".zip")
-    gamma_function_test.deburst_S1_SLC(path_to_folder=download_dir)
+    # gamma_function_test.deburst_S1_SLC(path_to_folder=download_dir)
+    gamma_function_test.SLC_import(path_to_folder=download_dir)
 
 
 if __name__ == '__main__':
