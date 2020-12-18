@@ -8,6 +8,7 @@ def display_slc():
 def extract_files_to_list(path_to_folder, datatype, datascenes_file):
     """
     function to extract files of given datatype from given directory and return as a list
+    :param datascenes_file:
     :param path_to_folder: string
         path to folder, where files are to be extracted from
     :param datatype: string
@@ -30,11 +31,7 @@ def extract_files_to_list(path_to_folder, datatype, datascenes_file):
 def deburst_S1_SLC(path_to_folder, datatype):
     datascenes_file = path_to_folder + 'datascenes.asc'
     print(datascenes_file)
-    zip_file_list = extract_files_to_list(path_to_folder, datatype, datascenes_file)
-
-    # burst_table_folder = path_to_folder + "burst_ref/"
-    # if not os.path.exists(burst_table_folder):
-    #     os.mkdir(burst_table_folder)
+    zip_file_list = extract_files_to_list(path_to_folder, datatype=".zip", datascenes_file=datascenes_file)
 
     for file in zip_file_list:
         file_name = file[file.find("S1"):len(file)-4] + ".burst_number_table"
