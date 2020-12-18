@@ -17,6 +17,7 @@ def main():
 
     download_dir = home_path + "GEO410_data/"
     slc_dir = home_path + "GEO410_data/slc/"
+    orbit_dir = home_path + "GEO410_data/orbit_files/"
     shapefile_dir = home_path + "GEO410/Scripts/InSel/shapefiles/thuringia.shp"
 
     if not os.path.exists(download_dir):
@@ -60,7 +61,9 @@ def main():
 
     # gamma_function_test.extract_files_to_list(path_to_folder=home_path, datatype=".zip")
     # gamma_function_test.deburst_S1_SLC(path_to_folder=download_dir)
-    gamma_function_test.SLC_import(path_to_folder=download_dir, slc_dir=slc_dir)
+    # gamma_function_test.SLC_import(path_to_folder=download_dir, slc_dir=slc_dir)
+
+    gamma_function_test.define_precise_orbits(slc_dir=slc_dir, orbit_dir=orbit_dir)
 
 
 if __name__ == '__main__':

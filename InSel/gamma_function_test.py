@@ -51,8 +51,8 @@ def SLC_import(path_to_folder, slc_dir):
         for element in slc_zip_list:
             with open(one_scene_file, 'w') as f:
                     f.write(element)
-            # os.system("S1_import_SLC_from_zipfiles " + one_scene_file + " " + element[:len(element)-4] +
-            #           "burst_number_table" + " - 0 0 . 1")
+            os.system("S1_import_SLC_from_zipfiles " + one_scene_file + " " + element[:len(element)-4] +
+                      "burst_number_table" + " - 0 0 . 1")
         pol_list = [".vh", ".vv"]
         for pol in pol_list:
             import_file_list = extract_files_to_list(os.getcwd(), datatype=pol, datascenes_file=None)
@@ -61,3 +61,14 @@ def SLC_import(path_to_folder, slc_dir):
                 index = file.find(pol)
                 filename = file[index-8:]
                 os.replace(file, slc_dir + filename)
+
+
+def define_precise_orbits(slc_dir, orbit_dir):
+    nstate = 60
+    pol_list = [".vh", ".vv"]
+    par_file_list = extract_files_to_list(slc_dir, datatype=".par", datascenes_file=None)
+    par_file_list = sorted(par_file_list)
+    # print(par_file_list)
+    # print(os.getcwd().find(".pl"))
+    for parfile in par_file_list:
+        os.system(os.getcwd() + "/OPOD_vec_lola.pl " + parfile + " " + orbit_dir)
