@@ -8,11 +8,11 @@ def display_slc():
 def extract_files_to_list(path_to_folder, datatype, datascenes_file):
     """
     function to extract files of given datatype from given directory and return as a list
-    :param datascenes_file:
     :param path_to_folder: string
         path to folder, where files are to be extracted from
     :param datatype: string
         datatype of files to return from given folder
+    :param datascenes_file:
     :return: new_list: list
         returns list of paths to files
     """
@@ -29,22 +29,23 @@ def extract_files_to_list(path_to_folder, datatype, datascenes_file):
     return new_list
 
 
-def deburst_S1_SLC(path_to_folder):
-    datascenes_file = path_to_folder + 'datascenes.zipfile_list'
+def deburst_S1_SLC(processing_dir, download_dir, list_dir):
+    if not os.path.exists(list_dir):
+        os.makedirs(list_dir)
+    datascenes_file = list_dir + 'datascenes.zipfile_list'
     print(datascenes_file)
-    zip_file_list = extract_files_to_list(path_to_folder, datatype=".zip", datascenes_file=datascenes_file)
-
+    zip_file_list = extract_files_to_list(download_dir, datatype=".zip", datascenes_file=datascenes_file)
     for file in zip_file_list:
-        file_name = file[file.find("S1"):len(file)-4] + ".burst_number_table"
+        file_name = file[file.find("S1A"):len(file)-4] + ".burst_number_table"
+        print(file_name)
         print("Masterfile is...:" + file)
         os.system("S1_BURST_tab_from_zipfile" + " - " + file)
+        os.replace(file_name, processing_dir + file_name)
 
-        os.replace(file_name, path_to_folder + file_name)
 
-
-def SLC_import(path_to_folder, slc_dir):
-    datascenes_file = path_to_folder + 'datascenes.zipfile_list'
-    one_scene_file = path_to_folder + "one_scene.zipfile_list"
+def SLC_import(slc_dir, list_dir):
+    datascenes_file = list_dir + 'datascenes.zipfile_list'
+    one_scene_file = list_dir + "one_scene.zipfile_list"
     if not os.path.exists(slc_dir):
         os.makedirs(slc_dir)
     with open(datascenes_file, "rt") as slc_zip_list:
@@ -65,10 +66,8 @@ def SLC_import(path_to_folder, slc_dir):
 
 def define_precise_orbits(slc_dir, orbit_dir):
     nstate = 60
-    pol_list = [".vh", ".vv"]
     par_file_list = extract_files_to_list(slc_dir, datatype=".par", datascenes_file=None)
     par_file_list = sorted(par_file_list)
-    # print(par_file_list)
-    # print(os.getcwd().find(".pl"))
+
     for parfile in par_file_list:
-        os.system(os.getcwd() + "/OPOD_vec_lola.pl " + parfile + " " + orbit_dir)
+        os.system(os.getcwd() + "/OPOD_vec_lola.pl " + parfile + " " + orbit_dir + " " + nstate)

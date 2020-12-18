@@ -15,7 +15,12 @@ def main():
     # home_path = "/home/ki73did/"
     home_path = "/home/ni82xoj/"
 
+    # download_dir = "/geonfs03_vol1/SALDI_EMS/S1_SLC/04_Augrabies/"
     download_dir = home_path + "GEO410_data/"
+
+
+    processing_dir = home_path + "GEO410_data/"
+    list_dir = home_path + "GEO410_data/lists/"
     slc_dir = home_path + "GEO410_data/slc/"
     orbit_dir = home_path + "GEO410_data/orbit_files/"
     shapefile_dir = home_path + "GEO410/Scripts/InSel/shapefiles/thuringia.shp"
@@ -59,11 +64,10 @@ def main():
 
     # gamma_function_test.display_slc()
 
-    # gamma_function_test.extract_files_to_list(path_to_folder=home_path, datatype=".zip")
-    # gamma_function_test.deburst_S1_SLC(path_to_folder=download_dir)
-    # gamma_function_test.SLC_import(path_to_folder=download_dir, slc_dir=slc_dir)
-
-    gamma_function_test.define_precise_orbits(slc_dir=slc_dir, orbit_dir=orbit_dir)
+    # gamma_function_test.deburst_S1_SLC(processing_dir=processing_dir, download_dir=download_dir, list_dir=list_dir)
+    gamma_function_test.SLC_import(slc_dir=slc_dir, list_dir=list_dir)
+    #
+    # gamma_function_test.define_precise_orbits(slc_dir=slc_dir, orbit_dir=orbit_dir)
 
 
 if __name__ == '__main__':
