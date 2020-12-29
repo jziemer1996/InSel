@@ -36,7 +36,7 @@ def deburst_S1_SLC(processing_dir, download_dir, list_dir):
     print(datascenes_file)
     zip_file_list = extract_files_to_list(download_dir, datatype=".zip", datascenes_file=datascenes_file)
     for file in zip_file_list:
-        file_name = file[file.find("S1A"):len(file)-4] + ".burst_number_table"
+        file_name = file[file.find("S1A"):len(file) - 4] + ".burst_number_table"
         print(file_name)
         print("Masterfile is...:" + file)
         os.system("S1_BURST_tab_from_zipfile" + " - " + file)
@@ -51,8 +51,8 @@ def SLC_import(slc_dir, list_dir):
     with open(datascenes_file, "rt") as slc_zip_list:
         for element in slc_zip_list:
             with open(one_scene_file, 'w') as f:
-                    f.write(element)
-            os.system("S1_import_SLC_from_zipfiles " + one_scene_file + " " + element[:len(element)-4] +
+                f.write(element)
+            os.system("S1_import_SLC_from_zipfiles " + one_scene_file + " " + element[:len(element) - 4] +
                       "burst_number_table" + " - 0 0 . 1")
         pol_list = [".vh", ".vv"]
         for pol in pol_list:
@@ -60,7 +60,7 @@ def SLC_import(slc_dir, list_dir):
             print(import_file_list)
             for file in import_file_list:
                 index = file.find(pol)
-                filename = file[index-8:]
+                filename = file[index - 8:]
                 os.replace(file, slc_dir + filename)
 
 
@@ -79,4 +79,48 @@ def multilook(slc_dir):
     os.chdir(slc_dir)
     for tab in tab_file_list:
         # print(tab[:len(tab)-8])
-        os.system("multi_look_ScanSAR " + tab + " " + tab[:len(tab)-8] + ".mli " + tab[:len(tab)-8] + ".mli.par" + " 5 1 1")
+        os.system("multi_look_ScanSAR " + tab + " " + tab[:len(tab) - 8] + ".mli " + tab[:len(
+            tab) - 8] + ".mli.par" + " 5 1 0")
+
+
+def coreg(slc_dir):
+    import shutil
+    pol = "vh"
+    tab_file_list = extract_files_to_list(slc_dir, datatype=".SLC_tab", datascenes_file=None)
+    tab_file_list = sorted(tab_file_list)
+    tab_pol_list = []
+    for element in tab_file_list:
+        if pol in element:
+            tab_pol_list.append(element)
+    print(tab_file_list)
+
+    rslc_list = []
+    for tab in tab_pol_list:
+        if pol in tab:
+            rslc_file = tab[:len(tab) - 8] + ".RSLC_tab"
+            shutil.copy2(tab, rslc_file)
+            # Read in the file
+            with open(rslc_file, 'r') as file:
+                filedata = file.read()
+
+            # Replace the target string
+            filedata = filedata.replace('slc', 'rslc')
+
+            # Write the file out again
+            with open(rslc_file, 'w') as file:
+                file.write(filedata)
+
+            rslc_list.append(rslc_file)
+    print(rslc_list)
+
+    pol_list = []
+    for file in tab_pol_list:
+        if pol in file:
+            file_name = file[len(slc_dir):len(file)-11]
+            pol_list.append(file_name)
+
+    os.chdir(slc_dir)
+    for i in range(0, len(tab_pol_list)-1):
+        os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[i+1] + " "
+                  + pol_list[i+1] + " " + rslc_list[i+1] + " /home/ni82xoj/GEO410_data/DEM/Augrabies_DEM_small_filesize.tif"
+                  + " 5 1")

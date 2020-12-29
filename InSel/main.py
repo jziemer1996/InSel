@@ -69,7 +69,9 @@ def main():
 
     # gamma_function_test.define_precise_orbits(slc_dir=slc_dir, orbit_dir=orbit_dir)
 
-    gamma_function_test.multilook(slc_dir=slc_dir)
+    # gamma_function_test.multilook(slc_dir=slc_dir)
+
+    gamma_function_test.coreg(slc_dir=slc_dir)
 
 
 if __name__ == '__main__':
