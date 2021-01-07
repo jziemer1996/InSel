@@ -12,12 +12,13 @@ import gamma_function_test
 
 
 def main():
-    # home_path = "/home/ki73did/"
-    home_path = "/home/ni82xoj/"
+    home_path = "/home/ki73did/"
+    # home_path = "/home/ni82xoj/"
 
     # download_dir = "/geonfs03_vol1/SALDI_EMS/S1_SLC/04_Augrabies/"
     download_dir = home_path + "GEO410_data/"
 
+    dem_dir = download_dir + "DEM/Augrabies_DEM_small_filesize.tif"
 
     processing_dir = home_path + "GEO410_data/"
     list_dir = home_path + "GEO410_data/lists/"
@@ -71,7 +72,7 @@ def main():
 
     # gamma_function_test.multilook(slc_dir=slc_dir)
 
-    gamma_function_test.coreg(slc_dir=slc_dir)
+    gamma_function_test.coreg(slc_dir=slc_dir, dem_dir=dem_dir)
 
 
 if __name__ == '__main__':

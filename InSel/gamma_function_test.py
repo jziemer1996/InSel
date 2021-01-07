@@ -83,7 +83,7 @@ def multilook(slc_dir):
             tab) - 8] + ".mli.par" + " 5 1 0")
 
 
-def coreg(slc_dir):
+def coreg(slc_dir, dem_dir):
     import shutil
     pol = "vh"
     tab_file_list = extract_files_to_list(slc_dir, datatype=".SLC_tab", datascenes_file=None)
@@ -121,6 +121,5 @@ def coreg(slc_dir):
 
     os.chdir(slc_dir)
     for i in range(0, len(tab_pol_list)-1):
-        os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[i+1] + " "
-                  + pol_list[i+1] + " " + rslc_list[i+1] + " /home/ni82xoj/GEO410_data/DEM/Augrabies_DEM_small_filesize.tif"
-                  + " 5 1")
+        os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[i+1] + " " + pol_list[i+1]
+                  + " " + rslc_list[i+1] + " " + dem_dir + " 5 1")
