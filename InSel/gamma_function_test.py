@@ -54,7 +54,7 @@ def SLC_import(slc_dir, list_dir):
                 f.write(element)
             os.system("S1_import_SLC_from_zipfiles " + one_scene_file + " " + element[:len(element) - 4] +
                       "burst_number_table" + " - 0 0 . 1")
-        pol_list = [".vh", ".vv"]
+        pol_list = [".vv"]
         for pol in pol_list:
             import_file_list = extract_files_to_list(os.getcwd(), datatype=pol, datascenes_file=None)
             print(import_file_list)
@@ -85,7 +85,7 @@ def multilook(slc_dir):
 
 def coreg(slc_dir, dem_dir):
     import shutil
-    pol = "vh"
+    pol = "vv"
     tab_file_list = extract_files_to_list(slc_dir, datatype=".SLC_tab", datascenes_file=None)
     tab_file_list = sorted(tab_file_list)
     tab_pol_list = []
