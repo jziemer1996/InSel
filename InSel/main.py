@@ -18,7 +18,7 @@ def main():
     # download_dir = "/geonfs03_vol1/SALDI_EMS/S1_SLC/04_Augrabies/"
     download_dir = home_path + "GEO410_data/"
 
-    dem_dir = download_dir + "DEM/Augrabies_DEM_small_filesize.tif"
+    dem_dir = download_dir + "DEM/"
 
     processing_dir = home_path + "GEO410_data/"
     list_dir = home_path + "GEO410_data/lists/"
