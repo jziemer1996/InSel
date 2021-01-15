@@ -84,11 +84,10 @@ def multilook(slc_dir):
             tab) - 8] + ".mli.par" + " 7 1 0")
 
 
-def create_dem_for_GAMMA():
+def create_dem_for_GAMMA(dem_dir):
     shapefile_path = "./shapefiles/augrabies_extent.shp"
-
     shape_vector = Vector(filename=shapefile_path)
-    dem_autocreate(geometry=shape_vector, demType="SRTM 1Sec HGT", outfile="/home/ki73did/GEO410/Scripts/InSel/test/dem_final", buffer=0.05)
+    dem_autocreate(geometry=shape_vector, demType="SRTM 1Sec HGT", outfile=dem_dir + "dem_final", buffer=0.05)
 
 
 def gc_map():

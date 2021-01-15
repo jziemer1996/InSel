@@ -72,7 +72,7 @@ def main():
 
     # gamma_function_test.multilook(slc_dir=slc_dir)
 
-    gamma_function_test.create_dem_for_GAMMA()
+    gamma_function_test.create_dem_for_GAMMA(dem_dir=dem_dir)
 
     # gamma_function_test.coreg(slc_dir=slc_dir, dem_dir=dem_dir)
 
