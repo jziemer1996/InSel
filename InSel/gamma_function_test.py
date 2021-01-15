@@ -90,6 +90,11 @@ def create_dem_for_GAMMA(dem_dir):
     dem_autocreate(geometry=shape_vector, demType="SRTM 1Sec HGT", outfile=dem_dir + "dem_final", buffer=0.05)
 
 
+def geocode_dem():
+    # add stuff here
+    pass
+
+
 def gc_map():
     pass
 
