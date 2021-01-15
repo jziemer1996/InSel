@@ -99,9 +99,9 @@ def gc_map(slc_dir, dem_dir):
                   "- - - - - - - - - - - -")
 
 
-def geocode_dem():
-    # add stuff here
-    pass
+def geocode_dem(dem_dir):
+    os.system("geocode " + dem_dir + "DEM_final_lookup.lut " + dem_dir + "DEM_final_seg " + "3290 " + dem_dir +
+    "DEM_final_out.rdc_hgt " + "9685 13578 " + "- -")
 
 
 def coreg(slc_dir, dem_dir):
