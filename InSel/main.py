@@ -9,9 +9,11 @@ Authors: Marlin Mueller <marlin.markus.mueller@uni-jena.de>, Jonas Ziemer <jonas
 import os
 import sentinel_download
 import gamma_function_test
+from datetime import datetime
 
 
 def main():
+    start_time = datetime.now()
     home_path = "/home/ki73did/"
     # home_path = "/home/ni82xoj/"
 
@@ -72,14 +74,18 @@ def main():
 
     # gamma_function_test.multilook(slc_dir=slc_dir)
 
-    # gamma_function_test.create_dem_for_GAMMA(dem_dir=dem_dir)
-
-    # gamma_function_test.gc_map(slc_dir=slc_dir, dem_dir=dem_dir)
-
-    # gamma_function_test.geocode_dem(dem_dir=dem_dir)
+    gamma_function_test.create_dem_for_gamma(dem_dir=dem_dir)
     #
-    gamma_function_test.coreg(slc_dir=slc_dir, dem_dir=dem_dir)
+    gamma_function_test.gc_map(slc_dir=slc_dir, dem_dir=dem_dir)
 
+    gamma_function_test.geocode_dem(dem_dir=dem_dir)
+
+    # gamma_function_test.coreg(slc_dir=slc_dir, dem_dir=dem_dir)
+
+    end_time = datetime.now()
+    print("#####################################################")
+    print("processing-time = ", end_time - start_time, "Hr:min:sec")
+    print("#####################################################")
 
 if __name__ == '__main__':
     main()
