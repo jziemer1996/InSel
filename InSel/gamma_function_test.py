@@ -90,12 +90,17 @@ def create_dem_for_GAMMA(dem_dir):
     dem_autocreate(geometry=shape_vector, demType="SRTM 1Sec HGT", outfile=dem_dir + "dem_final", buffer=0.05)
 
 
+def gc_map(slc_dir, dem_dir):
+    mli_file_list = extract_files_to_list(slc_dir, datatype=".mli.par", datascenes_file=None)
+    mli_file_list = sorted(mli_file_list)
+    for mli in mli_file_list:
+        os.system("gc_map " + mli + " - " + dem_dir + "dem_final.par " + dem_dir + "dem_final.dem " + dem_dir +
+                  "DEM_final_seg.par " + dem_dir + "DEM_final_seg " + dem_dir + "DEM_final_lookup.lut " +
+                  "- - - - - - - - - - - -")
+
+
 def geocode_dem():
     # add stuff here
-    pass
-
-
-def gc_map():
     pass
 
 
