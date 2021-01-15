@@ -1,5 +1,6 @@
 import os
-
+from pyroSAR.gamma.dem import *
+from spatialist.vector import *
 
 def display_slc():
     os.system("disSLC /home/ni82xoj/GEO410/DISP/orig/05721.slc 2500")
@@ -80,7 +81,18 @@ def multilook(slc_dir):
     for tab in tab_file_list:
         # print(tab[:len(tab)-8])
         os.system("multi_look_ScanSAR " + tab + " " + tab[:len(tab) - 8] + ".mli " + tab[:len(
-            tab) - 8] + ".mli.par" + " 5 1 0")
+            tab) - 8] + ".mli.par" + " 7 1 0")
+
+
+def create_dem_for_GAMMA():
+    shapefile_path = "./shapefiles/augrabies_extent.shp"
+
+    shape_vector = Vector(filename=shapefile_path)
+    dem_autocreate(geometry=shape_vector, demType="SRTM 1Sec HGT", outfile="/home/ki73did/GEO410/Scripts/InSel/test/dem_final", buffer=0.05)
+
+
+def gc_map():
+    pass
 
 
 def coreg(slc_dir, dem_dir):
@@ -122,4 +134,4 @@ def coreg(slc_dir, dem_dir):
     os.chdir(slc_dir)
     for i in range(0, len(tab_pol_list)-1):
         os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[i+1] + " " + pol_list[i+1]
-                  + " " + rslc_list[i+1] + " " + dem_dir + " 5 1")
+                  + " " + rslc_list[i+1] + " " + dem_dir + " 5 1 - - - - - 0")
