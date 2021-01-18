@@ -82,7 +82,7 @@ def multilook(slc_dir):
         # print(tab[:len(tab)-8])
         # TODO: nochmal die multi-look factors ueberpruefen
         os.system("multi_look_ScanSAR " + tab + " " + tab[:len(tab) - 8] + ".mli " + tab[:len(
-            tab) - 8] + ".mli.par" + " 7 1 0")
+            tab) - 8] + ".mli.par" + " 8 2 0")
 
 
 def create_dem_for_gamma(dem_dir):
@@ -94,8 +94,8 @@ def create_dem_for_gamma(dem_dir):
 def gc_map(slc_dir, dem_dir):
     mli_file_list = extract_files_to_list(slc_dir, datatype=".mli.par", datascenes_file=None)
     mli_file_list = sorted(mli_file_list)
-    for mli in mli_file_list:
-        os.system("gc_map " + mli + " - " + dem_dir + "dem_final.dem.par " + dem_dir + "dem_final.dem " + dem_dir +
+    master_mli = mli_file_list[0]
+    os.system("gc_map " + master_mli + " - " + dem_dir + "dem_final.dem.par " + dem_dir + "dem_final.dem " + dem_dir +
                   "DEM_final_seg.par " + dem_dir + "DEM_final_seg " + dem_dir + "DEM_final_lookup.lut " +
                   "- - - - - - - - - - - -")
 
@@ -144,4 +144,14 @@ def coreg(slc_dir, dem_dir):
     os.chdir(slc_dir)
     for i in range(0, len(tab_pol_list)-1):
         os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[i+1] + " " + pol_list[i+1]
-                  + " " + rslc_list[i+1] + " " + dem_dir + "DEM_final_out.rdc_hgt" + " 7 1 - - - - - 0")
+                  + " " + rslc_list[i+1] + " " + dem_dir + "DEM_final_out.rdc_hgt" + " 8 2 - - - - - 0")
+
+
+def geocode_back(slc_dir, dem_dir):
+    os.system("geocode_back " + slc_dir + "20201001.vv.mli " + "9685 " + dem_dir + "DEM_final_lookup.lut " + slc_dir
+              + "20201001.vv_geocode.mli " + "3290 " + "- 2 0")
+
+
+def data2geotiff(dem_dir, slc_dir):
+    os.system("data2geotiff " + dem_dir + "dem_final.dem.par " + slc_dir + "20201001.vv_geocode.mli " + "2 " + slc_dir
+              + "output1.tif")

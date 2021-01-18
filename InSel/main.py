@@ -14,8 +14,8 @@ from datetime import datetime
 
 def main():
     start_time = datetime.now()
-    home_path = "/home/ki73did/"
-    # home_path = "/home/ni82xoj/"
+    # home_path = "/home/ki73did/"
+    home_path = "/home/ni82xoj/"
 
     # download_dir = "/geonfs03_vol1/SALDI_EMS/S1_SLC/04_Augrabies/"
     download_dir = home_path + "GEO410_data/"
@@ -67,20 +67,24 @@ def main():
 
     # gamma_function_test.display_slc()
 
-    # gamma_function_test.deburst_S1_SLC(processing_dir=processing_dir, download_dir=download_dir, list_dir=list_dir)
-    # gamma_function_test.SLC_import(slc_dir=slc_dir, list_dir=list_dir)
+    gamma_function_test.deburst_S1_SLC(processing_dir=processing_dir, download_dir=download_dir, list_dir=list_dir)
+    gamma_function_test.SLC_import(slc_dir=slc_dir, list_dir=list_dir)
 
-    # gamma_function_test.define_precise_orbits(slc_dir=slc_dir, orbit_dir=orbit_dir)
-
-    # gamma_function_test.multilook(slc_dir=slc_dir)
-
-    gamma_function_test.create_dem_for_gamma(dem_dir=dem_dir)
+    gamma_function_test.define_precise_orbits(slc_dir=slc_dir, orbit_dir=orbit_dir)
     #
+    gamma_function_test.multilook(slc_dir=slc_dir)
+    #
+    gamma_function_test.create_dem_for_gamma(dem_dir=dem_dir)
+
     gamma_function_test.gc_map(slc_dir=slc_dir, dem_dir=dem_dir)
 
     gamma_function_test.geocode_dem(dem_dir=dem_dir)
 
-    # gamma_function_test.coreg(slc_dir=slc_dir, dem_dir=dem_dir)
+    gamma_function_test.coreg(slc_dir=slc_dir, dem_dir=dem_dir)
+
+    # gamma_function_test.geocode_back(slc_dir=slc_dir, dem_dir=dem_dir)
+    #
+    # gamma_function_test.data2geotiff(dem_dir=dem_dir, slc_dir=slc_dir)
 
     end_time = datetime.now()
     print("#####################################################")
