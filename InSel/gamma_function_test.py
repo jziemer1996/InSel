@@ -1,6 +1,6 @@
 import os
 from pyroSAR.gamma.dem import *
-from spatialist.vector import *
+
 
 def display_slc():
     os.system("disSLC /home/ni82xoj/GEO410/DISP/orig/05721.slc 2500")
@@ -80,14 +80,15 @@ def multilook(slc_dir):
     tab_file_list = sorted(tab_file_list)
     os.chdir(slc_dir)
     for tab in tab_file_list:
-        print(tab[:len(tab)-8])
+        print(tab[:len(tab) - 8])
         # TODO: nochmal die multi-look factors ueberpruefen
         os.system("multi_look_ScanSAR " + tab + " " + tab[:len(tab) - 8] + ".mli " + tab[:len(
-            tab) - 8] + ".mli.par" + " 7 1 0")
+            tab) - 8] + ".mli.par" + " 8 2 0")
 
 
-def create_dem_for_gamma(dem_dir):
-    shapefile_path = "./shapefiles/augrabies_extent.shp"
+def create_dem_for_gamma(dem_dir, shapefile_path):
+    from spatialist.vector import Vector
+    # shapefile_path = "./shapefiles/augrabies_extent.shp"
     shape_vector = Vector(filename=shapefile_path)
     dem_autocreate(geometry=shape_vector, demType="SRTM 1Sec HGT", outfile=dem_dir + "dem_final.dem", buffer=0.05)
 
@@ -97,8 +98,8 @@ def gc_map(slc_dir, dem_dir):
     mli_file_list = sorted(mli_file_list)
     master_mli = mli_file_list[0]
     os.system("gc_map " + master_mli + " - " + dem_dir + "dem_final.dem.par " + dem_dir + "dem_final.dem " + dem_dir +
-                  "DEM_final_seg.par " + dem_dir + "DEM_final_seg " + dem_dir + "DEM_final_lookup.lut " +
-                  "- - - - - - - - - - - -")
+              "DEM_final_seg.par " + dem_dir + "DEM_final_seg " + dem_dir + "DEM_final_lookup.lut " +
+              "- - - - - - - - - - - -")
 
 
 def geocode_dem(dem_dir):
@@ -139,13 +140,14 @@ def coreg(slc_dir, dem_dir):
     pol_list = []
     for file in tab_pol_list:
         if pol in file:
-            file_name = file[len(slc_dir):len(file)-11]
+            file_name = file[len(slc_dir):len(file) - 11]
             pol_list.append(file_name)
 
     os.chdir(slc_dir)
-    for i in range(0, len(tab_pol_list)-1):
-        os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[i+1] + " " + pol_list[i+1]
-                  + " " + rslc_list[i+1] + " " + dem_dir + "DEM_final_out.rdc_hgt" + " 7 1 - - - - - 0")
+    for i in range(0, len(tab_pol_list) - 1):
+        os.system(
+            "S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[i + 1] + " " + pol_list[i + 1]
+            + " " + rslc_list[i + 1] + " " + dem_dir + "DEM_final_out.rdc_hgt" + " 8 2 - - - - - 0")
 
 
 def geocode_back(slc_dir, dem_dir):
