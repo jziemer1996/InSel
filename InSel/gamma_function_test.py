@@ -31,6 +31,13 @@ def extract_files_to_list(path_to_folder, datatype, datascenes_file):
 
 
 def deburst_S1_SLC(processing_dir, download_dir, list_dir):
+    """
+
+    :param processing_dir:
+    :param download_dir:
+    :param list_dir:
+    :return:
+    """
     if not os.path.exists(list_dir):
         os.makedirs(list_dir)
     datascenes_file = list_dir + 'datascenes.zipfile_list'
@@ -45,6 +52,12 @@ def deburst_S1_SLC(processing_dir, download_dir, list_dir):
 
 
 def SLC_import(slc_dir, list_dir):
+    """
+
+    :param slc_dir:
+    :param list_dir:
+    :return:
+    """
     datascenes_file = list_dir + 'datascenes.zipfile_list'
     one_scene_file = list_dir + "one_scene.zipfile_list"
     if not os.path.exists(slc_dir):
@@ -67,6 +80,12 @@ def SLC_import(slc_dir, list_dir):
 
 
 def define_precise_orbits(slc_dir, orbit_dir):
+    """
+
+    :param slc_dir:
+    :param orbit_dir:
+    :return:
+    """
     nstate = 60
     par_file_list = extract_files_to_list(slc_dir, datatype=".par", datascenes_file=None)
     par_file_list = sorted(par_file_list)
@@ -76,6 +95,11 @@ def define_precise_orbits(slc_dir, orbit_dir):
 
 
 def multilook(slc_dir):
+    """
+
+    :param slc_dir:
+    :return:
+    """
     tab_file_list = extract_files_to_list(slc_dir, datatype=".SLC_tab", datascenes_file=None)
     tab_file_list = sorted(tab_file_list)
     os.chdir(slc_dir)
@@ -87,6 +111,12 @@ def multilook(slc_dir):
 
 
 def create_dem_for_gamma(dem_dir, shapefile_path):
+    """
+
+    :param dem_dir:
+    :param shapefile_path:
+    :return:
+    """
     from spatialist.vector import Vector
     # shapefile_path = "./shapefiles/augrabies_extent.shp"
     shape_vector = Vector(filename=shapefile_path)
@@ -94,6 +124,12 @@ def create_dem_for_gamma(dem_dir, shapefile_path):
 
 
 def gc_map(slc_dir, dem_dir):
+    """
+
+    :param slc_dir:
+    :param dem_dir:
+    :return:
+    """
     mli_file_list = extract_files_to_list(slc_dir, datatype=".mli.par", datascenes_file=None)
     mli_file_list = sorted(mli_file_list)
     master_mli = mli_file_list[0]
@@ -103,11 +139,22 @@ def gc_map(slc_dir, dem_dir):
 
 
 def geocode_dem(dem_dir):
+    """
+
+    :param dem_dir:
+    :return:
+    """
     os.system("geocode " + dem_dir + "DEM_final_lookup.lut " + dem_dir + "DEM_final_seg " + "3290 " + dem_dir
               + "DEM_final_out.rdc_hgt " + "9685 13578 " + "- -")
 
 
 def coreg(slc_dir, dem_dir):
+    """
+
+    :param slc_dir:
+    :param dem_dir:
+    :return:
+    """
     import shutil
     pol = "vv"
     tab_file_list = extract_files_to_list(slc_dir, datatype=".SLC_tab", datascenes_file=None)
@@ -151,10 +198,22 @@ def coreg(slc_dir, dem_dir):
 
 
 def geocode_back(slc_dir, dem_dir):
+    """
+
+    :param slc_dir:
+    :param dem_dir:
+    :return:
+    """
     os.system("geocode_back " + slc_dir + "20201025.vv.mli " + "9685 " + dem_dir + "DEM_final_lookup.lut " + slc_dir
               + "20201025.vv_geocode.mli " + "3290 " + "- 2 0")
 
 
 def data2geotiff(dem_dir, slc_dir):
+    """
+
+    :param dem_dir:
+    :param slc_dir:
+    :return:
+    """
     os.system("data2geotiff " + dem_dir + "dem_final.dem.par " + slc_dir + "20201025.vv_geocode.mli " + "2 " + slc_dir
               + "output3.tif")
