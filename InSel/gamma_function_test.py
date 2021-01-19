@@ -62,7 +62,8 @@ def SLC_import(slc_dir, list_dir):
             for file in import_file_list:
                 index = file.find(pol)
                 filename = file[index - 8:]
-                os.replace(file, slc_dir + filename)
+                # os.replace(file, slc_dir + filename)
+                shutil.move(file, slc_dir + filename)
 
 
 def define_precise_orbits(slc_dir, orbit_dir):
@@ -79,10 +80,10 @@ def multilook(slc_dir):
     tab_file_list = sorted(tab_file_list)
     os.chdir(slc_dir)
     for tab in tab_file_list:
-        # print(tab[:len(tab)-8])
+        print(tab[:len(tab)-8])
         # TODO: nochmal die multi-look factors ueberpruefen
         os.system("multi_look_ScanSAR " + tab + " " + tab[:len(tab) - 8] + ".mli " + tab[:len(
-            tab) - 8] + ".mli.par" + " 8 2 0")
+            tab) - 8] + ".mli.par" + " 7 1 0")
 
 
 def create_dem_for_gamma(dem_dir):
@@ -144,14 +145,14 @@ def coreg(slc_dir, dem_dir):
     os.chdir(slc_dir)
     for i in range(0, len(tab_pol_list)-1):
         os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[i+1] + " " + pol_list[i+1]
-                  + " " + rslc_list[i+1] + " " + dem_dir + "DEM_final_out.rdc_hgt" + " 8 2 - - - - - 0")
+                  + " " + rslc_list[i+1] + " " + dem_dir + "DEM_final_out.rdc_hgt" + " 7 1 - - - - - 0")
 
 
 def geocode_back(slc_dir, dem_dir):
-    os.system("geocode_back " + slc_dir + "20201001.vv.mli " + "9685 " + dem_dir + "DEM_final_lookup.lut " + slc_dir
-              + "20201001.vv_geocode.mli " + "3290 " + "- 2 0")
+    os.system("geocode_back " + slc_dir + "20201025.vv.mli " + "9685 " + dem_dir + "DEM_final_lookup.lut " + slc_dir
+              + "20201025.vv_geocode.mli " + "3290 " + "- 2 0")
 
 
 def data2geotiff(dem_dir, slc_dir):
-    os.system("data2geotiff " + dem_dir + "dem_final.dem.par " + slc_dir + "20201001.vv_geocode.mli " + "2 " + slc_dir
-              + "output1.tif")
+    os.system("data2geotiff " + dem_dir + "dem_final.dem.par " + slc_dir + "20201025.vv_geocode.mli " + "2 " + slc_dir
+              + "output3.tif")

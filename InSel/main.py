@@ -67,24 +67,26 @@ def main():
 
     # gamma_function_test.display_slc()
 
-    gamma_function_test.deburst_S1_SLC(processing_dir=processing_dir, download_dir=download_dir, list_dir=list_dir)
-    gamma_function_test.SLC_import(slc_dir=slc_dir, list_dir=list_dir)
+    # gamma_function_test.deburst_S1_SLC(processing_dir=processing_dir, download_dir=download_dir, list_dir=list_dir)
 
-    gamma_function_test.define_precise_orbits(slc_dir=slc_dir, orbit_dir=orbit_dir)
-    #
-    gamma_function_test.multilook(slc_dir=slc_dir)
-    #
-    gamma_function_test.create_dem_for_gamma(dem_dir=dem_dir)
+    # gamma_function_test.SLC_import(slc_dir=slc_dir, list_dir=list_dir)
 
-    gamma_function_test.gc_map(slc_dir=slc_dir, dem_dir=dem_dir)
+    # gamma_function_test.define_precise_orbits(slc_dir=slc_dir, orbit_dir=orbit_dir)
 
-    gamma_function_test.geocode_dem(dem_dir=dem_dir)
+    # gamma_function_test.multilook(slc_dir=slc_dir)
+    #TODO: hier funktioniert der Übergang zwischen den Funktionen nicht fehlerfrei
 
-    gamma_function_test.coreg(slc_dir=slc_dir, dem_dir=dem_dir)
+    # gamma_function_test.create_dem_for_gamma(dem_dir=dem_dir)
 
-    # gamma_function_test.geocode_back(slc_dir=slc_dir, dem_dir=dem_dir)
-    #
-    # gamma_function_test.data2geotiff(dem_dir=dem_dir, slc_dir=slc_dir)
+    # gamma_function_test.gc_map(slc_dir=slc_dir, dem_dir=dem_dir)
+
+    # gamma_function_test.geocode_dem(dem_dir=dem_dir)
+
+    # gamma_function_test.coreg(slc_dir=slc_dir, dem_dir=dem_dir)
+
+    gamma_function_test.geocode_back(slc_dir=slc_dir, dem_dir=dem_dir)
+
+    gamma_function_test.data2geotiff(dem_dir=dem_dir, slc_dir=slc_dir)
 
     end_time = datetime.now()
     print("#####################################################")
