@@ -1,6 +1,6 @@
 import os
 import shutil
-from InSel.gamma_support_functions import *
+from gamma_support_functions import *
 
 
 def extract_files_to_list(path_to_folder, datatype, datascenes_file):
