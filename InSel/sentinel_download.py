@@ -33,22 +33,22 @@ def copernicus_download(copernicus_username, copernicus_password, download_direc
     ############## Sentinel Download ##############
 
     # Set Sentinel api
-    s3 = s3api.SentinelDownloader(copernicus_username, copernicus_password, api_url)
+    s1 = s3api.SentinelDownloader(copernicus_username, copernicus_password, api_url)
 
     # Set download directory
-    s3.set_download_dir(download_directory)
+    s1.set_download_dir(download_directory)
 
     # Set bounding box for area of investigation
     polygon = get_extent(shapefile=orig_shape)
     print(polygon)
-    s3.set_geometries(polygon)
+    s1.set_geometries(polygon)
 
     # Search for corresponding data scenes via api
-    s3.search(satellite, min_overlap, download_directory, start_date, end_date, producttype=product)
+    s1.search(satellite, min_overlap, download_directory, start_date, end_date, producttype=product)
 
     # Download data - returns dictionary of downloaded data scenes
     # (Format: {'failed': ['', '', ..], 'success': ['', '', '', ..]})
-    s3.download_all()
+    s1.download_all()
 
     download_time = datetime.now()
     print("Copernicus_Download-time = ", download_time - start_time, "Hr:min:sec")
