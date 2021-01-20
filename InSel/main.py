@@ -48,13 +48,13 @@ def main():
     # GAMMA functions for processing:
     # gamma_function_test.display_slc()
 
-    gamma_processing.deburst_S1_SLC(processing_dir=processing_dir, download_dir=download_dir, list_dir=list_dir)
+    # gamma_processing.deburst_S1_SLC(processing_dir=processing_dir, download_dir=download_dir, list_dir=list_dir)
 
-    gamma_processing.SLC_import(slc_dir=slc_dir, list_dir=list_dir)
+    # gamma_processing.SLC_import(slc_dir=slc_dir, list_dir=list_dir)
 
-    gamma_processing.define_precise_orbits(slc_dir=slc_dir, orbit_dir=orbit_dir)
+    # gamma_processing.define_precise_orbits(slc_dir=slc_dir, orbit_dir=orbit_dir)
 
-    gamma_processing.multilook(slc_dir=slc_dir)
+    # gamma_processing.multilook(slc_dir=slc_dir)
     # TODO: hier funktioniert der Übergang zwischen den Funktionen nicht fehlerfrei <-- Bei mir schon... ;)
 
     gamma_processing.gc_map(slc_dir=slc_dir, dem_dir=dem_dir, shapefile_path=shapefile_dir)
@@ -71,6 +71,7 @@ def main():
     print("#####################################################")
     print("processing-time = ", end_time - start_time, "Hr:min:sec")
     print("#####################################################")
+
 
 if __name__ == '__main__':
     main()
