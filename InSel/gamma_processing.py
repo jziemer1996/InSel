@@ -1,9 +1,6 @@
 import os
-from pyroSAR.gamma.dem import *
-
-
-def display_slc():
-    os.system("disSLC /home/ni82xoj/GEO410/DISP/orig/05721.slc 2500")
+import shutil
+from InSel.gamma_support_functions import *
 
 
 def extract_files_to_list(path_to_folder, datatype, datascenes_file):
@@ -110,26 +107,18 @@ def multilook(slc_dir):
             tab) - 8] + ".mli.par" + " 8 2 0")
 
 
-def create_dem_for_gamma(dem_dir, shapefile_path):
-    """
-
-    :param dem_dir:
-    :param shapefile_path:
-    :return:
-    """
-    from spatialist.vector import Vector
-    # shapefile_path = "./shapefiles/augrabies_extent.shp"
-    shape_vector = Vector(filename=shapefile_path)
-    dem_autocreate(geometry=shape_vector, demType="SRTM 1Sec HGT", outfile=dem_dir + "dem_final.dem", buffer=0.05)
-
-
-def gc_map(slc_dir, dem_dir):
+def gc_map(slc_dir, dem_dir, shapefile_path):
     """
 
     :param slc_dir:
     :param dem_dir:
+    :param shapefile_path:
     :return:
     """
+    # Automatically create DEM and DEM_par files using pyroSAR:
+    create_dem_for_gamma(dem_dir, shapefile_path)
+
+    # Extract first .mli based on date to select as master scene:
     mli_file_list = extract_files_to_list(slc_dir, datatype=".mli.par", datascenes_file=None)
     mli_file_list = sorted(mli_file_list)
     master_mli = mli_file_list[0]
@@ -195,25 +184,3 @@ def coreg(slc_dir, dem_dir):
         os.system(
             "S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[i + 1] + " " + pol_list[i + 1]
             + " " + rslc_list[i + 1] + " " + dem_dir + "DEM_final_out.rdc_hgt" + " 8 2 - - - - - 0")
-
-
-def geocode_back(slc_dir, dem_dir):
-    """
-
-    :param slc_dir:
-    :param dem_dir:
-    :return:
-    """
-    os.system("geocode_back " + slc_dir + "20201025.vv.mli " + "9685 " + dem_dir + "DEM_final_lookup.lut " + slc_dir
-              + "20201025.vv_geocode.mli " + "3290 " + "- 2 0")
-
-
-def data2geotiff(dem_dir, slc_dir):
-    """
-
-    :param dem_dir:
-    :param slc_dir:
-    :return:
-    """
-    os.system("data2geotiff " + dem_dir + "dem_final.dem.par " + slc_dir + "20201025.vv_geocode.mli " + "2 " + slc_dir
-              + "output3.tif")
