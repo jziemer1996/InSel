@@ -66,14 +66,21 @@ def SLC_import(slc_dir, list_dir):
             os.system("S1_import_SLC_from_zipfiles " + one_scene_file + " " + element[:len(element) - 4] +
                       "burst_number_table" + " - 0 0 . 1")
         pol_list = [".vv"]
+        delete_list = [".vv", ".vh"]
         for pol in pol_list:
             import_file_list = extract_files_to_list(os.getcwd(), datatype=pol, datascenes_file=None)
             print(import_file_list)
             for file in import_file_list:
                 index = file.find(pol)
                 filename = file[index - 8:]
-                # os.replace(file, slc_dir + filename)
+                print(file)
                 shutil.move(file, slc_dir + filename)
+
+            for datascene in delete_list:
+                import_delete_list = extract_files_to_list(os.getcwd(), datatype=datascene, datascenes_file=None)
+                print(import_delete_list)
+                for ele in import_delete_list:
+                    os.remove(ele)
 
 
 def define_precise_orbits(slc_dir, orbit_dir):
