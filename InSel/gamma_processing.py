@@ -105,13 +105,13 @@ def multilook(slc_dir):
     :return:
     """
     tab_file_list = extract_files_to_list(slc_dir, datatype=".SLC_tab", datascenes_file=None)
-    tab_file_list = sorted(tab_file_list)
+    tab = sorted(tab_file_list)
     os.chdir(slc_dir)
-    for tab in tab_file_list:
-        print(tab[:len(tab) - 8])
-        # TODO: nochmal die multi-look factors ueberpruefen
-        os.system("multi_look_ScanSAR " + tab + " " + tab[:len(tab) - 8] + ".mli " + tab[:len(
-            tab) - 8] + ".mli.par" + " 8 2 0")
+    # for tab in tab_file_list:
+    #     print(tab[:len(tab) - 8])
+    #     # TODO: nochmal die multi-look factors ueberpruefen
+    os.system("multi_look_ScanSAR " + tab[0] + " " + tab[0][:len(tab[0]) - 8] + ".mli " + tab[0][:len(
+        tab[0]) - 8] + ".mli.par" + " 8 2 0")
 
 
 def gc_map(slc_dir, dem_dir, shapefile_path):
@@ -188,6 +188,6 @@ def coreg(slc_dir, dem_dir):
 
     os.chdir(slc_dir)
     for i in range(0, len(tab_pol_list) - 1):
-        os.system(
-            "S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[i + 1] + " " + pol_list[i + 1]
-            + " " + rslc_list[i + 1] + " " + dem_dir + "DEM_final_out.rdc_hgt" + " 8 2 - - - - - 0")
+        os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[i + 1] + " "
+                  + pol_list[i + 1] + " " + rslc_list[i + 1] + " " + dem_dir + "DEM_final_out.rdc_hgt"
+                  + " 8 2 - - - - - 0")

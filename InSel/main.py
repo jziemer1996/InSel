@@ -49,11 +49,11 @@ def main():
     # gamma_function_test.display_slc()
 
     # gamma_processing.deburst_S1_SLC(processing_dir=processing_dir, download_dir=download_dir, list_dir=list_dir)
-
+    #
     # gamma_processing.SLC_import(slc_dir=slc_dir, list_dir=list_dir)
-
+    #
     # gamma_processing.define_precise_orbits(slc_dir=slc_dir, orbit_dir=orbit_dir)
-
+    #
     # gamma_processing.multilook(slc_dir=slc_dir)
     # TODO: hier funktioniert der Übergang zwischen den Funktionen nicht fehlerfrei <-- Bei mir schon... ;)
 
