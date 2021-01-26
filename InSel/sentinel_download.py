@@ -4,7 +4,7 @@ from osgeo import ogr
 
 
 def copernicus_download(copernicus_username, copernicus_password, download_directory, api_url, satellite, min_overlap,
-                        timeliness, start_date, end_date, product, orig_shape):
+                        start_date, end_date, product, orig_shape):
     """
     This function takes the user input to create a API call for the Copernicus Hub and downloads the specified data.
     Args:
@@ -24,26 +24,31 @@ def copernicus_download(copernicus_username, copernicus_password, download_direc
     """
 
     start_time = datetime.now()
+    print(api_url)
+    print(satellite)
+    print(min_overlap)
+    print(download_directory)
+    print(orig_shape)
 
     ############## Sentinel Download ##############
 
     # Set Sentinel api
-    s3 = s3api.SentinelDownloader(copernicus_username, copernicus_password, api_url)
+    s1 = s3api.SentinelDownloader(copernicus_username, copernicus_password, api_url)
 
     # Set download directory
-    s3.set_download_dir(download_directory)
+    s1.set_download_dir(download_directory)
 
     # Set bounding box for area of investigation
-    polygon = get_extent(shapefile=orig_shape)[0]
-    s3.set_geometries(polygon)
+    polygon = get_extent(shapefile=orig_shape)
+    print(polygon)
+    s1.set_geometries(polygon)
 
     # Search for corresponding data scenes via api
-    s3.search(satellite, min_overlap, download_directory, start_date, end_date, producttype=product,
-              timeliness=timeliness)
+    s1.search(satellite, min_overlap, download_directory, start_date, end_date, producttype=product)
 
     # Download data - returns dictionary of downloaded data scenes
     # (Format: {'failed': ['', '', ..], 'success': ['', '', '', ..]})
-    s3.download_all()
+    s1.download_all()
 
     download_time = datetime.now()
     print("Copernicus_Download-time = ", download_time - start_time, "Hr:min:sec")
