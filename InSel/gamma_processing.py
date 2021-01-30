@@ -104,14 +104,14 @@ def multilook(slc_dir):
     :param slc_dir:
     :return:
     """
+
     tab_file_list = extract_files_to_list(slc_dir, datatype=".SLC_tab", datascenes_file=None)
     tab = sorted(tab_file_list)
+    print(tab[0])
     os.chdir(slc_dir)
-    # for tab in tab_file_list:
-    #     print(tab[:len(tab) - 8])
-    #     # TODO: nochmal die multi-look factors ueberpruefen
-    os.system("multi_look_ScanSAR " + tab[0] + " " + tab[0][:len(tab[0]) - 8] + ".mli " + tab[0][:len(
-        tab[0]) - 8] + ".mli.par" + " 8 2 0")
+    # TODO: nochmal die multi-look factors ueberpruefen
+    os.system("multi_look_ScanSAR " + tab[0] + " " + tab[0][:len(tab[0]) - 11] + ".mli " +
+              tab[0][:len(tab[0]) - 11] + ".mli.par" + " 8 2 0")
 
 
 def gc_map(slc_dir, dem_dir, shapefile_path):
@@ -128,7 +128,9 @@ def gc_map(slc_dir, dem_dir, shapefile_path):
     # Extract first .mli based on date to select as master scene:
     mli_file_list = extract_files_to_list(slc_dir, datatype=".mli.par", datascenes_file=None)
     mli_file_list = sorted(mli_file_list)
+    print(mli_file_list)
     master_mli = mli_file_list[0]
+    print(master_mli)
     os.system("gc_map " + master_mli + " - " + dem_dir + "dem_final.dem.par " + dem_dir + "dem_final.dem " + dem_dir +
               "DEM_final_seg.par " + dem_dir + "DEM_final_seg " + dem_dir + "DEM_final_lookup.lut " +
               "- - - - - - - - - - - -")
@@ -141,7 +143,7 @@ def geocode_dem(dem_dir):
     :return:
     """
     os.system("geocode " + dem_dir + "DEM_final_lookup.lut " + dem_dir + "DEM_final_seg " + "3290 " + dem_dir
-              + "DEM_final_out.rdc_hgt " + "8474 6789 " + "- -")
+              + "DEM_final_out.rdc_hgt " + "8474 6790 " + "- -")
 
 
 def coreg(slc_dir, dem_dir):
@@ -185,6 +187,13 @@ def coreg(slc_dir, dem_dir):
         if pol in file:
             file_name = file[len(slc_dir):len(file) - 11]
             pol_list.append(file_name)
+
+    print("tab_pol_list=")
+    print(tab_pol_list)
+    print("pol_list=")
+    print(pol_list)
+    print("rslc_list=")
+    print(rslc_list)
 
     os.chdir(slc_dir)
     for i in range(0, len(tab_pol_list) - 1):
