@@ -1,6 +1,7 @@
 import os
 import shutil
 from gamma_support_functions import *
+from user_data import *
 
 
 def extract_files_to_list(path_to_folder, datatype, datascenes_file):
@@ -27,44 +28,37 @@ def extract_files_to_list(path_to_folder, datatype, datascenes_file):
     return new_list
 
 
-def deburst_S1_SLC(processing_dir, download_dir, list_dir):
+def deburst_S1_SLC(datascenes_file):
     """
 
-    :param processing_dir:
-    :param download_dir:
-    :param list_dir:
-    :return:
     """
-    if not os.path.exists(list_dir):
-        os.makedirs(list_dir)
-    datascenes_file = list_dir + 'datascenes.zipfile_list'
+    # datascenes_file = Paths.list_dir + 'datascenes.zipfile_list'
     print(datascenes_file)
-    zip_file_list = extract_files_to_list(download_dir, datatype=".zip", datascenes_file=datascenes_file)
+    zip_file_list = extract_files_to_list(Paths.download_dir, datatype=".zip", datascenes_file=datascenes_file)
     for file in zip_file_list:
         file_name = file[file.find("S1A"):len(file) - 4] + ".burst_number_table"
         print(file_name)
         print("Masterfile is...:" + file)
         os.system("S1_BURST_tab_from_zipfile" + " - " + file)
-        os.replace(file_name, processing_dir + file_name)
+        os.replace(file_name, Paths.processing_dir + file_name)
 
 
-def SLC_import(slc_dir, list_dir):
+def SLC_import():
     """
 
-    :param slc_dir:
-    :param list_dir:
-    :return:
     """
-    datascenes_file = list_dir + 'datascenes.zipfile_list'
-    one_scene_file = list_dir + "one_scene.zipfile_list"
-    if not os.path.exists(slc_dir):
-        os.makedirs(slc_dir)
+    datascenes_file = Paths.list_dir + "datascenes.zipfile_list"
+    deburst_S1_SLC(datascenes_file)
+
+    one_scene_file = Paths.list_dir + "one_scene.zipfile_list"
+
     with open(datascenes_file, "rt") as slc_zip_list:
         for element in slc_zip_list:
             with open(one_scene_file, 'w') as f:
                 f.write(element)
+                print(element[:len(element) - 4])
             os.system("S1_import_SLC_from_zipfiles " + one_scene_file + " " + element[:len(element) - 4] +
-                      "burst_number_table" + " - 0 0 . 1")
+                      "burst_number_table" + " - 0 0 " + Paths.orbit_file_dir + " 1")
         pol_list = [".vv"]
         delete_list = [".vv", ".vh"]
         for pol in pol_list:
@@ -74,7 +68,7 @@ def SLC_import(slc_dir, list_dir):
                 index = file.find(pol)
                 filename = file[index - 8:]
                 print(file)
-                shutil.move(file, slc_dir + filename)
+                shutil.move(file, Paths.slc_dir + filename)
 
             for datascene in delete_list:
                 import_delete_list = extract_files_to_list(os.getcwd(), datatype=datascene, datascenes_file=None)
@@ -83,70 +77,61 @@ def SLC_import(slc_dir, list_dir):
                     os.remove(ele)
 
 
-def define_precise_orbits(slc_dir, orbit_dir):
-    """
-
-    :param slc_dir:
-    :param orbit_dir:
-    :return:
-    """
-    nstate = 60
-    par_file_list = extract_files_to_list(slc_dir, datatype=".par", datascenes_file=None)
-    par_file_list = sorted(par_file_list)
-
-    for parfile in par_file_list:
-        os.system(os.getcwd() + "/OPOD_vec_lola.pl " + parfile + " " + orbit_dir + " " + str(nstate))
+# def define_precise_orbits():
+#     """
+#
+#     """
+#     nstate = 60
+#     par_file_list = extract_files_to_list(Paths.slc_dir, datatype=".par", datascenes_file=None)
+#     par_file_list = sorted(par_file_list)
+#
+#     for parfile in par_file_list:
+#         os.system(os.getcwd() + "/OPOD_vec_lola.pl " + parfile + " " + Paths.orbit_file_dir + " " + str(nstate))
 
 
-def multilook(slc_dir):
+def multilook():
     """
 
     :param slc_dir:
     :return:
     """
 
-    tab_file_list = extract_files_to_list(slc_dir, datatype=".SLC_tab", datascenes_file=None)
+    tab_file_list = extract_files_to_list(Paths.slc_dir, datatype=".SLC_tab", datascenes_file=None)
     tab = sorted(tab_file_list)
     print(tab[0])
-    os.chdir(slc_dir)
+    os.chdir(Paths.slc_dir)
     # TODO: nochmal die multi-look factors ueberpruefen
     os.system("multi_look_ScanSAR " + tab[0] + " " + tab[0][:len(tab[0]) - 11] + ".mli " +
               tab[0][:len(tab[0]) - 11] + ".mli.par" + " 8 2 0")
 
 
-def gc_map(slc_dir, dem_dir, shapefile_path):
+def gc_map():
     """
 
-    :param slc_dir:
-    :param dem_dir:
-    :param shapefile_path:
-    :return:
     """
     # Automatically create DEM and DEM_par files using pyroSAR:
-    create_dem_for_gamma(dem_dir, shapefile_path)
+    create_dem_for_gamma(Paths.dem_dir, Paths.shapefile_dir)
 
     # Extract first .mli based on date to select as master scene:
-    mli_file_list = extract_files_to_list(slc_dir, datatype=".mli.par", datascenes_file=None)
+    mli_file_list = extract_files_to_list(Paths.slc_dir, datatype=".mli.par", datascenes_file=None)
     mli_file_list = sorted(mli_file_list)
     print(mli_file_list)
     master_mli = mli_file_list[0]
     print(master_mli)
-    os.system("gc_map " + master_mli + " - " + dem_dir + "dem_final.dem.par " + dem_dir + "dem_final.dem " + dem_dir +
-              "DEM_final_seg.par " + dem_dir + "DEM_final_seg " + dem_dir + "DEM_final_lookup.lut " +
-              "- - - - - - - - - - - -")
+    os.system("gc_map " + master_mli + " - " + Paths.dem_dir + "dem_final.dem.par " + Paths.dem_dir + "dem_final.dem "
+              + Paths.dem_dir + "DEM_final_seg.par " + Paths.dem_dir + "DEM_final_seg " + Paths.dem_dir
+              + "DEM_final_lookup.lut " + "- - - - - - - - - - - -")
 
 
-def geocode_dem(dem_dir):
+def geocode_dem():
     """
 
-    :param dem_dir:
-    :return:
     """
-    os.system("geocode " + dem_dir + "DEM_final_lookup.lut " + dem_dir + "DEM_final_seg " + "3290 " + dem_dir
-              + "DEM_final_out.rdc_hgt " + "8474 6790 " + "- -")
+    os.system("geocode " + Paths.dem_dir + "DEM_final_lookup.lut " + Paths.dem_dir + "DEM_final_seg " + "3290 " +
+              Paths.dem_dir + "DEM_final_out.rdc_hgt " + "8474 6790 " + "- -")
 
 
-def coreg(slc_dir, dem_dir):
+def coreg():
     """
 
     :param slc_dir:
@@ -155,7 +140,7 @@ def coreg(slc_dir, dem_dir):
     """
     import shutil
     pol = "vv"
-    tab_file_list = extract_files_to_list(slc_dir, datatype=".SLC_tab", datascenes_file=None)
+    tab_file_list = extract_files_to_list(Paths.slc_dir, datatype=".SLC_tab", datascenes_file=None)
     tab_file_list = sorted(tab_file_list)
     tab_pol_list = []
     for element in tab_file_list:
@@ -185,7 +170,7 @@ def coreg(slc_dir, dem_dir):
     pol_list = []
     for file in tab_pol_list:
         if pol in file:
-            file_name = file[len(slc_dir):len(file) - 11]
+            file_name = file[len(Paths.slc_dir):len(file) - 11]
             pol_list.append(file_name)
 
     print("tab_pol_list=")
@@ -195,8 +180,8 @@ def coreg(slc_dir, dem_dir):
     print("rslc_list=")
     print(rslc_list)
 
-    os.chdir(slc_dir)
+    os.chdir(Paths.slc_dir)
     for i in range(0, len(tab_pol_list) - 1):
         os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[i + 1] + " "
-                  + pol_list[i + 1] + " " + rslc_list[i + 1] + " " + dem_dir + "DEM_final_out.rdc_hgt"
+                  + pol_list[i + 1] + " " + rslc_list[i + 1] + " " + Paths.dem_dir + "DEM_final_out.rdc_hgt"
                   + " 8 2 - - - - - 0")
