@@ -142,11 +142,13 @@ def geocode_dem(dem_dir):
     :param dem_dir:
     :return:
     """
+    # TODO: 6790 vs. 6788 für Test- und Prozessdata
     os.system("geocode " + dem_dir + "DEM_final_lookup.lut " + dem_dir + "DEM_final_seg " + "3290 " + dem_dir
-              + "DEM_final_out.rdc_hgt " + "8474 6790 " + "- -")
+              + "DEM_final_out.rdc_hgt " + "8474 6788 " + "- -")
 
 
 def coreg(slc_dir, dem_dir):
+    # TODO: ScanSAR_coreg.py --no_int für Koregistrierung verwenden, nicht S1_coreg_TOPS!
     """
 
     :param slc_dir:
@@ -200,3 +202,17 @@ def coreg(slc_dir, dem_dir):
         os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[i + 1] + " "
                   + pol_list[i + 1] + " " + rslc_list[i + 1] + " " + dem_dir + "DEM_final_out.rdc_hgt"
                   + " 8 2 - - - - - 0")
+
+def file_for_SBAS_graph(slc_dir):
+    sbas_list = extract_files_to_list(slc_dir, datatype="vv.slc.iw1.par", datascenes_file=None)
+    sbas_list = sorted(sbas_list)
+    sbas_nopar_list = []
+    for element in sbas_list:
+        sbas_nopar_list.append(element[:len(element)-4])
+    merge_list = [sbas_nopar_list, sbas_list]
+    with open(slc_dir + "SLC_tab", "w") as file:
+        for x in zip(*merge_list):
+            file.write("{0}\t{1}\n".format(*x))
+
+
+

@@ -19,11 +19,11 @@ def main():
 
     # download_dir = "/geonfs03_vol1/SALDI_EMS/S1_SLC/04_Augrabies/"
     download_dir = home_path + "GEO410_data/"
-    #
+
     dem_dir = download_dir + "DEM/"
-    #
+
     shapefile_dir = home_path + "GEO410/Scripts/InSel/shapefiles/augrabies_extent.shp"
-    #
+
     processing_dir = home_path + "GEO410_data/"
     list_dir = home_path + "GEO410_data/lists/"
     slc_dir = home_path + "GEO410_data/slc/"
@@ -58,19 +58,21 @@ def main():
     # gamma_function_test.display_slc()
 
     # gamma_processing.deburst_S1_SLC(processing_dir=processing_dir, download_dir=download_dir, list_dir=list_dir)
-
+    #
     # gamma_processing.SLC_import(slc_dir=slc_dir, list_dir=list_dir)
-
+    #
     # gamma_processing.define_precise_orbits(slc_dir=slc_dir, orbit_dir=orbit_dir)
-
+    #
     # gamma_processing.multilook(slc_dir=slc_dir)
-    # TODO: hier funktioniert der Übergang zwischen den Funktionen nicht fehlerfrei <-- Bei mir schon... ;)
-
+    # # TODO: hier funktioniert der Übergang zwischen den Funktionen nicht fehlerfrei <-- Bei mir schon... ;)
+    #
     # gamma_processing.gc_map(slc_dir=slc_dir, dem_dir=dem_dir, shapefile_path=shapefile_dir)
-
+    #
     # gamma_processing.geocode_dem(dem_dir=dem_dir)
 
     # gamma_processing.coreg(slc_dir=slc_dir, dem_dir=dem_dir)
+
+    gamma_processing.file_for_SBAS_graph(slc_dir)
 
     # gamma_function_test.geocode_back(slc_dir=slc_dir, dem_dir=dem_dir)
     #
