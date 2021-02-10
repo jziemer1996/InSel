@@ -25,13 +25,11 @@ def main():
     #                                       orig_shape=Paths.shapefile_dir)
 
     ##### GAMMA functions for processing: #####
-    # deburst_S1_SLC() # probably not needed anymore
-
-    SLC_import()
+    # SLC_import()
 
     # define_precise_orbits() # probably not needed anymore
 
-    # multilook()
+    multilook(res=20)
 
     # gc_map()
 
