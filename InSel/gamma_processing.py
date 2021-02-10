@@ -115,7 +115,6 @@ def multilook(res=None):
     tab = sorted(tab_file_list)
     output_name = multilook_dir + tab[0][len(Paths.slc_dir):len(tab[0]) - 11]
     os.chdir(Paths.slc_dir)
-    # TODO: nochmal die multi-look factors ueberpruefen
     os.system("multi_look_ScanSAR " + tab[0] + " " + output_name + ".mli " + output_name + ".mli.par " + rlks_azlks_var
               + " 0")
 
@@ -142,6 +141,16 @@ def geocode_dem():
     """
 
     """
+
+    # TODO: call "get_par_as_dict" here and get "range_samples" and "azimuth_lines" from dict. We need to specify, which
+    #  par file is opend for each step
+    # Example:
+    ### par_dict = get_par_as_dict(path)
+    ### range_samples = par_dict.get("range_samples")
+    ### azimuth_lines = par_dict.get("azimuth_lines")
+    ### UND SO WEITER...
+
+
     os.system("geocode " + Paths.dem_dir + "DEM_final_lookup.lut " + Paths.dem_dir + "DEM_final_seg " + "3290 " +
               Paths.dem_dir + "DEM_final_out.rdc_hgt " + "8474 6790 " + "- -")
 
