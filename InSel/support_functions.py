@@ -43,21 +43,21 @@ def display_slc():
 
 def get_par_as_dict(path):
     # path = "C:/Users/marli/Downloads/20201001.vv.slc.iw1.par"
-    f = open(path, 'r')
+    par_file = open(path, 'r')
     par_dict = {}
 
     # iterate through lines of par file
-    for i, l in enumerate(f):
+    for line in par_file:
         # remove newline statements at end of each line with "-1"
-        line = l[0:len(l)-1]
+        cleaned_line = line[0:len(line)-1]
         # check for lines containing ":" as separator
-        if ":" in line:
+        if ":" in cleaned_line:
             # create key by extracting name
-            index = line.index(":")
-            key = line[0:index]
+            index = cleaned_line.index(":")
+            key = cleaned_line[0:index]
 
             # create value by extracting everything right of ":"
-            temp_value = line[index + 1:]
+            temp_value = cleaned_line[index + 1:]
             value = temp_value.strip()
 
             # append to dict
