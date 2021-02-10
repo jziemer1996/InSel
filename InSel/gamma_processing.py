@@ -1,7 +1,7 @@
 import os
 import shutil
-from gamma_support_functions import *
-from user_data import *
+from support_functions import *
+from user_data import Paths
 
 
 def extract_files_to_list(path_to_folder, datatype, datascenes_file):
@@ -89,20 +89,35 @@ def SLC_import():
 #         os.system(os.getcwd() + "/OPOD_vec_lola.pl " + parfile + " " + Paths.orbit_file_dir + " " + str(nstate))
 
 
-def multilook():
+def multilook(res=None):
     """
 
-    :param slc_dir:
-    :return:
     """
+    # allow user-defined resolutions in increments of 20m
+    default_resolution = 40
+    if res is None:
+        res = default_resolution
+        range_looks = 8
+        azimuth_looks = 2
+    if res is not None and res % 20 == 0:
+        range_looks = res / 5
+        azimuth_looks = res / 20
+    if res is not None and res % 20 != 0:
+        raise Exception("resolution should be multiple of 20m, default is set to 40m")
+
+    rlks_azlks_var = " " + str(range_looks) + " " + str(azimuth_looks)
+
+    multilook_dir = Paths.slc_dir + "multilook/"
+    if not os.path.exists(multilook_dir):
+        os.makedirs(multilook_dir)
 
     tab_file_list = extract_files_to_list(Paths.slc_dir, datatype=".SLC_tab", datascenes_file=None)
     tab = sorted(tab_file_list)
-    print(tab[0])
+    output_name = multilook_dir + tab[0][len(Paths.slc_dir):len(tab[0]) - 11]
     os.chdir(Paths.slc_dir)
     # TODO: nochmal die multi-look factors ueberpruefen
-    os.system("multi_look_ScanSAR " + tab[0] + " " + tab[0][:len(tab[0]) - 11] + ".mli " +
-              tab[0][:len(tab[0]) - 11] + ".mli.par" + " 8 2 0")
+    os.system("multi_look_ScanSAR " + tab[0] + " " + output_name + ".mli " + output_name + ".mli.par " + rlks_azlks_var
+              + " 0")
 
 
 def gc_map():
@@ -134,9 +149,6 @@ def geocode_dem():
 def coreg():
     """
 
-    :param slc_dir:
-    :param dem_dir:
-    :return:
     """
     import shutil
     pol = "vv"
