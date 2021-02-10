@@ -72,7 +72,9 @@ def main():
 
     # gamma_processing.coreg(slc_dir=slc_dir, dem_dir=dem_dir)
 
-    gamma_processing.file_for_SBAS_graph(slc_dir)
+    gamma_processing.file_for_sbas_graph(slc_dir)
+
+    gamma_processing.sbas_graph(slc_dir)
 
     # gamma_function_test.geocode_back(slc_dir=slc_dir, dem_dir=dem_dir)
     #

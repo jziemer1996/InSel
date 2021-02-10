@@ -203,7 +203,7 @@ def coreg(slc_dir, dem_dir):
                   + pol_list[i + 1] + " " + rslc_list[i + 1] + " " + dem_dir + "DEM_final_out.rdc_hgt"
                   + " 8 2 - - - - - 0")
 
-def file_for_SBAS_graph(slc_dir):
+def file_for_sbas_graph(slc_dir):
     sbas_list = extract_files_to_list(slc_dir, datatype="vv.slc.iw1.par", datascenes_file=None)
     sbas_list = sorted(sbas_list)
     sbas_nopar_list = []
@@ -215,4 +215,7 @@ def file_for_SBAS_graph(slc_dir):
             file.write("{0}\t{1}\n".format(*x))
 
 
+def sbas_graph(slc_dir):
+    os.system("base_calc " + slc_dir + "/SLC_tab " + slc_dir + "20190808.rslc.par " + slc_dir + "baseline_plot4.out "
+              + slc_dir + "baselines4.txt " + "1 1 - 136 - 48")
 
