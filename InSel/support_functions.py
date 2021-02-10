@@ -39,3 +39,27 @@ def data2geotiff():
 
 def display_slc():
     os.system("disSLC /home/ni82xoj/GEO410/DISP/orig/05721.slc 2500")
+
+
+def get_par_as_dict(path):
+    # path = "C:/Users/marli/Downloads/20201001.vv.slc.iw1.par"
+    f = open(path, 'r')
+    par_dict = {}
+
+    # iterate through lines of par file
+    for i, l in enumerate(f):
+        # remove newline statements at end of each line with "-1"
+        line = l[0:len(l)-1]
+        # check for lines containing ":" as separator
+        if ":" in line:
+            # create key by extracting name
+            index = line.index(":")
+            key = line[0:index]
+
+            # create value by extracting everything right of ":"
+            temp_value = line[index + 1:]
+            value = temp_value.strip()
+
+            # append to dict
+            par_dict.update({key: value})
+    return par_dict
