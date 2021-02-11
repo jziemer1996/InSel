@@ -95,6 +95,7 @@ def multilook(res=None):
     """
     # allow user-defined resolutions in increments of 20m
     default_resolution = 40
+    default_burst_window_calc_flag = 0
     if res is None:
         res = default_resolution
         range_looks = 8
@@ -107,34 +108,56 @@ def multilook(res=None):
 
     rlks_azlks_var = " " + str(range_looks) + " " + str(azimuth_looks)
 
-    multilook_dir = Paths.slc_dir + "multilook/"
-    if not os.path.exists(multilook_dir):
-        os.makedirs(multilook_dir)
+    # multilook_dir = Paths.slc_dir + "multilook/"
+    # if not os.path.exists(Paths.multilook_dir):
+    #     os.makedirs(Paths.multilook_dir)
 
     tab_file_list = extract_files_to_list(Paths.slc_dir, datatype=".SLC_tab", datascenes_file=None)
     tab = sorted(tab_file_list)
-    output_name = multilook_dir + tab[0][len(Paths.slc_dir):len(tab[0]) - 11]
+    output_name = Paths.multilook_dir + tab[0][len(Paths.slc_dir):len(tab[0]) - 11]
     os.chdir(Paths.slc_dir)
     os.system("multi_look_ScanSAR " + tab[0] + " " + output_name + ".mli " + output_name + ".mli.par " + rlks_azlks_var
-              + " 0")
+              + " " + str(default_burst_window_calc_flag))
 
 
 def gc_map():
     """
-
+-
     """
+    # TODO: rework function to work for normal workflow and for SBAS workflow for processsing of n-1 files
+
+    # GAMMA default values for additional output parameter represented by "-"
+    # oversampling factors (float)
+    lat_ovr = "- "
+    lon_ovr = "- "
+    r_ovr = "- "
+
+    # output files (can be specified as strings)
+    sim_sar = "- "
+    zen_angle = "- "
+    ori_angle = "- "
+    loc_inc_angle = "- "
+    proj_angle = "- "
+    pix_norm_factor = "- "
+
+    # number of additional DEM pixel to add around area covered by SAR image
+    frame = "- "
+    # LUT values for regions with layover,shadows or DEM gaps (can range from 0 to 3 -> default 2)
+    ls_mode = "- "
+
     # Automatically create DEM and DEM_par files using pyroSAR:
     create_dem_for_gamma(Paths.dem_dir, Paths.shapefile_dir)
 
     # Extract first .mli based on date to select as master scene:
-    mli_file_list = extract_files_to_list(Paths.slc_dir, datatype=".mli.par", datascenes_file=None)
+    mli_file_list = extract_files_to_list(Paths.multilook_dir, datatype=".mli.par", datascenes_file=None)
     mli_file_list = sorted(mli_file_list)
     print(mli_file_list)
     master_mli = mli_file_list[0]
     print(master_mli)
     os.system("gc_map " + master_mli + " - " + Paths.dem_dir + "dem_final.dem.par " + Paths.dem_dir + "dem_final.dem "
               + Paths.dem_dir + "DEM_final_seg.par " + Paths.dem_dir + "DEM_final_seg " + Paths.dem_dir
-              + "DEM_final_lookup.lut " + "- - - - - - - - - - - -")
+              + "DEM_final_lookup.lut " + lat_ovr + lon_ovr + sim_sar + zen_angle + ori_angle + loc_inc_angle
+              + proj_angle + pix_norm_factor + frame + ls_mode + r_ovr)
 
 
 def geocode_dem():
@@ -149,7 +172,6 @@ def geocode_dem():
     ### range_samples = par_dict.get("range_samples")
     ### azimuth_lines = par_dict.get("azimuth_lines")
     ### UND SO WEITER...
-
 
     os.system("geocode " + Paths.dem_dir + "DEM_final_lookup.lut " + Paths.dem_dir + "DEM_final_seg " + "3290 " +
               Paths.dem_dir + "DEM_final_out.rdc_hgt " + "8474 6790 " + "- -")
