@@ -108,10 +108,6 @@ def multilook(res=None):
 
     rlks_azlks_var = " " + str(range_looks) + " " + str(azimuth_looks)
 
-    # multilook_dir = Paths.slc_dir + "multilook/"
-    # if not os.path.exists(Paths.multilook_dir):
-    #     os.makedirs(Paths.multilook_dir)
-
     tab_file_list = extract_files_to_list(Paths.slc_dir, datatype=".SLC_tab", datascenes_file=None)
     tab = sorted(tab_file_list)
     output_name = Paths.multilook_dir + tab[0][len(Paths.slc_dir):len(tab[0]) - 11]
