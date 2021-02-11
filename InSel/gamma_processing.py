@@ -219,3 +219,7 @@ def file_for_sbas_graph(slc_dir):
 def sbas_graph(slc_dir):
     os.system("base_calc " + slc_dir + "/SLC_tab " + slc_dir + "20190808.rslc.par " + slc_dir + "baseline_plot4.out "
               + slc_dir + "baselines4.txt " + "1 1 - 136 - 48")
+
+
+def spectral_diversity_points(slc_dir):
+    os.system("mk_sp_all " + slc_dir + "/SLC_tab " + slc_dir + " " + "8 2 0 0.4 1.2 1")
