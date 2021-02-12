@@ -12,7 +12,7 @@ from gamma_processing import *
 from datetime import datetime
 
 
-def main():
+if __name__ == '__main__':
     start_time = datetime.now()
 
     ##### Data download function: #####
@@ -25,28 +25,40 @@ def main():
     #                                       orig_shape=Paths.shapefile_dir)
 
     ##### GAMMA functions for processing: #####
-    # SLC_import()
 
-    # define_precise_orbits() # probably not needed anymore
+    def coreg_only(processing_step="single"):
 
-    multilook(res=20)
+        SLC_import(polarization=["vv"], swath_flag=0)
 
-    # gc_map()
+        # define_precise_orbits() # probably not needed anymore
 
-    # geocode_dem()
+        multilook(processing_step, res=40)
 
-    # coreg()
+        gc_map()
 
-    # geocode_back()
+        # geocode_dem()
 
-    # data2geotiff()
+        # coreg()
+
+
+    def SBAS_processing(processing_step="multi"):
+
+        SLC_import(polarization=["vv"])
+
+        # define_precise_orbits() # probably not needed anymore
+
+        multilook(processing_step)
+
+        gc_map()
+
+        # geocode_dem()
+
+        # coreg()
+
+
 
     end_time = datetime.now()
     print("#####################################################")
     print("processing-time = ", end_time - start_time, "Hr:min:sec")
     print("#####################################################")
-
-
-if __name__ == '__main__':
-    main()
 
