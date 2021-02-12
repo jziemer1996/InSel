@@ -38,15 +38,28 @@ def deburst_S1_SLC(datascenes_file):
     for file in zip_file_list:
         file_name = file[file.find("S1A"):len(file) - 4] + ".burst_number_table"
         print(file_name)
-        print("Masterfile is...:" + file)
+        print("Mainfile is...:" + file)
         os.system("S1_BURST_tab_from_zipfile" + " - " + file)
         os.replace(file_name, Paths.processing_dir + file_name)
 
 
-def SLC_import():
+def SLC_import(polarization=None, swath_flag=None):
     """
 
     """
+    # set polarization range
+    pol_default = ["vv", "vh"]
+    pol_list = []
+    if polarization is None:
+        polarization = pol_default
+    for elem in polarization:
+        pol_list.append("." + elem.lower())
+
+    # set subswath range
+    swath_flag_default = 0
+    if swath_flag is None:
+        swath_flag = swath_flag_default
+
     datascenes_file = Paths.list_dir + "datascenes.zipfile_list"
     deburst_S1_SLC(datascenes_file)
 
@@ -58,8 +71,9 @@ def SLC_import():
                 f.write(element)
                 print(element[:len(element) - 4])
             os.system("S1_import_SLC_from_zipfiles " + one_scene_file + " " + element[:len(element) - 4] +
-                      "burst_number_table" + " - 0 0 " + Paths.orbit_file_dir + " 1")
-        pol_list = [".vv"]
+                      "burst_number_table" + " " + polarization + " 0 " + swath_flag + " " + Paths.orbit_file_dir
+                      + " 1")
+
         delete_list = [".vv", ".vh"]
         for pol in pol_list:
             import_file_list = extract_files_to_list(os.getcwd(), datatype=pol, datascenes_file=None)
@@ -89,7 +103,7 @@ def SLC_import():
 #         os.system(os.getcwd() + "/OPOD_vec_lola.pl " + parfile + " " + Paths.orbit_file_dir + " " + str(nstate))
 
 
-def multilook(res=None):
+def multilook(processing_step, res=None):
     """
 
     """
@@ -109,16 +123,23 @@ def multilook(res=None):
     rlks_azlks_var = " " + str(range_looks) + " " + str(azimuth_looks)
 
     tab_file_list = extract_files_to_list(Paths.slc_dir, datatype=".SLC_tab", datascenes_file=None)
-    tab = sorted(tab_file_list)
-    output_name = Paths.multilook_dir + tab[0][len(Paths.slc_dir):len(tab[0]) - 11]
-    os.chdir(Paths.slc_dir)
-    os.system("multi_look_ScanSAR " + tab[0] + " " + output_name + ".mli " + output_name + ".mli.par " + rlks_azlks_var
-              + " " + str(default_burst_window_calc_flag))
+    tab_file_list = sorted(tab_file_list)
+    if processing_step == "single":
+        output_name = Paths.multilook_dir + tab_file_list[0][len(Paths.slc_dir):len(tab_file_list[0]) - 11]
+        os.chdir(Paths.slc_dir)
+        os.system("multi_look_ScanSAR " + tab_file_list[0] + " " + output_name + ".mli " + output_name + ".mli.par "
+                  + rlks_azlks_var + " " + str(default_burst_window_calc_flag))
+    if processing_step == "multi":
+        for slc in tab_file_list:
+            output_name = Paths.multilook_dir + slc[len(Paths.slc_dir):len(slc) - 11]
+            os.chdir(Paths.slc_dir)
+            os.system("multi_look_ScanSAR " + slc + " " + output_name + ".mli " + output_name + ".mli.par "
+                      + rlks_azlks_var + " " + str(default_burst_window_calc_flag))
 
 
 def gc_map():
     """
--
+
     """
     # TODO: rework function to work for normal workflow and for SBAS workflow for processsing of n-1 files
 
@@ -144,13 +165,12 @@ def gc_map():
     # Automatically create DEM and DEM_par files using pyroSAR:
     create_dem_for_gamma(Paths.dem_dir, Paths.shapefile_dir)
 
-    # Extract first .mli based on date to select as master scene:
+    # Extract first .mli based on date to select as main scene:
     mli_file_list = extract_files_to_list(Paths.multilook_dir, datatype=".mli.par", datascenes_file=None)
     mli_file_list = sorted(mli_file_list)
-    print(mli_file_list)
-    master_mli = mli_file_list[0]
-    print(master_mli)
-    os.system("gc_map " + master_mli + " - " + Paths.dem_dir + "dem_final.dem.par " + Paths.dem_dir + "dem_final.dem "
+
+    main_mli = mli_file_list[0]
+    os.system("gc_map " + main_mli + " - " + Paths.dem_dir + "dem_final.dem.par " + Paths.dem_dir + "dem_final.dem "
               + Paths.dem_dir + "DEM_final_seg.par " + Paths.dem_dir + "DEM_final_seg " + Paths.dem_dir
               + "DEM_final_lookup.lut " + lat_ovr + lon_ovr + sim_sar + zen_angle + ori_angle + loc_inc_angle
               + proj_angle + pix_norm_factor + frame + ls_mode + r_ovr)
