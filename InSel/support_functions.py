@@ -2,9 +2,12 @@ import os
 from user_data import *
 
 
-def create_dem_for_gamma(dem_dir, shapefile_path):
+def create_dem_for_gamma(dem_dir, dem_name, demType, shapefile_path, buffer):
     """
 
+    :param buffer:
+    :param demType:
+    :param dem_name:
     :param dem_dir:
     :param shapefile_path:
     :return:
@@ -12,7 +15,9 @@ def create_dem_for_gamma(dem_dir, shapefile_path):
     from spatialist.vector import Vector
     from pyroSAR.gamma.dem import dem_autocreate
     shape_vector = Vector(filename=shapefile_path)
-    dem_autocreate(geometry=shape_vector, demType="SRTM 1Sec HGT", outfile=dem_dir + "dem_final.dem", buffer=0.05)
+    dem_output = dem_dir + dem_name
+    # dem_autocreate(geometry=shape_vector, demType="SRTM 1Sec HGT", outfile=dem_output, buffer=0.05)
+    dem_autocreate(geometry=shape_vector, demType=demType, outfile=dem_output, buffer=buffer)
 
 
 def geocode_back():
