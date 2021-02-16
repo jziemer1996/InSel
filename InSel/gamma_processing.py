@@ -109,20 +109,23 @@ def multilook(processing_step, res=None):
     """
     # TODO: let user select main mli file instead of first file in list (0)
 
-    # allow user-defined resolutions in increments of 20m
-    default_resolution = 40
-    default_burst_window_calc_flag = 0
-    if res is None:
-        res = default_resolution
-        range_looks = 8
-        azimuth_looks = 2
-    if res is not None and res % 20 == 0:
-        range_looks = res / 5
-        azimuth_looks = res / 20
-    if res is not None and res % 20 != 0:
-        raise Exception("resolution should be multiple of 20m, default is set to 40m")
+    # # allow user-defined resolutions in increments of 20m
+    # default_resolution = 40
+    # default_burst_window_calc_flag = 0
+    # if res is None:
+    #     res = default_resolution
+    #     range_looks = 8
+    #     azimuth_looks = 2
+    # if res is not None and res % 20 == 0:
+    #     range_looks = res / 5
+    #     azimuth_looks = res / 20
+    # if res is not None and res % 20 != 0:
+    #     raise Exception("resolution should be multiple of 20m, default is set to 40m")
 
-    rlks_azlks_var = " " + str(range_looks) + " " + str(azimuth_looks)
+    range_looks, azimuth_looks = calculate_multilook_resolution(res)
+    default_burst_window_calc_flag = 0
+
+    rlks_azlks_var = " " + range_looks + " " + azimuth_looks
 
     # get all slc swath files from slc folder
     tab_file_list = extract_files_to_list(Paths.slc_dir, datatype=".SLC_tab", datascenes_file=None)
@@ -261,11 +264,14 @@ def geocode_dem(processing_step):
                       + range_samples + " " + azimuth_lines + " - -")
 
 
-def coreg():
+def coreg(res=None):
     """
 
     """
     import shutil
+
+    range_looks, azimuth_looks = calculate_multilook_resolution(res)
+
     pol = "vv"
     tab_file_list = extract_files_to_list(Paths.slc_dir, datatype=".SLC_tab", datascenes_file=None)
     tab_file_list = sorted(tab_file_list)
@@ -310,5 +316,26 @@ def coreg():
     os.chdir(Paths.slc_dir)
     for i in range(0, len(tab_pol_list) - 1):
         os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[i + 1] + " "
-                  + pol_list[i + 1] + " " + rslc_list[i + 1] + " " + Paths.dem_dir + "DEM_final_out.rdc_hgt"
-                  + " 8 2 - - - - - 0")
+                  + pol_list[i + 1] + " " + rslc_list[i + 1] + " " + Paths.dem_dir + "20201001_out.rdc_hgt "
+                  + range_looks + " " + azimuth_looks + " - - - - - 0")
+
+
+def file_for_sbas_graph(slc_dir):
+    sbas_list = extract_files_to_list(slc_dir, datatype="vv.slc.iw1.par", datascenes_file=None)
+    sbas_list = sorted(sbas_list)
+    sbas_nopar_list = []
+    for element in sbas_list:
+        sbas_nopar_list.append(element[:len(element) - 4])
+    merge_list = [sbas_nopar_list, sbas_list]
+    with open(slc_dir + "SLC_tab", "w") as file:
+        for x in zip(*merge_list):
+            file.write("{0}\t{1}\n".format(*x))
+
+
+def sbas_graph(slc_dir):
+    os.system("base_calc " + slc_dir + "/SLC_tab " + slc_dir + "20201001.rslc.par " + slc_dir + "baseline_plot4.out "
+              + slc_dir + "baselines4.txt " + "1 1 - 136 - 48")
+
+
+def spectral_diversity_points(slc_dir):
+    os.system("mk_sp_all " + slc_dir + "/SLC_tab " + slc_dir + " " + "8 2 0 0.4 1.2 1")

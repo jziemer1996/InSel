@@ -46,6 +46,22 @@ def display_slc():
     os.system("disSLC /home/ni82xoj/GEO410/DISP/orig/05721.slc 2500")
 
 
+def calculate_multilook_resolution(res):
+    # allow user-defined resolutions in increments of 20m
+    default_resolution = 40
+
+    if res is None:
+        res = default_resolution
+        range_looks = 8
+        azimuth_looks = 2
+    if res is not None and res % 20 == 0:
+        range_looks = res / 5
+        azimuth_looks = res / 20
+    if res is not None and res % 20 != 0:
+        raise Exception("resolution should be multiple of 20m, default is set to 40m")
+    return str(range_looks), str(azimuth_looks)
+
+
 def get_par_as_dict(path):
     # path = "C:/Users/marli/Downloads/20201001.vv.slc.iw1.par"
     par_file = open(path, 'r')
