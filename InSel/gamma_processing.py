@@ -223,3 +223,20 @@ def sbas_graph(slc_dir):
 
 def spectral_diversity_points(slc_dir):
     os.system("mk_sp_all " + slc_dir + "/SLC_tab " + slc_dir + " " + "8 2 0 0.4 1.2 1")
+
+
+def readfileforcoreg(slc_dir):
+
+    file = slc_dir + "baseline_plot4.out"
+    columns = []
+    ref_scene_list = []
+    coreg_scene_list = []
+    with open(file, 'r') as token:
+        for line in token:
+            test = line.splitlines()[0]
+            columns.append(test.split())
+        for elem in columns:
+            ref_scene_list.append(elem[1])
+            coreg_scene_list.append(elem[2])
+        print(ref_scene_list)
+        print(coreg_scene_list)

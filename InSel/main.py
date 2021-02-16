@@ -76,7 +76,9 @@ def main():
 
     # gamma_processing.sbas_graph(slc_dir)
 
-    gamma_processing.spectral_diversity_points(slc_dir)
+    # gamma_processing.spectral_diversity_points(slc_dir)
+
+    gamma_processing.readfileforcoreg(slc_dir)
 
     # gamma_function_test.geocode_back(slc_dir=slc_dir, dem_dir=dem_dir)
     #
