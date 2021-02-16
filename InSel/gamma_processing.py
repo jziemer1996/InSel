@@ -56,7 +56,7 @@ def SLC_import(polarization=None, swath_flag=None):
         pol_list.append("." + elem.lower())
 
     # set subswath range
-    swath_flag_default = 0
+    swath_flag_default = "0"
     if swath_flag is None:
         swath_flag = swath_flag_default
 
@@ -70,9 +70,9 @@ def SLC_import(polarization=None, swath_flag=None):
             with open(one_scene_file, 'w') as f:
                 f.write(element)
                 print(element[:len(element) - 4])
-            os.system("S1_import_SLC_from_zipfiles " + one_scene_file + " " + element[:len(element) - 4] +
-                      "burst_number_table" + " " + polarization + " 0 " + swath_flag + " " + Paths.orbit_file_dir
-                      + " 1")
+            for pol_type in polarization:
+                os.system("S1_import_SLC_from_zipfiles " + one_scene_file + " " + element[:len(element) - 4] +
+                          "burst_number_table" + " " + pol_type + " 0 " + swath_flag + " " + Paths.orbit_file_dir + " 1")
 
         delete_list = [".vv", ".vh"]
         for pol in pol_list:
@@ -107,6 +107,8 @@ def multilook(processing_step, res=None):
     """
 
     """
+    # TODO: let user select main mli file instead of first file in list (0)
+
     # allow user-defined resolutions in increments of 20m
     default_resolution = 40
     default_burst_window_calc_flag = 0
@@ -122,26 +124,32 @@ def multilook(processing_step, res=None):
 
     rlks_azlks_var = " " + str(range_looks) + " " + str(azimuth_looks)
 
+    # get all slc swath files from slc folder
     tab_file_list = extract_files_to_list(Paths.slc_dir, datatype=".SLC_tab", datascenes_file=None)
     tab_file_list = sorted(tab_file_list)
+
+    # execute this branch, if only using coreg and normal preprocessing
     if processing_step == "single":
         output_name = Paths.multilook_dir + tab_file_list[0][len(Paths.slc_dir):len(tab_file_list[0]) - 11]
         os.chdir(Paths.slc_dir)
         os.system("multi_look_ScanSAR " + tab_file_list[0] + " " + output_name + ".mli " + output_name + ".mli.par "
                   + rlks_azlks_var + " " + str(default_burst_window_calc_flag))
+
+    # execute this branch, if using SBAS and special preprocessing
     if processing_step == "multi":
+        os.chdir(Paths.slc_dir)
         for slc in tab_file_list:
             output_name = Paths.multilook_dir + slc[len(Paths.slc_dir):len(slc) - 11]
-            os.chdir(Paths.slc_dir)
+            # os.chdir(Paths.slc_dir)
             os.system("multi_look_ScanSAR " + slc + " " + output_name + ".mli " + output_name + ".mli.par "
                       + rlks_azlks_var + " " + str(default_burst_window_calc_flag))
 
 
-def gc_map():
+def gc_map(processing_step, demType, buffer):
     """
 
     """
-    # TODO: rework function to work for normal workflow and for SBAS workflow for processsing of n-1 files
+    # # TODO: let user select main mli file instead of first file in list (0)
 
     # GAMMA default values for additional output parameter represented by "-"
     # oversampling factors (float)
@@ -162,35 +170,95 @@ def gc_map():
     # LUT values for regions with layover,shadows or DEM gaps (can range from 0 to 3 -> default 2)
     ls_mode = "- "
 
-    # Automatically create DEM and DEM_par files using pyroSAR:
-    create_dem_for_gamma(Paths.dem_dir, Paths.shapefile_dir)
-
     # Extract first .mli based on date to select as main scene:
     mli_file_list = extract_files_to_list(Paths.multilook_dir, datatype=".mli.par", datascenes_file=None)
     mli_file_list = sorted(mli_file_list)
 
-    main_mli = mli_file_list[0]
-    os.system("gc_map " + main_mli + " - " + Paths.dem_dir + "dem_final.dem.par " + Paths.dem_dir + "dem_final.dem "
-              + Paths.dem_dir + "DEM_final_seg.par " + Paths.dem_dir + "DEM_final_seg " + Paths.dem_dir
-              + "DEM_final_lookup.lut " + lat_ovr + lon_ovr + sim_sar + zen_angle + ori_angle + loc_inc_angle
-              + proj_angle + pix_norm_factor + frame + ls_mode + r_ovr)
+    # execute this branch, if only using coreg and normal preprocessing
+    if processing_step == "single":
+        main_mli = mli_file_list[0]
+
+        # Automatically create DEM and DEM_par files using pyroSAR:
+        dem_name = main_mli[len(main_mli) - 16:len(main_mli) - 8] + ".dem"
+        create_dem_for_gamma(Paths.dem_dir, dem_name, demType, Paths.shapefile_dir, buffer)
+
+        dem_par = Paths.dem_dir + dem_name + ".par "
+        dem = Paths.dem_dir + dem_name + " "
+        dem_seg_par = Paths.dem_dir + dem_name + "_seg.par "
+        dem_seg = Paths.dem_dir + dem_name + "_seg "
+        dem_lut = Paths.dem_dir + dem_name + "_lookup.lut "
+
+        os.system("gc_map " + main_mli + " - " + dem_par + dem + dem_seg_par + dem_seg + dem_lut + lat_ovr + lon_ovr
+                  + sim_sar + zen_angle + ori_angle + loc_inc_angle + proj_angle + pix_norm_factor + frame + ls_mode
+                  + r_ovr)
+
+    # execute this branch, if using SBAS and special preprocessing
+    if processing_step == "multi":
+        for mli in mli_file_list:
+            # Automatically create DEM and DEM_par files using pyroSAR:
+            dem_name = mli[len(mli) - 16:len(mli) - 8] + ".dem"
+            create_dem_for_gamma(Paths.dem_dir, dem_name, demType, Paths.shapefile_dir, buffer)
+
+            dem_par = Paths.dem_dir + dem_name + ".par "
+            dem = Paths.dem_dir + dem_name + " "
+            dem_seg_par = Paths.dem_dir + dem_name + "_seg.par "
+            dem_seg = Paths.dem_dir + dem_name + "_seg "
+            dem_lut = Paths.dem_dir + dem_name + "_lookup.lut "
+
+            os.system("gc_map " + mli + " - " + dem_par + dem + dem_seg_par + dem_seg + dem_lut + lat_ovr + lon_ovr
+                      + sim_sar + zen_angle + ori_angle + loc_inc_angle + proj_angle + pix_norm_factor + frame + ls_mode
+                      + r_ovr)
 
 
-def geocode_dem():
+def geocode_dem(processing_step):
     """
 
     """
+    # TODO: let user select main mli file instead of first file in list (0)
 
-    # TODO: call "get_par_as_dict" here and get "range_samples" and "azimuth_lines" from dict. We need to specify, which
-    #  par file is opend for each step
-    # Example:
-    ### par_dict = get_par_as_dict(path)
-    ### range_samples = par_dict.get("range_samples")
-    ### azimuth_lines = par_dict.get("azimuth_lines")
-    ### UND SO WEITER...
+    #
+    lut_list = extract_files_to_list(Paths.dem_dir, datatype=".lut", datascenes_file=None)
+    lut_list = sorted(lut_list)
+    #
+    mli_par_list = extract_files_to_list(Paths.multilook_dir, datatype=".mli.par", datascenes_file=None)
+    mli_par_list = sorted(mli_par_list)
+    #
+    dem_seg_list = []
+    dem_seg_list_in = extract_files_to_list(Paths.dem_dir, datatype=".dem_seg.par", datascenes_file=None)
+    #
+    for elem in dem_seg_list_in:
+        dem_seg_list.append(elem[:len(elem) - 4])
+    dem_seg_list = sorted(dem_seg_list)
+    #
+    dem_par_list = extract_files_to_list(Paths.dem_dir, datatype=".dem.par", datascenes_file=None)
+    dem_par_list = sorted(dem_par_list)
+    #
+    hgt_out_list = []
+    for file in dem_par_list:
+        hgt_out_list.append(file[:len(file) - 8] + "_out.rdc_hgt")
 
-    os.system("geocode " + Paths.dem_dir + "DEM_final_lookup.lut " + Paths.dem_dir + "DEM_final_seg " + "3290 " +
-              Paths.dem_dir + "DEM_final_out.rdc_hgt " + "8474 6790 " + "- -")
+    if processing_step == "single":
+        mli_par_dict = get_par_as_dict(mli_par_list[0])
+        range_samples = mli_par_dict.get("range_samples")
+        azimuth_lines = mli_par_dict.get("azimuth_lines")
+
+        dem_par_dict = get_par_as_dict(dem_par_list[0])
+        dem_width = dem_par_dict.get("width")
+
+        os.system("geocode " + lut_list[0] + " " + dem_seg_list[0] + " " + dem_width + " " + hgt_out_list[0] + " "
+                  + range_samples + " " + azimuth_lines + " - -")
+
+    if processing_step == "multi":
+        for i, mli_par in enumerate(mli_par_list):
+            mli_par_dict = get_par_as_dict(mli_par)
+            range_samples = mli_par_dict.get("range_samples")
+            azimuth_lines = mli_par_dict.get("azimuth_lines")
+
+            dem_par_dict = get_par_as_dict(dem_par_list[i])
+            dem_width = dem_par_dict.get("width")
+
+            os.system("geocode " + lut_list[i] + " " + dem_seg_list[i] + " " + dem_width + " " + hgt_out_list[i] + " "
+                      + range_samples + " " + azimuth_lines + " - -")
 
 
 def coreg():
