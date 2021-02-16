@@ -28,13 +28,13 @@ if __name__ == '__main__':
 
     def coreg_only(processing_step="single"):
 
-        SLC_import(polarization=["vv"], swath_flag=0)
+        # SLC_import(polarization=["vv"])
 
         # define_precise_orbits() # probably not needed anymore
 
-        multilook(processing_step, res=40)
+        multilook(processing_step="single", res=40)
 
-        gc_map()
+        # gc_map(processing_step="single", demType="SRTM 1Sec HGT", buffer=0.05)
 
         # geocode_dem()
 
@@ -43,19 +43,20 @@ if __name__ == '__main__':
 
     def SBAS_processing(processing_step="multi"):
 
-        SLC_import(polarization=["vv"])
+        # SLC_import(polarization=["vv"])
 
         # define_precise_orbits() # probably not needed anymore
 
-        multilook(processing_step)
+        # multilook(processing_step="multi")
 
-        gc_map()
+        # gc_map(processing_step="multi", demType="SRTM 1Sec HGT", buffer=0.05)
 
-        # geocode_dem()
+        geocode_dem(processing_step)
 
         # coreg()
 
-
+    # coreg_only()
+    SBAS_processing()
 
     end_time = datetime.now()
     print("#####################################################")
