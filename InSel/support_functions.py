@@ -70,7 +70,7 @@ def get_par_as_dict(path):
     # iterate through lines of par file
     for line in par_file:
         # remove newline statements at end of each line with "-1"
-        cleaned_line = line[0:len(line)-1]
+        cleaned_line = line[0:len(line) - 1]
         # check for lines containing ":" as separator
         if ":" in cleaned_line:
             # create key by extracting name
@@ -103,5 +103,5 @@ def read_file_for_coreg(slc_dir):
         for elem in columns:
             ref_scene_list.append(elem[1])
             coreg_scene_list.append(elem[2])
-        print(ref_scene_list)
-        print(coreg_scene_list)
+
+    return ref_scene_list, coreg_scene_list
