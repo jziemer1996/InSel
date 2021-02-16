@@ -84,3 +84,24 @@ def get_par_as_dict(path):
             # append to dict
             par_dict.update({key: value})
     return par_dict
+
+
+def read_file_for_coreg(slc_dir):
+    """
+
+    :param slc_dir:
+    :return:
+    """
+    file = slc_dir + "baseline_plot.out"
+    columns = []
+    ref_scene_list = []
+    coreg_scene_list = []
+    with open(file, 'r') as token:
+        for line in token:
+            test = line.splitlines()[0]
+            columns.append(test.split())
+        for elem in columns:
+            ref_scene_list.append(elem[1])
+            coreg_scene_list.append(elem[2])
+        print(ref_scene_list)
+        print(coreg_scene_list)
