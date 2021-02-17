@@ -314,13 +314,15 @@ def coreg(processing_step, polarization, res=None, clean_flag="0"):
     print("rslc_list=")
     print(rslc_list)
 
-    # os.chdir(Paths.coreg_dir)
+    os.chdir(Paths.slc_dir)
     rdc_hgt_list = extract_files_to_list(Paths.dem_dir, datatype=".rdc_hgt", datascenes_file=None)
     rdc_hgt_list = sorted(rdc_hgt_list)
+    print(rdc_hgt_list)
 
     os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[1] + " "
               + pol_list[1] + " " + rslc_list[1] + " " + rdc_hgt_list[0] + " "
               + range_looks + " " + azimuth_looks + " - - - - - " + clean_flag)
+
 
     # if processing_step == "single":
         # for i in range(0, len(tab_pol_list) - 1):
