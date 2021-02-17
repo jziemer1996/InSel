@@ -32,7 +32,7 @@ if __name__ == '__main__':
 
         # define_precise_orbits() # probably not needed anymore
 
-        multilook(processing_step="single", res=40)
+        multilook(processing_step="single")
 
         # gc_map(processing_step="single", demType="SRTM 1Sec HGT", buffer=0.05)
 
@@ -51,9 +51,9 @@ if __name__ == '__main__':
 
         # gc_map(processing_step="multi", demType="SRTM 1Sec HGT", buffer=0.05)
 
-        geocode_dem(processing_step)
+        # geocode_dem(processing_step)
 
-        # coreg()
+        coreg(processing_step, polarization="vv", res=None, clean_flag=0)
 
     # coreg_only()
     SBAS_processing()
