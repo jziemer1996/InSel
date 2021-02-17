@@ -86,13 +86,12 @@ def get_par_as_dict(path):
     return par_dict
 
 
-def read_file_for_coreg(slc_dir):
+def read_file_for_coreg():
     """
 
-    :param slc_dir:
     :return:
     """
-    file = slc_dir + "baseline_plot.out"
+    file = Paths.slc_dir + "baseline_plot.out"
     columns = []
     ref_scene_list = []
     coreg_scene_list = []
