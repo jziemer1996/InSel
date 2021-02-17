@@ -344,6 +344,7 @@ def coreg(processing_step, polarization, res=None, clean_flag="0"):
             SLC2_tab = coreg_scene_list[i] + "." + polarization + ".SLC_tab"
             RSLC_tab = coreg_scene_list[i] + "." + polarization + ".RSLC_tab"
 
+            # TODO: Marlin wenn du willst, kannst du das noch schoener loesen!
             hgt_list = Paths.dem_dir + ref + "_out.rdc_hgt"
             print(SLC1_tab)
             print(hgt_list)
