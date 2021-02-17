@@ -55,8 +55,8 @@ def calculate_multilook_resolution(res):
         range_looks = 8
         azimuth_looks = 2
     if res is not None and res % 20 == 0:
-        range_looks = res / 5
-        azimuth_looks = res / 20
+        range_looks = int(res / 5)
+        azimuth_looks = int(res / 20)
     if res is not None and res % 20 != 0:
         raise Exception("resolution should be multiple of 20m, default is set to 40m")
     return str(range_looks), str(azimuth_looks)
