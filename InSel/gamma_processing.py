@@ -264,7 +264,7 @@ def geocode_dem(processing_step):
                       + range_samples + " " + azimuth_lines + " - -")
 
 
-def coreg(processing_step, polarization, res=None, clean_flag=1):
+def coreg(processing_step, polarization, res=None, clean_flag="0"):
     """
 
     """
@@ -314,7 +314,7 @@ def coreg(processing_step, polarization, res=None, clean_flag=1):
     print("rslc_list=")
     print(rslc_list)
 
-    os.chdir(Paths.coreg_dir)
+    # os.chdir(Paths.coreg_dir)
     rdc_hgt_list = extract_files_to_list(Paths.dem_dir, datatype=".rdc_hgt", datascenes_file=None)
     rdc_hgt_list = sorted(rdc_hgt_list)
 
@@ -334,13 +334,16 @@ def coreg(processing_step, polarization, res=None, clean_flag=1):
         ref_scene_list, coreg_scene_list = read_file_for_coreg()
 
         for i, ref in enumerate(ref_scene_list):
+            ref_scene_list = ref_scene_list[0:len(ref_scene_list) - 1]
+            # coreg_scene_list = coreg_scene_list[0:len(coreg_scene_list) - 1]
+            # rdc_hgt_list = rdc_hgt_list[0:len(rdc_hgt_list) - 1]
             SLC1_tab = ref + "." + polarization + ".SLC_tab"
             SLC2_tab = coreg_scene_list[i] + "." + polarization + ".SLC_tab"
             RSLC_tab = coreg_scene_list[i] + "." + polarization + ".RSLC_tab"
 
-            os.system("S1_coreg_TOPS " + SLC1_tab + " " + ref + " " + SLC2_tab + " " + coreg_scene_list[i] + " "
-                      + RSLC_tab + " " + rdc_hgt_list[i] + " " + range_looks + " " + azimuth_looks + " - - - - - "
-                      + clean_flag)
+            os.system("S1_coreg_TOPS " + Paths.slc_dir + SLC1_tab + " " + ref + " " + Paths.slc_dir + SLC2_tab + " " +
+                      coreg_scene_list[i] + " " + Paths.slc_dir + RSLC_tab + " " + rdc_hgt_list[i] + " " + range_looks
+                      + " " + azimuth_looks + " - - - - - " + clean_flag)
 
 
 def file_for_sbas_graph():
@@ -357,7 +360,13 @@ def file_for_sbas_graph():
 
 def sbas_graph():
     slc_dir = Paths.slc_dir
-    os.system("base_calc " + slc_dir + "/SLC_tab " + slc_dir + "20201001.rslc.par " + slc_dir + "baseline_plot.out "
+    rslc_path_list = extract_files_to_list(Paths.slc_dir, datatype=".rslc.par", datascenes_file=None)
+    rslc_path_list = sorted(rslc_path_list)
+    rslc_par_list = []
+    for elem in rslc_path_list:
+        rslc_par_list.append(elem[len(Paths.slc_dir):len(elem)])
+    print(rslc_par_list)
+    os.system("base_calc " + slc_dir + "/SLC_tab " + slc_dir + rslc_par_list[0] + " " + slc_dir + "baseline_plot.out "
               + slc_dir + "baselines.txt " + "1 1 - 136 - 48")
 
 
