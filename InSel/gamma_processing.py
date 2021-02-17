@@ -256,10 +256,10 @@ def geocode_dem(processing_step):
             mli_par_dict = get_par_as_dict(mli_par)
             range_samples = mli_par_dict.get("range_samples")
             azimuth_lines = mli_par_dict.get("azimuth_lines")
+            print(azimuth_lines)
 
             dem_par_dict = get_par_as_dict(dem_par_list[i])
             dem_width = dem_par_dict.get("width")
-
             os.system("geocode " + lut_list[i] + " " + dem_seg_list[i] + " " + dem_width + " " + hgt_out_list[i] + " "
                       + range_samples + " " + azimuth_lines + " - -")
 
@@ -331,10 +331,10 @@ def coreg(processing_step, polarization, res=None, clean_flag="0"):
         file_for_sbas_graph()
         rslc_par_list = sbas_graph()
 
-        if not os.path.exists(rslc_par_list[0] + ".rslc.par"):
-            os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[1] + " "
-                      + pol_list[1] + " " + rslc_list[1] + " " + rdc_hgt_list[0] + " "
-                      + range_looks + " " + azimuth_looks + " - - - - - " + clean_flag)
+        # if not os.path.exists(rslc_par_list[0] + ".rslc.par"):
+        #     os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[1] + " "
+        #               + pol_list[1] + " " + rslc_list[1] + " " + rdc_hgt_list[0] + " "
+        #               + range_looks + " " + azimuth_looks + " - - - - - " + clean_flag)
 
         # extract reference list and coreg list from sbas output
         ref_scene_list, coreg_scene_list = read_file_for_coreg()
@@ -344,8 +344,16 @@ def coreg(processing_step, polarization, res=None, clean_flag="0"):
             SLC2_tab = coreg_scene_list[i] + "." + polarization + ".SLC_tab"
             RSLC_tab = coreg_scene_list[i] + "." + polarization + ".RSLC_tab"
 
+            hgt_list = Paths.dem_dir + ref + "_out.rdc_hgt"
+            print(SLC1_tab)
+            print(hgt_list)
+            print(SLC2_tab)
+            print(coreg_scene_list[i])
+            print(RSLC_tab)
+            # print(rdc_hgt_list[i])
+
             os.system("S1_coreg_TOPS " + Paths.slc_dir + SLC1_tab + " " + ref + " " + Paths.slc_dir + SLC2_tab + " " +
-                      coreg_scene_list[i] + " " + Paths.slc_dir + RSLC_tab + " " + rdc_hgt_list[i] + " " + range_looks
+                      coreg_scene_list[i] + " " + Paths.slc_dir + RSLC_tab + " " + hgt_list + " " + range_looks
                       + " " + azimuth_looks + " - - - - - " + clean_flag)
 
 
