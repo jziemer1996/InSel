@@ -48,6 +48,8 @@ class Paths(object):
         os.makedirs(dem_dir)
     if not os.path.exists(multilook_dir):
         os.makedirs(multilook_dir)
+    if not os.path.exists(coreg_dir):
+        os.makedirs(coreg_dir)
 
 
 class DownloadParams(object):
