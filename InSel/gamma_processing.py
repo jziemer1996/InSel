@@ -264,15 +264,16 @@ def geocode_dem(processing_step):
                       + range_samples + " " + azimuth_lines + " - -")
 
 
-def coreg(res=None):
+def coreg(processing_step, polarization, res=None, clean_flag=1):
     """
 
     """
+    # TODO: let user select main mli file instead of first file in list (0)
     import shutil
 
     range_looks, azimuth_looks = calculate_multilook_resolution(res)
 
-    pol = "vv"
+    pol = polarization  # TODO: checken, ob nur VV genutzt wird!?
     tab_file_list = extract_files_to_list(Paths.slc_dir, datatype=".SLC_tab", datascenes_file=None)
     tab_file_list = sorted(tab_file_list)
     tab_pol_list = []
@@ -313,29 +314,53 @@ def coreg(res=None):
     print("rslc_list=")
     print(rslc_list)
 
-    os.chdir(Paths.slc_dir)
-    for i in range(0, len(tab_pol_list) - 1):
-        os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[i + 1] + " "
-                  + pol_list[i + 1] + " " + rslc_list[i + 1] + " " + Paths.dem_dir + "20201001_out.rdc_hgt "
-                  + range_looks + " " + azimuth_looks + " - - - - - 0")
+    os.chdir(Paths.coreg_dir)
+    rdc_hgt_list = extract_files_to_list(Paths.dem_dir, datatype=".rdc_hgt", datascenes_file=None)
+    rdc_hgt_list = sorted(rdc_hgt_list)
+
+    if processing_step == "single":
+        for i in range(0, len(tab_pol_list) - 1):
+            os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[i + 1] + " "
+                      + pol_list[i + 1] + " " + rslc_list[i + 1] + " " + rdc_hgt_list[0] + " "
+                      + range_looks + " " + azimuth_looks + " - - - - - " + clean_flag)
+
+    if processing_step == "multi":
+
+        # comment, why this needs to be rund here
+        file_for_sbas_graph()
+        sbas_graph()
+
+        # extract reference list and coreg list from sbas output
+        ref_scene_list, coreg_scene_list = read_file_for_coreg()
+
+        for i, ref in enumerate(ref_scene_list):
+            SLC1_tab = ref + "." + polarization + ".SLC_tab"
+            SLC2_tab = coreg_scene_list[i] + "." + polarization + ".SLC_tab"
+            RSLC_tab = coreg_scene_list[i] + "." + polarization + ".RSLC_tab"
+
+            os.system("S1_coreg_TOPS " + SLC1_tab + " " + ref + " " + SLC2_tab + " " + coreg_scene_list[i] + " "
+                      + RSLC_tab + " " + rdc_hgt_list[i] + " " + range_looks + " " + azimuth_looks + " - - - - - "
+                      + clean_flag)
 
 
-def file_for_sbas_graph(slc_dir):
-    sbas_list = extract_files_to_list(slc_dir, datatype="vv.slc.iw1.par", datascenes_file=None)
+def file_for_sbas_graph():
+    sbas_list = extract_files_to_list(Paths.slc_dir, datatype="vv.slc.iw1.par", datascenes_file=None)
     sbas_list = sorted(sbas_list)
     sbas_nopar_list = []
     for element in sbas_list:
         sbas_nopar_list.append(element[:len(element) - 4])
     merge_list = [sbas_nopar_list, sbas_list]
-    with open(slc_dir + "SLC_tab", "w") as file:
+    with open(Paths.slc_dir + "SLC_tab", "w") as file:
         for x in zip(*merge_list):
             file.write("{0}\t{1}\n".format(*x))
 
 
-def sbas_graph(slc_dir):
+def sbas_graph():
+    slc_dir = Paths.slc_dir
     os.system("base_calc " + slc_dir + "/SLC_tab " + slc_dir + "20201001.rslc.par " + slc_dir + "baseline_plot.out "
               + slc_dir + "baselines.txt " + "1 1 - 136 - 48")
 
 
-def spectral_diversity_points(slc_dir):
+def spectral_diversity_points():
+    slc_dir = Paths.slc_dir
     os.system("mk_sp_all " + slc_dir + "/SLC_tab " + slc_dir + " " + "8 2 0 0.4 1.2 1")
