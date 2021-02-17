@@ -271,7 +271,7 @@ def coreg(processing_step, polarization, res=None, clean_flag="0"):
     # TODO: let user select main mli file instead of first file in list (0)
     import shutil
 
-    range_looks, azimuth_looks = calculate_multilook_resolution(res)
+    # range_looks, azimuth_looks = calculate_multilook_resolution(res)
 
     pol = polarization  # TODO: checken, ob nur VV genutzt wird!?
     tab_file_list = extract_files_to_list(Paths.slc_dir, datatype=".SLC_tab", datascenes_file=None)
@@ -314,15 +314,15 @@ def coreg(processing_step, polarization, res=None, clean_flag="0"):
     print("rslc_list=")
     print(rslc_list)
 
-    # os.chdir(Paths.coreg_dir)
+    os.chdir(Paths.coreg_dir)
     rdc_hgt_list = extract_files_to_list(Paths.dem_dir, datatype=".rdc_hgt", datascenes_file=None)
     rdc_hgt_list = sorted(rdc_hgt_list)
 
-    if processing_step == "single":
-        for i in range(0, len(tab_pol_list) - 1):
-            os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[i + 1] + " "
-                      + pol_list[i + 1] + " " + rslc_list[i + 1] + " " + rdc_hgt_list[0] + " "
-                      + range_looks + " " + azimuth_looks + " - - - - - " + clean_flag)
+    # if processing_step == "single":
+        # for i in range(0, len(tab_pol_list) - 1):
+            # os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[i + 1] + " "
+            #           + pol_list[i + 1] + " " + rslc_list[i + 1] + " " + rdc_hgt_list[0] + " "
+            #           + range_looks + " " + azimuth_looks + " - - - - - " + clean_flag)
 
     if processing_step == "multi":
 
@@ -334,16 +334,14 @@ def coreg(processing_step, polarization, res=None, clean_flag="0"):
         ref_scene_list, coreg_scene_list = read_file_for_coreg()
 
         for i, ref in enumerate(ref_scene_list):
-            ref_scene_list = ref_scene_list[0:len(ref_scene_list) - 1]
-            # coreg_scene_list = coreg_scene_list[0:len(coreg_scene_list) - 1]
-            # rdc_hgt_list = rdc_hgt_list[0:len(rdc_hgt_list) - 1]
             SLC1_tab = ref + "." + polarization + ".SLC_tab"
             SLC2_tab = coreg_scene_list[i] + "." + polarization + ".SLC_tab"
             RSLC_tab = coreg_scene_list[i] + "." + polarization + ".RSLC_tab"
 
-            os.system("S1_coreg_TOPS " + Paths.slc_dir + SLC1_tab + " " + ref + " " + Paths.slc_dir + SLC2_tab + " " +
-                      coreg_scene_list[i] + " " + Paths.slc_dir + RSLC_tab + " " + rdc_hgt_list[i] + " " + range_looks
-                      + " " + azimuth_looks + " - - - - - " + clean_flag)
+        print(ref_scene_list, coreg_scene_list, rdc_hgt_list)
+            # os.system("S1_coreg_TOPS " + Paths.slc_dir + SLC1_tab + " " + ref + " " + Paths.slc_dir + SLC2_tab + " " +
+            #           coreg_scene_list[i] + " " + Paths.slc_dir + RSLC_tab + " " + rdc_hgt_list[i] + " " + "8 " + "2" +
+            #           " - - - - - " + clean_flag)
 
 
 def file_for_sbas_graph():
