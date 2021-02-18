@@ -330,11 +330,12 @@ def coreg(processing_step, polarization, res=None, clean_flag="0"):
         # comment, why this needs to be rund here
         file_for_sbas_graph()
         rslc_par_list = sbas_graph()
+        print(rslc_par_list[0])
 
-        # if not os.path.exists(rslc_par_list[0] + ".rslc.par"):
-        #     os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[1] + " "
-        #               + pol_list[1] + " " + rslc_list[1] + " " + rdc_hgt_list[0] + " "
-        #               + range_looks + " " + azimuth_looks + " - - - - - " + clean_flag)
+        if not os.path.exists(rslc_par_list[0]):
+            os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[1] + " "
+                      + pol_list[1] + " " + rslc_list[1] + " " + rdc_hgt_list[0] + " "
+                      + range_looks + " " + azimuth_looks + " - - - - - " + clean_flag)
 
         # extract reference list and coreg list from sbas output
         ref_scene_list, coreg_scene_list = read_file_for_coreg()
@@ -353,9 +354,9 @@ def coreg(processing_step, polarization, res=None, clean_flag="0"):
             print(RSLC_tab)
             # print(rdc_hgt_list[i])
 
-            os.system("S1_coreg_TOPS " + Paths.slc_dir + SLC1_tab + " " + ref + " " + Paths.slc_dir + SLC2_tab + " " +
-                      coreg_scene_list[i] + " " + Paths.slc_dir + RSLC_tab + " " + hgt_list + " " + range_looks
-                      + " " + azimuth_looks + " - - - - - " + clean_flag)
+            # os.system("S1_coreg_TOPS " + Paths.slc_dir + SLC1_tab + " " + ref + " " + Paths.slc_dir + SLC2_tab + " " +
+            #           coreg_scene_list[i] + " " + Paths.slc_dir + RSLC_tab + " " + hgt_list + " " + range_looks
+            #           + " " + azimuth_looks + " - - - - - " + clean_flag)
 
 
 def file_for_sbas_graph():
