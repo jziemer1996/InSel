@@ -354,9 +354,9 @@ def coreg(processing_step, polarization, res=None, clean_flag="0"):
             print(RSLC_tab)
             # print(rdc_hgt_list[i])
 
-            # os.system("S1_coreg_TOPS " + Paths.slc_dir + SLC1_tab + " " + ref + " " + Paths.slc_dir + SLC2_tab + " " +
-            #           coreg_scene_list[i] + " " + Paths.slc_dir + RSLC_tab + " " + hgt_list + " " + range_looks
-            #           + " " + azimuth_looks + " - - - - - " + clean_flag)
+            os.system("S1_coreg_TOPS " + Paths.slc_dir + SLC1_tab + " " + ref + " " + Paths.slc_dir + SLC2_tab + " " +
+                      coreg_scene_list[i] + " " + Paths.slc_dir + RSLC_tab + " " + hgt_list + " " + range_looks
+                      + " " + azimuth_looks + " - - - - - " + clean_flag)
 
 
 def file_for_sbas_graph():
