@@ -359,7 +359,40 @@ def coreg(processing_step, polarization, res=None, clean_flag="0"):
                       + " " + azimuth_looks + " - - - - - " + clean_flag)
 
 
+def coherence_calc():
+    """
+
+    :return:
+    """
+    # TODO: fuer extract files to list funktion coreg_dir anstatt slc_dir angeben!
+    diff_bmp_list = extract_files_to_list(Paths.slc_dir, datatype=".diff.bmp", datascenes_file=None)
+    diff_bmp_list = sorted(diff_bmp_list)
+    diff_list = []
+    for element in diff_bmp_list:
+        diff_list.append(element[:len(element) - 4])
+
+    mli_par_list = extract_files_to_list(Paths.multilook_dir, datatype=".mli.par", datascenes_file=None)
+    mli_par_list = sorted(mli_par_list)
+    if len(mli_par_list) == 1:
+        mli_par_dict = get_par_as_dict(mli_par_list[0])
+        range_samples = mli_par_dict.get("range_samples")
+    if len(mli_par_list) > 1:
+        diff_for_mli_list = []
+        for element in diff_list:
+            diff_for_mli_list.append(Paths.multilook_dir + element[len(element) - 22:len(element) - 14] + ".mli.par")
+        for mli_par in diff_for_mli_list:
+            mli_par_dict = get_par_as_dict(mli_par)
+            range_samples = mli_par_dict.get("range_samples")
+
+    for diff in diff_list:
+        os.system("cc_wave " + diff + " - - " + diff[:len(diff)-5] + ".cc " + range_samples)
+
+
 def file_for_sbas_graph():
+    """
+
+    :return:
+    """
     sbas_list = extract_files_to_list(Paths.slc_dir, datatype="vv.slc.iw1.par", datascenes_file=None)
     sbas_list = sorted(sbas_list)
     sbas_nopar_list = []
@@ -372,6 +405,10 @@ def file_for_sbas_graph():
 
 
 def sbas_graph():
+    """
+
+    :return:
+    """
     slc_dir = Paths.slc_dir
     rslc_path_list = extract_files_to_list(Paths.slc_dir, datatype=".rslc.par", datascenes_file=None)
     rslc_path_list = sorted(rslc_path_list)
