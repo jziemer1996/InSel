@@ -55,6 +55,8 @@ if __name__ == '__main__':
 
         coreg(processing_step, polarization="vv", res=None, clean_flag="0")
 
+        # sbas_graph()
+
     # coreg_only()
     SBAS_processing()
 
