@@ -104,3 +104,14 @@ def read_file_for_coreg():
             coreg_scene_list.append(elem[2])
 
     return ref_scene_list, coreg_scene_list
+
+
+def geocode_back(input_file, range_samples, dem_lut, output_file, out_width):
+    """
+
+    :param slc_dir:
+    :param dem_dir:
+    :return:
+    """
+    os.system("geocode_back " + input_file + " " + range_samples + " " + dem_lut + " " +
+              output_file + " " + out_width + " - 2 0")

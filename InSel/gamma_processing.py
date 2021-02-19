@@ -403,20 +403,6 @@ def file_for_sbas_graph():
             file.write("{0}\t{1}\n".format(*x))
 
 
-def geocode_back():
-    """
-
-    :param slc_dir:
-    :param dem_dir:
-    :return:
-    """
-    cc_list = extract_files_to_list(Paths.slc_dir, datatype=".cc", datascenes_file=None)
-    cc_list = sorted(cc_list)
-    for element in cc_list:
-        os.system("geocode_back " + Paths.slc_dir + element + "9685 " + Paths.dem_dir
-                  + "DEM_final_lookup.lut " + Paths.slc_dir + "20201025.vv_geocode.mli " + "3290 " + "- 2 0")
-
-
 def sbas_graph():
     """
 
@@ -433,6 +419,66 @@ def sbas_graph():
               + slc_dir + "baselines.txt " + "1 1 - 136 - 48")
 
     return rslc_par_list
+
+
+def geocode_coherence():
+    """
+
+    :param slc_dir:
+    :param dem_dir:
+    :return:
+    """
+    cc_list = extract_files_to_list(Paths.slc_dir, datatype=".cc", datascenes_file=None)
+    cc_list = sorted(cc_list)
+
+    # TODO: support_functions if possible!
+    diff_list = []
+    for element in cc_list:
+        diff_list.append(element[:len(element) - 4])
+    mli_par_list = extract_files_to_list(Paths.multilook_dir, datatype=".mli.par", datascenes_file=None)
+    mli_par_list = sorted(mli_par_list)
+    print(mli_par_list)
+    if len(mli_par_list) == 1:
+        mli_par_dict = get_par_as_dict(mli_par_list[0])
+        range_samples = mli_par_dict.get("range_samples")
+    if len(mli_par_list) > 1:
+        for mli_par in mli_par_list:
+            mli_par_dict = get_par_as_dict(mli_par)
+            range_samples = mli_par_dict.get("range_samples")
+
+    lut_list = []
+    dem_par_list = []
+    for element in cc_list:
+        lut_list.append(Paths.dem_dir + element[len(element) - 20:len(element) - 12] + ".dem_lookup.lut")
+        dem_par_list.append(Paths.dem_dir + element[len(element) - 20:len(element) - 12] + ".dem.par")
+
+    for element in dem_par_list:
+        if len(dem_par_list) == 1:
+            dem_width_dict = get_par_as_dict(dem_par_list[0])
+            out_width = dem_width_dict.get("range_samples")
+        if len(dem_par_list) > 1:
+            for dem_par in dem_par_list:
+                dem_width_dict = get_par_as_dict(dem_par)
+                out_width = dem_width_dict.get("range_samples")
+
+
+    # TODO: out_width ist none!
+    for i, cc in enumerate(cc_list):
+        print(range_samples)
+        print(out_width)
+    #     geocode_back(input_file=cc, range_samples=range_samples, dem_lut=lut_list[i], output_file="test" + str(i) + ".tif",
+    #                  out_width=out_width)
+
+
+def data2geotiff(dem_dir, slc_dir):
+    """
+
+    :param dem_dir:
+    :param slc_dir:
+    :return:
+    """
+    os.system("data2geotiff " + dem_dir + "dem_final.dem.par " + slc_dir + "20201025.vv_geocode.mli " + "2 " + slc_dir
+              + "output3.tif")
 
 
 def spectral_diversity_points():
