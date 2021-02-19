@@ -364,7 +364,6 @@ def coherence_calc():
 
     :return:
     """
-    # TODO: fuer extract files to list funktion coreg_dir anstatt slc_dir angeben!
     diff_bmp_list = extract_files_to_list(Paths.slc_dir, datatype=".diff.bmp", datascenes_file=None)
     diff_bmp_list = sorted(diff_bmp_list)
     diff_list = []
@@ -402,6 +401,20 @@ def file_for_sbas_graph():
     with open(Paths.slc_dir + "SLC_tab", "w") as file:
         for x in zip(*merge_list):
             file.write("{0}\t{1}\n".format(*x))
+
+
+def geocode_back():
+    """
+
+    :param slc_dir:
+    :param dem_dir:
+    :return:
+    """
+    cc_list = extract_files_to_list(Paths.slc_dir, datatype=".cc", datascenes_file=None)
+    cc_list = sorted(cc_list)
+    for element in cc_list:
+        os.system("geocode_back " + Paths.slc_dir + element + "9685 " + Paths.dem_dir
+                  + "DEM_final_lookup.lut " + Paths.slc_dir + "20201025.vv_geocode.mli " + "3290 " + "- 2 0")
 
 
 def sbas_graph():
