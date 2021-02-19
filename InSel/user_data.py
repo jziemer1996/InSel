@@ -30,7 +30,6 @@ class Paths(object):
     dem_dir = home_path + "GEO410_data/DEM/"
 
     multilook_dir = slc_dir + "multilook/"
-    coreg_dir = slc_dir + "coreg/"
 
     if not os.path.exists(download_dir):
         os.makedirs(download_dir)
@@ -48,8 +47,6 @@ class Paths(object):
         os.makedirs(dem_dir)
     if not os.path.exists(multilook_dir):
         os.makedirs(multilook_dir)
-    if not os.path.exists(coreg_dir):
-        os.makedirs(coreg_dir)
 
 
 class DownloadParams(object):
