@@ -452,33 +452,21 @@ def geocode_coherence():
         lut_list.append(Paths.dem_dir + element[len(element) - 20:len(element) - 12] + ".dem_lookup.lut")
         dem_par_list.append(Paths.dem_dir + element[len(element) - 20:len(element) - 12] + ".dem.par")
 
-    for element in dem_par_list:
         if len(dem_par_list) == 1:
             dem_width_dict = get_par_as_dict(dem_par_list[0])
-            out_width = dem_width_dict.get("range_samples")
+            out_width = dem_width_dict.get("width")
         if len(dem_par_list) > 1:
             for dem_par in dem_par_list:
                 dem_width_dict = get_par_as_dict(dem_par)
-                out_width = dem_width_dict.get("range_samples")
+                out_width = dem_width_dict.get("width")
 
-
-    # TODO: out_width ist none!
     for i, cc in enumerate(cc_list):
-        print(range_samples)
-        print(out_width)
-    #     geocode_back(input_file=cc, range_samples=range_samples, dem_lut=lut_list[i], output_file="test" + str(i) + ".tif",
-    #                  out_width=out_width)
+        geocode_file = cc[:len(cc)-3] + ".mli"
+        output_file = cc[:len(cc)-3] + ".tif"
+        geocode_back(input_file=cc, range_samples=range_samples, dem_lut=lut_list[i],
+                     output_file=geocode_file, out_width=out_width)
 
-
-def data2geotiff(dem_dir, slc_dir):
-    """
-
-    :param dem_dir:
-    :param slc_dir:
-    :return:
-    """
-    os.system("data2geotiff " + dem_dir + "dem_final.dem.par " + slc_dir + "20201025.vv_geocode.mli " + "2 " + slc_dir
-              + "output3.tif")
+        data2geotiff(dem_par_file=dem_par_list[i], geocode_mli=geocode_file, output_file=output_file)
 
 
 def spectral_diversity_points():
