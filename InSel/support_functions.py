@@ -115,3 +115,14 @@ def geocode_back(input_file, range_samples, dem_lut, output_file, out_width):
     """
     os.system("geocode_back " + input_file + " " + range_samples + " " + dem_lut + " " +
               output_file + " " + out_width + " - 2 0")
+
+
+
+def data2geotiff(dem_par_file, geocode_mli, output_file):
+    """
+
+    :param dem_dir:
+    :param slc_dir:
+    :return:
+    """
+    os.system("data2geotiff " + dem_par_file + " " + geocode_mli + " 2 " + output_file)
