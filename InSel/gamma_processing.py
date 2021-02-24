@@ -1,5 +1,4 @@
 import os
-import shutil
 from support_functions import *
 from user_data import Paths
 
