@@ -55,37 +55,15 @@ def create_dem_for_gamma(dem_dir, dem_name, demType, shapefile_path, buffer):
     from pyroSAR.gamma.dem import dem_autocreate
     shape_vector = Vector(filename=shapefile_path)
     dem_output = dem_dir + dem_name
-    # dem_autocreate(geometry=shape_vector, demType="SRTM 1Sec HGT", outfile=dem_output, buffer=0.05)
     dem_autocreate(geometry=shape_vector, demType=demType, outfile=dem_output, buffer=buffer)
 
 
-def geocode_back():
-    """
-
-    :param slc_dir:
-    :param dem_dir:
-    :return:
-    """
-    os.system("geocode_back " + Paths.slc_dir + "20201025.vv.mli " + "9685 " + Paths.dem_dir + "DEM_final_lookup.lut "
-              + Paths.slc_dir + "20201025.vv_geocode.mli " + "3290 " + "- 2 0")
-
-
-def data2geotiff():
-    """
-
-    :param dem_dir:
-    :param slc_dir:
-    :return:
-    """
-    os.system("data2geotiff " + Paths.dem_dir + "dem_final.dem.par " + Paths.slc_dir + "20201025.vv_geocode.mli " + "2 "
-              + Paths.slc_dir + "output3.tif")
-
-
-def display_slc():
-    os.system("disSLC /home/ni82xoj/GEO410/DISP/orig/05721.slc 2500")
-
-
 def calculate_multilook_resolution(res):
+    """
+
+    :param res:
+    :return:
+    """
     # allow user-defined resolutions in increments of 20m
     default_resolution = 40
 
@@ -102,7 +80,11 @@ def calculate_multilook_resolution(res):
 
 
 def get_par_as_dict(path):
-    # path = "C:/Users/marli/Downloads/20201001.vv.slc.iw1.par"
+    """
+
+    :param path:
+    :return:
+    """
     par_file = open(path, 'r')
     par_dict = {}
 
@@ -154,7 +136,6 @@ def geocode_back(input_file, range_samples, dem_lut, output_file, out_width):
     """
     os.system("geocode_back " + input_file + " " + range_samples + " " + dem_lut + " " +
               output_file + " " + out_width + " - 2 0")
-
 
 
 def data2geotiff(dem_par_file, geocode_mli, output_file):
