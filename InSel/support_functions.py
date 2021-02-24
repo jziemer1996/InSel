@@ -11,8 +11,9 @@ def extract_files_to_list(path_to_folder, datatype, datascenes_file=None):
         datatype of files to return from given folder
     :param datascenes_file: string
         if filename is specified, list is exported to file
-    :return: new_list: list
-        returns list of paths to files
+    :return:
+        new_list: list
+            returns list of paths to files
     """
     new_list = []
     for filename in os.listdir(path_to_folder):
@@ -43,13 +44,12 @@ def deburst_S1_SLC(datascenes_file):
 
 def create_dem_for_gamma(dem_dir, dem_name, demType, shapefile_path, buffer):
     """
-
-    :param buffer:
-    :param demType:
-    :param dem_name:
+    # TODO: add docstrings!
     :param dem_dir:
+    :param dem_name:
+    :param demType:
     :param shapefile_path:
-    :return:
+    :param buffer:
     """
     from spatialist.vector import Vector
     from pyroSAR.gamma.dem import dem_autocreate
@@ -60,9 +60,15 @@ def create_dem_for_gamma(dem_dir, dem_name, demType, shapefile_path, buffer):
 
 def calculate_multilook_resolution(res):
     """
-
-    :param res:
+    Function that calculates number of range and azimuth looks according to desired resolution
+    :param res: int
+        specifies the output multilook resolution by adjusting range and azimuth multipliers accordingly. Currently only
+        20 or multiples thereof allowed (default: 40)
     :return:
+        range_looks: string:
+            number of range looks to archive desired multilook resolution
+        azimuth_looks: string:
+            number of azimuth looks to archive desired multilook resolution
     """
     # allow user-defined resolutions in increments of 20m
     default_resolution = 40
@@ -76,13 +82,13 @@ def calculate_multilook_resolution(res):
         azimuth_looks = int(res / 20)
     if res is not None and res % 20 != 0:
         raise Exception("resolution should be multiple of 20m, default is set to 40m")
+
     return str(range_looks), str(azimuth_looks)
 
 
 def get_par_as_dict(path):
     """
-
-    :param path:
+    # TODO: add docstrings!
     :return:
     """
     par_file = open(path, 'r')
@@ -104,17 +110,18 @@ def get_par_as_dict(path):
 
             # append to dict
             par_dict.update({key: value})
+
     return par_dict
 
 
 def read_file_for_coreg():
     """
     Function to read textfile with interferogram pairs generated in sbas_graph function
-    :return: ref_scene_list: list
-        returns list of reference scenes according to the SBAS procedure
-    :return: coreg_scene_list: list
-        returns list of scenes which will be coregistered with their corresponding reference scene
-
+    :return:
+        ref_scene_list: list
+            returns list of reference scenes according to the SBAS procedure
+        coreg_scene_list: list
+            returns list of scenes which will be coregistered with their corresponding reference scene
     """
     file = Paths.slc_dir + "baseline_plot.out"
     columns = []
@@ -131,22 +138,51 @@ def read_file_for_coreg():
     return ref_scene_list, coreg_scene_list
 
 
-def geocode_back(input_file, range_samples, dem_lut, output_file, out_width):
+def file_for_sbas_graph():
     """
+    Function to write SLC_tab list for SBAS inteferogram pairs
+    """
+    sbas_list = extract_files_to_list(Paths.slc_dir, datatype="vv.slc.iw1.par", datascenes_file=None)
+    sbas_list = sorted(sbas_list)
+    sbas_nopar_list = []
+    for element in sbas_list:
+        sbas_nopar_list.append(element[:len(element) - 4])
+    merge_list = [sbas_nopar_list, sbas_list]
+    with open(Paths.slc_dir + "SLC_tab", "w") as file:
+        for x in zip(*merge_list):
+            file.write("{0}\t{1}\n".format(*x))
 
-    :param slc_dir:
-    :param dem_dir:
-    :return:
+
+def geocode_back(input_file, range_samples, dem_lut, output_file, out_width):
+
+    # TODO: input_file list or string?
+    """
+    Function used to geocode image data using a geocoding lookup table
+    :param input_file: string
+        (input) data file to be geocoded
+    :param range_samples: integer
+        width of input data file
+    :param dem_lut: string
+        (input) lookup table containing pairs of real-valued input data coordinates
+    :param output_file: string
+        (output) output data file
+    :param out_width: integer
+        width of gc_map lookup table, output file has the same width
     """
     os.system("geocode_back " + input_file + " " + range_samples + " " + dem_lut + " " +
               output_file + " " + out_width + " - 2 0")
 
 
 def data2geotiff(dem_par_file, geocode_mli, output_file):
-    """
 
-    :param dem_dir:
-    :param slc_dir:
-    :return:
+    # TODO: input_file list or string?
+    """
+    Function to convert geocoded data with DEM parameter file to GeoTIFF format
+    :param dem_par_file: string
+        (input) DIFF/GEO DEM parameter file
+    :param geocode_mli: string
+        (input) data file
+    :param output_file: string
+        (output) GeoTIFF file (.tif is the recommended extension)
     """
     os.system("data2geotiff " + dem_par_file + " " + geocode_mli + " 2 " + output_file)

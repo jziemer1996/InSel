@@ -330,36 +330,19 @@ def coherence_calc():
         os.system("cc_wave " + diff + " - - " + diff[:len(diff)-5] + ".cc " + range_samples)
 
 
-def file_for_sbas_graph():
-    """
-
-    :return:
-    """
-    sbas_list = extract_files_to_list(Paths.slc_dir, datatype="vv.slc.iw1.par", datascenes_file=None)
-    sbas_list = sorted(sbas_list)
-    sbas_nopar_list = []
-    for element in sbas_list:
-        sbas_nopar_list.append(element[:len(element) - 4])
-    merge_list = [sbas_nopar_list, sbas_list]
-    with open(Paths.slc_dir + "SLC_tab", "w") as file:
-        for x in zip(*merge_list):
-            file.write("{0}\t{1}\n".format(*x))
-
-
 def sbas_graph():
     """
 
     :return:
     """
-    slc_dir = Paths.slc_dir
     rslc_path_list = extract_files_to_list(Paths.slc_dir, datatype=".rslc.par", datascenes_file=None)
     rslc_path_list = sorted(rslc_path_list)
     rslc_par_list = []
     for elem in rslc_path_list:
         rslc_par_list.append(elem[len(Paths.slc_dir):len(elem)])
     print(rslc_par_list)
-    os.system("base_calc " + slc_dir + "/SLC_tab " + slc_dir + rslc_par_list[0] + " " + slc_dir + "baseline_plot.out "
-              + slc_dir + "baselines.txt " + "1 1 - 136 - 48")
+    os.system("base_calc " + Paths.slc_dir + "/SLC_tab " + Paths.slc_dir + rslc_par_list[0] + " " + Paths.slc_dir +
+              "baseline_plot.out " + Paths.slc_dir + "baselines.txt " + "1 1 - 136 - 48")
 
     return rslc_par_list
 
