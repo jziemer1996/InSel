@@ -4,48 +4,14 @@ from support_functions import *
 from user_data import Paths
 
 
-def extract_files_to_list(path_to_folder, datatype, datascenes_file):
-    """
-    function to extract files of given datatype from given directory and return as a list
-    :param path_to_folder: string
-        path to folder, where files are to be extracted from
-    :param datatype: string
-        datatype of files to return from given folder
-    :param datascenes_file:
-    :return: new_list: list
-        returns list of paths to files
-    """
-    new_list = []
-    for filename in os.listdir(path_to_folder):
-        if datatype in filename:
-            new_list.append(os.path.join(path_to_folder, filename))
-        else:
-            continue
-    if datascenes_file is not None:
-        with open(datascenes_file, 'w') as f:
-            for item in new_list:
-                f.write("%s\n" % item)
-    return new_list
-
-
-def deburst_S1_SLC(datascenes_file):
-    """
-
-    """
-    # datascenes_file = Paths.list_dir + 'datascenes.zipfile_list'
-    print(datascenes_file)
-    zip_file_list = extract_files_to_list(Paths.download_dir, datatype=".zip", datascenes_file=datascenes_file)
-    for file in zip_file_list:
-        file_name = file[file.find("S1A"):len(file) - 4] + ".burst_number_table"
-        print(file_name)
-        print("Mainfile is...:" + file)
-        os.system("S1_BURST_tab_from_zipfile" + " - " + file)
-        os.replace(file_name, Paths.processing_dir + file_name)
-
-
 def SLC_import(polarization=None, swath_flag=None):
     """
-
+    Function to read in and concatenate S1 TOPS SLC from zip files
+    :param polarization: list
+        list containing strings defining the desired polarizations considered during processing e.g. <["vv", "vh"]>
+    :param swath_flag: string
+        define subswaths to be considered during processing (default = 0 (as listed in
+        burst_number_table_ref, all if no burst_number_table_ref provided), 1,2,3 (1 sub-swath only), 4 (1&2), 5 (2&3))
     """
     # set polarization range
     pol_default = ["vv", "vh"]
@@ -59,6 +25,8 @@ def SLC_import(polarization=None, swath_flag=None):
     swath_flag_default = "0"
     if swath_flag is None:
         swath_flag = swath_flag_default
+
+    os.chdir(Paths.slc_dir)
 
     datascenes_file = Paths.list_dir + "datascenes.zipfile_list"
     deburst_S1_SLC(datascenes_file)
@@ -74,33 +42,10 @@ def SLC_import(polarization=None, swath_flag=None):
                 os.system("S1_import_SLC_from_zipfiles " + one_scene_file + " " + element[:len(element) - 4] +
                           "burst_number_table" + " " + pol_type + " 0 " + swath_flag + " " + Paths.orbit_file_dir + " 1")
 
-        delete_list = [".vv", ".vh"]
-        for pol in pol_list:
-            import_file_list = extract_files_to_list(os.getcwd(), datatype=pol, datascenes_file=None)
-            print(import_file_list)
-            for file in import_file_list:
-                index = file.find(pol)
-                filename = file[index - 8:]
-                print(file)
-                shutil.move(file, Paths.slc_dir + filename)
-
-            for datascene in delete_list:
-                import_delete_list = extract_files_to_list(os.getcwd(), datatype=datascene, datascenes_file=None)
-                print(import_delete_list)
-                for ele in import_delete_list:
-                    os.remove(ele)
-
-
-# def define_precise_orbits():
-#     """
-#
-#     """
-#     nstate = 60
-#     par_file_list = extract_files_to_list(Paths.slc_dir, datatype=".par", datascenes_file=None)
-#     par_file_list = sorted(par_file_list)
-#
-#     for parfile in par_file_list:
-#         os.system(os.getcwd() + "/OPOD_vec_lola.pl " + parfile + " " + Paths.orbit_file_dir + " " + str(nstate))
+        delete_files = ".burst_number_table"
+        delete_list = extract_files_to_list(path_to_folder=Paths.slc_dir, datatype=delete_files, datascenes_file=None)
+        for file in delete_list:
+            os.remove(file)
 
 
 def multilook(processing_step, res=None):
@@ -108,19 +53,6 @@ def multilook(processing_step, res=None):
 
     """
     # TODO: let user select main mli file instead of first file in list (0)
-
-    # # allow user-defined resolutions in increments of 20m
-    # default_resolution = 40
-    # default_burst_window_calc_flag = 0
-    # if res is None:
-    #     res = default_resolution
-    #     range_looks = 8
-    #     azimuth_looks = 2
-    # if res is not None and res % 20 == 0:
-    #     range_looks = res / 5
-    #     azimuth_looks = res / 20
-    # if res is not None and res % 20 != 0:
-    #     raise Exception("resolution should be multiple of 20m, default is set to 40m")
 
     range_looks, azimuth_looks = calculate_multilook_resolution(res)
     default_burst_window_calc_flag = 0
@@ -151,6 +83,9 @@ def multilook(processing_step, res=None):
 def gc_map(processing_step, demType, buffer):
     """
 
+    :param processing_step:
+    :param demType:
+    :param buffer:
     """
     # # TODO: let user select main mli file instead of first file in list (0)
 
@@ -467,8 +402,3 @@ def geocode_coherence():
                      output_file=geocode_file, out_width=out_width)
 
         data2geotiff(dem_par_file=dem_par_list[i], geocode_mli=geocode_file, output_file=output_file)
-
-
-def spectral_diversity_points():
-    slc_dir = Paths.slc_dir
-    os.system("mk_sp_all " + slc_dir + "/SLC_tab " + slc_dir + " " + "8 2 0 0.4 1.2 1")

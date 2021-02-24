@@ -2,6 +2,45 @@ import os
 from user_data import *
 
 
+def extract_files_to_list(path_to_folder, datatype, datascenes_file=None):
+    """
+    Function to extract files of given datatype from given directory and return as a list
+    :param path_to_folder: string
+        path to folder, where files are to be extracted from
+    :param datatype: string
+        datatype of files to return from given folder
+    :param datascenes_file: string
+        if filename is specified, list is exported to file
+    :return: new_list: list
+        returns list of paths to files
+    """
+    new_list = []
+    for filename in os.listdir(path_to_folder):
+        if datatype in filename:
+            new_list.append(os.path.join(path_to_folder, filename))
+        else:
+            continue
+    if datascenes_file is not None:
+        with open(datascenes_file, 'w') as f:
+            for item in new_list:
+                f.write("%s\n" % item)
+    return new_list
+
+
+def deburst_S1_SLC(datascenes_file):
+    """
+    Function used to generate S1_BURST_tab to support burst selection
+    :param datascenes_file: string
+        if filename is specified, list is exported to file
+    """
+    zip_file_list = extract_files_to_list(Paths.download_dir, datatype=".zip", datascenes_file=datascenes_file)
+    for file in zip_file_list:
+        file_name = file[file.find("S1A"):len(file) - 4] + ".burst_number_table"
+        print("Mainfile is...:" + file)
+        os.system("S1_BURST_tab_from_zipfile" + " - " + file)
+        os.replace(file_name, Paths.processing_dir + file_name)
+
+
 def create_dem_for_gamma(dem_dir, dem_name, demType, shapefile_path, buffer):
     """
 
