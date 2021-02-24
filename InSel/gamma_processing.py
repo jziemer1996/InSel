@@ -50,11 +50,20 @@ def SLC_import(polarization=None, swath_flag=None):
 
 def multilook(processing_step, res=None):
     """
-
+    Function to calculate MLI mosaic from ScanSAR SLC burst data
+    :param processing_step: string
+        user specified variable to determine if only main file is multilooked (<"single">) or all
+        files (<"multi">) in slc directory are multilooked
+    :param res: int
+        specifies the output multilook resolution by adjusting range and azimuth multipliers accordingly. Currently only
+        20 or multiples thereof allowed (default: 40)
     """
     # TODO: let user select main mli file instead of first file in list (0)
 
+    # define range and azimuth looks based on user-specified input or default values
     range_looks, azimuth_looks = calculate_multilook_resolution(res)
+
+    # set burst window calculation flag to default (0), set to 1 if parameters should be calculated
     default_burst_window_calc_flag = 0
 
     rlks_azlks_var = " " + range_looks + " " + azimuth_looks
