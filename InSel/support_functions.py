@@ -109,8 +109,12 @@ def get_par_as_dict(path):
 
 def read_file_for_coreg():
     """
+    Function to read textfile with interferogram pairs generated in sbas_graph function
+    :return: ref_scene_list: list
+        returns list of reference scenes according to the SBAS procedure
+    :return: coreg_scene_list: list
+        returns list of scenes which will be coregistered with their corresponding reference scene
 
-    :return:
     """
     file = Paths.slc_dir + "baseline_plot.out"
     columns = []
