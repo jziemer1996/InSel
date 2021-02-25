@@ -1,4 +1,5 @@
 import os
+import rasterio as rio
 from user_data import *
 
 
@@ -187,3 +188,38 @@ def data2geotiff(dem_par_file, geocode_mli, output_file):
         (output) GeoTIFF file (.tif is the recommended extension)
     """
     os.system("data2geotiff " + dem_par_file + " " + geocode_mli + " 2 " + output_file)
+
+
+def raster_stack(stackname):
+    # TODO: ADD OVERWRITE OPTION!?
+    """
+    This function stacks the clipped raster files to one raster time series stack for each polarization and flight
+    direction
+    :param stackname: string
+        name of output raster stack of coherence images
+    """
+    geotiff_list = extract_files_to_list(path_to_folder=Paths.slc_dir, datatype=".tif", datascenes_file=None)
+    geotiff_list = sorted(geotiff_list)
+
+    first_band = rio.open(geotiff_list[0], "r")
+    meta = first_band.meta.copy()
+
+    # Replace metadata with new count and create a new file
+    counts = 0
+    for ifile in geotiff_list:
+        with rio.open(ifile, 'r') as ff:
+            counts += ff.meta['count']
+    meta.update(count=counts)
+
+    # Check if filename already exists
+    if os.path.exists(Paths.slc_dir + stackname):
+        raise Exception("Name for raster stack already exists! Please delete it or specify a new one first!")
+
+    # Write coherence rasterstacks
+    with rio.open(Paths.slc_dir + stackname, 'w', **meta) as ff:
+        for ii, ifile in enumerate(geotiff_list):
+            bands = rio.open(ifile, 'r').read()
+            for band in bands:
+                ff.write(band, ii + 1)
+
+
