@@ -87,8 +87,9 @@ def calculate_multilook_resolution(res):
 
 
 def get_par_as_dict(path):
-    """
     # TODO: add docstrings!
+    """
+
     :return:
     """
     par_file = open(path, 'r')
