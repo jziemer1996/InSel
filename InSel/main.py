@@ -16,7 +16,7 @@ if __name__ == '__main__':
     start_time = datetime.now()
 
     ##### Data download function: #####
-    sentinel_download.copernicus_download()
+    # sentinel_download.copernicus_download()
 
     ##### GAMMA functions for processing: #####
 
@@ -37,7 +37,7 @@ if __name__ == '__main__':
 
         geocode_coherence()
 
-        raster_stack(stackname=stackname)
+        raster_stack(stackname)
 
 
     def SBAS_processing(processing_step, swath_flag, polarization, resolution, demType, buffer, clean_flag, bperp_max,
@@ -57,12 +57,19 @@ if __name__ == '__main__':
 
         geocode_coherence()
 
-        raster_stack(stackname=stackname)
+        raster_stack(stackname)
 
 
     ######### Decide, which way to execute ############
-    # coreg_only()
-    SBAS_processing()
+    # coreg_only(processing_step=Processing.processing_step, swath_flag=Processing.swath_flag,
+    #               polarization=Processing.polarization, resolution=Processing.resolution, demType=Processing.demType,
+    #               buffer=Processing.buffer, clean_flag=Processing.clean_flag, bperp_max=Processing.bperp_max,
+    #               delta_T_max=Processing.delta_T_max, stackname=Processing.stackname)
+
+    SBAS_processing(processing_step=Processing.processing_step, swath_flag=Processing.swath_flag,
+                    polarization=Processing.polarization, resolution=Processing.resolution, demType=Processing.demType,
+                    buffer=Processing.buffer, clean_flag=Processing.clean_flag, bperp_max=Processing.bperp_max,
+                    delta_T_max=Processing.delta_T_max, stackname=Processing.stackname)
 
     end_time = datetime.now()
     print("#####################################################")
