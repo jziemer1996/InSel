@@ -8,71 +8,75 @@ Authors: Marlin Mueller <marlin.markus.mueller@uni-jena.de>, Jonas Ziemer <jonas
 ###########################################################
 import os
 import sentinel_download
-import gamma_processing
+from gamma_processing import *
+from support_functions import *
 from datetime import datetime
+import matplotlib.pyplot as plt
 
 
-def main():
+if __name__ == '__main__':
     start_time = datetime.now()
-    home_path = "/home/ki73did/"
-    # home_path = "/home/ni82xoj/"
 
-    # download_dir = "/geonfs03_vol1/SALDI_EMS/S1_SLC/04_Augrabies/"
-    download_dir = home_path + "GEO410_data/"
+    ##### Data download function: #####
+    # sentinel_download.copernicus_download(copernicus_username=DownloadParams.username,
+    #                                       copernicus_password=DownloadParams.password,
+    #                                       download_directory=Paths.download_dir,
+    #                                       api_url=DownloadParams.api_url, satellite="S1A*",
+    #                                       min_overlap=0.1, start_date=DownloadParams.start_date,
+    #                                       end_date=DownloadParams.end_date, product="SLC",
+    #                                       orig_shape=Paths.shapefile_dir)
 
-    dem_dir = download_dir + "DEM/"
+    ##### GAMMA functions for processing: #####
 
-    shapefile_dir = home_path + "GEO410/Scripts/InSel/shapefiles/augrabies_extent.shp"
+    def coreg_only(processing_step="single"):
 
-    processing_dir = home_path + "GEO410_data/"
-    list_dir = home_path + "GEO410_data/lists/"
-    slc_dir = home_path + "GEO410_data/slc/"
-    orbit_dir = home_path + "GEO410_data/orbit_files/"
+        SLC_import(polarization=["vv"])
 
-    # Settings for data download:
-    if not os.path.exists(download_dir):
-        os.makedirs(download_dir)
+        # define_precise_orbits() # probably not needed anymore
 
-    username = "marlinmm2"
-    password = "8DH5BkEre5kykXG"
-    api_url = "https://scihub.copernicus.eu/apihub/"
-    start_date = "2020-06-01"
-    end_date = "2020-07-30"
+        multilook(processing_step="single")
 
-    # Data download function:
-    # sentinel_download.copernicus_download(copernicus_username=username, copernicus_password=password,
-    #                                       download_directory=download_dir, api_url=api_url, satellite="S1A*",
-    #                                       min_overlap=0.1, start_date=start_date, end_date=end_date,
-    #                                       product="SLC", orig_shape=shapefile_dir)
+        # gc_map(processing_step="single", demType="SRTM 1Sec HGT", buffer=0.05)
 
-    # GAMMA functions for processing:
-    # gamma_function_test.display_slc()
+        # geocode_dem()
 
-    # gamma_processing.deburst_S1_SLC(processing_dir=processing_dir, download_dir=download_dir, list_dir=list_dir)
-    #
-    # gamma_processing.SLC_import(slc_dir=slc_dir, list_dir=list_dir)
-    #
-    # gamma_processing.define_precise_orbits(slc_dir=slc_dir, orbit_dir=orbit_dir)
-    #
-    # gamma_processing.multilook(slc_dir=slc_dir)
-    # TODO: hier funktioniert der Übergang zwischen den Funktionen nicht fehlerfrei <-- Bei mir schon... ;)
+        coreg()
 
-    gamma_processing.gc_map(slc_dir=slc_dir, dem_dir=dem_dir, shapefile_path=shapefile_dir)
 
-    gamma_processing.geocode_dem(dem_dir=dem_dir)
+    def SBAS_processing(processing_step="multi"):
 
-    gamma_processing.coreg(slc_dir=slc_dir, dem_dir=dem_dir)
+        SLC_import(polarization=["vv"])
 
-    # gamma_function_test.geocode_back(slc_dir=slc_dir, dem_dir=dem_dir)
-    #
-    # gamma_function_test.data2geotiff(dem_dir=dem_dir, slc_dir=slc_dir)
+        # define_precise_orbits() # probably not needed anymore
+
+        multilook(processing_step="multi")
+        #
+        # gc_map(processing_step="multi", demType="SRTM 1Sec HGT", buffer=0.05)
+        #
+        # geocode_dem(processing_step)
+
+        # coreg(processing_step, polarization="vv", res=None, clean_flag="0")
+
+        # sbas_graph()
+
+    # coreg_only()
+    # SBAS_processing()
+    point_path = "C:/Users/marli/Google Drive/Studium/Master/2.Semester/GEO410/Daten/Shapefiles/"
+    results_dir = "C:/Users/marli/Google Drive/Studium/Master/2.Semester/GEO410/Daten/Koheränzen/"
+    point_list = extract_files_to_list(path_to_folder=point_path, datatype=".shp")
+    print(point_list)
+    test_list = []
+    for shapefile in point_list:
+        test_list.append(extract_time_series(results_dir=results_dir, shapefile=shapefile, buffer_size=0.001))
+    print(test_list)
+    for elem in test_list:
+        plt.plot(elem)
+    plt.show()
+
 
     end_time = datetime.now()
     print("#####################################################")
     print("processing-time = ", end_time - start_time, "Hr:min:sec")
     print("#####################################################")
 
-
-if __name__ == '__main__':
-    main()
 
