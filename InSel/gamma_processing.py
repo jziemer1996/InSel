@@ -214,7 +214,7 @@ def geocode_dem(processing_step):
                       + range_samples + " " + azimuth_lines + " - -")
 
 
-def coreg(processing_step, polarization, clean_flag, res=None):
+def coreg(processing_step, polarization, clean_flag, bperp_max, delta_T_max, res=None):
     """
     Function to coregister a Sentinel-1 TOPS mode burst SLC to a reference burst SLC
     :param processing_step: string
@@ -223,10 +223,14 @@ def coreg(processing_step, polarization, clean_flag, res=None):
         spatio-temporal baselines (multi master approach with SBAS technique (Small Baseline Subsets)
     :param polarization: string
         string defining the desired polarization considered during processing (choose "vv" or "vh")
-        :param clean_flag: string
+    :param clean_flag: string
         flag to indicate if intermediate files are deleted
             - 0: not deleted
             - 1: deleted (default)
+    :param bperp_max: int
+        maximum magnitude of bperp (m) (default = all, enter - for default)
+    :param delta_T_max: int
+        maximum number of days between passes
     :param res: int
         specifies the output multilook resolution by adjusting range and azimuth multipliers accordingly. Currently only
         20 or multiples thereof allowed (default: 40)
@@ -239,7 +243,7 @@ def coreg(processing_step, polarization, clean_flag, res=None):
     range_looks, azimuth_looks = calculate_multilook_resolution(res)
 
     pol = polarization
-    # get all .SLC_tab files from dem folder
+    # get all .SLC_tab files from slc folder
     tab_file_list = extract_files_to_list(Paths.slc_dir, datatype=".SLC_tab", datascenes_file=None)
     tab_file_list = sorted(tab_file_list)
     tab_pol_list = []
@@ -289,7 +293,7 @@ def coreg(processing_step, polarization, clean_flag, res=None):
     if processing_step == "multi":
         # SBAS function needs to be run here to get SLC_tab file with interferometry pairs for coregistration
         file_for_sbas_graph()
-        rslc_par_list = sbas_graph()
+        rslc_par_list = sbas_graph(bperp_max, delta_T_max)
 
         if not os.path.exists(rslc_par_list[0]):
             os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[1] + " "
@@ -323,11 +327,15 @@ def coherence_calc():
     for element in diff_bmp_list:
         diff_list.append(element[:len(element) - 4])
 
+    # get all .mli.par files from multilook folder
     mli_par_list = extract_files_to_list(Paths.multilook_dir, datatype=".mli.par", datascenes_file=None)
     mli_par_list = sorted(mli_par_list)
+    # check, if previous analysis steps were in "single processing" or "multi processing" mode
+    # single reference scene
     if len(mli_par_list) == 1:
         mli_par_dict = get_par_as_dict(mli_par_list[0])
         range_samples = mli_par_dict.get("range_samples")
+    # single reference scenes
     if len(mli_par_list) > 1:
         diff_for_mli_list = []
         for element in diff_list:
@@ -340,57 +348,78 @@ def coherence_calc():
         os.system("cc_wave " + diff + " - - " + diff[:len(diff)-5] + ".cc " + range_samples)
 
 
-def sbas_graph():
+def sbas_graph(bperp_max, delta_T_max):
     """
-
+    Function that generates baseline plot and output file with perpendicular baselines and delta_T values and
+    interferogram table (itab) file specifying SLCs for each interferogram
+    :param bperp_max: int
+        maximum magnitude of bperp (m) (default = all, enter - for default)
+    :param delta_T_max: int
+        maximum number of days between passes
     :return:
+        rslc_par_list: list
+            returns list of co-registered S1 TOPS burst SLC slaves for use in SBAS-Coregistration
     """
+    # itab type (enter - for default; 0=single reference (default); 1=all pairs)
+    itab_type = "1 "
+    # bperp plotting flag (enter - for default; 0=none (default); 1=output plot in PNG format; 2=screen output)
+    pltflg = "1 "
+    # minimum magnitude of bperp (m) (default = all, enter - for default)
+    bperp_min = "- "
+    # minimum number of days between passes (default = 0, enter - for default)
+    delta_T_min = "- "
+
+    # get all .rslc.par files from slc folder
     rslc_path_list = extract_files_to_list(Paths.slc_dir, datatype=".rslc.par", datascenes_file=None)
     rslc_path_list = sorted(rslc_path_list)
+    # create rslc_par_list for use in GAMMA command
     rslc_par_list = []
     for elem in rslc_path_list:
         rslc_par_list.append(elem[len(Paths.slc_dir):len(elem)])
-    print(rslc_par_list)
+
     os.system("base_calc " + Paths.slc_dir + "/SLC_tab " + Paths.slc_dir + rslc_par_list[0] + " " + Paths.slc_dir +
-              "baseline_plot.out " + Paths.slc_dir + "baselines.txt " + "1 1 - 136 - 48")
+              "baseline_plot.out " + Paths.slc_dir + "baselines.txt " + itab_type + pltflg + bperp_min + str(bperp_max)
+              + " " + delta_T_min + str(delta_T_max))
 
     return rslc_par_list
 
 
 def geocode_coherence():
     """
-
-    :param slc_dir:
-    :param dem_dir:
-    :return:
+    Function to geocode back resulting files (.cc) of coherence_calc function for export preparation (.tif)
     """
+    # get all .cc files from slc folder
     cc_list = extract_files_to_list(Paths.slc_dir, datatype=".cc", datascenes_file=None)
     cc_list = sorted(cc_list)
 
-    # TODO: support_functions if possible!
     diff_list = []
     for element in cc_list:
         diff_list.append(element[:len(element) - 4])
     mli_par_list = extract_files_to_list(Paths.multilook_dir, datatype=".mli.par", datascenes_file=None)
     mli_par_list = sorted(mli_par_list)
-    print(mli_par_list)
+    # check, if previous analysis steps were in "single processing" or "multi processing" mode
+    # single reference scene
     if len(mli_par_list) == 1:
         mli_par_dict = get_par_as_dict(mli_par_list[0])
         range_samples = mli_par_dict.get("range_samples")
+    # multi reference scene
     if len(mli_par_list) > 1:
         for mli_par in mli_par_list:
             mli_par_dict = get_par_as_dict(mli_par)
             range_samples = mli_par_dict.get("range_samples")
 
+    # create new lists for use in GAMMA command
     lut_list = []
     dem_par_list = []
     for element in cc_list:
         lut_list.append(Paths.dem_dir + element[len(element) - 20:len(element) - 12] + ".dem_lookup.lut")
         dem_par_list.append(Paths.dem_dir + element[len(element) - 20:len(element) - 12] + ".dem.par")
-
+        # check, if previous analysis steps were in "single processing" or "multi processing" mode
+        # single reference
         if len(dem_par_list) == 1:
             dem_width_dict = get_par_as_dict(dem_par_list[0])
             out_width = dem_width_dict.get("width")
+        # multi reference
         if len(dem_par_list) > 1:
             for dem_par in dem_par_list:
                 dem_width_dict = get_par_as_dict(dem_par)
