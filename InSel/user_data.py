@@ -2,11 +2,12 @@ import os
 
 
 def user_data():
-    home_path = "/home/ki73did/"
-    # home_path = "/home/ni82xoj/"
+    # home_path = "/home/ki73did/"
+    home_path = "/home/ni82xoj/"
 
     # download_dir = "/geonfs03_vol1/SALDI_EMS/S1_SLC/04_Augrabies/"
-    download_dir = home_path + "GEO410_data/"
+    # download_dir = home_path + "GEO410_data/"
+    download_dir = home_path + "GAMMA_testdata/"
 
     # text
     shapefile_dir = home_path + "GEO410/Scripts/InSel/shapefiles/augrabies_extent.shp"
@@ -24,10 +25,15 @@ def user_data():
 class Paths(object):
     home_path, download_dir, shapefile_dir, orbit_file_dir = user_data()[0:4]
 
-    processing_dir = home_path + "GEO410_data/"
-    list_dir = home_path + "GEO410_data/lists/"
-    slc_dir = home_path + "GEO410_data/slc/"
-    dem_dir = home_path + "GEO410_data/DEM/"
+    # processing_dir = home_path + "GEO410_data/"
+    # list_dir = home_path + "GEO410_data/lists/"
+    # slc_dir = home_path + "GEO410_data/slc/"
+    # dem_dir = home_path + "GEO410_data/DEM/"
+
+    processing_dir = home_path + "GAMMA_testdata/"
+    list_dir = home_path + "GAMMA_testdata/lists/"
+    slc_dir = home_path + "GAMMA_testdata/slc/"
+    dem_dir = home_path + "GAMMA_testdata/DEM/"
 
     multilook_dir = slc_dir + "multilook/"
 

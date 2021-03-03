@@ -16,6 +16,9 @@ if __name__ == '__main__':
     start_time = datetime.now()
 
     ##### Data download function: #####
+    # sentinel_download.copernicus_download(satellite="S1A*",
+    #                                       min_overlap=0.1, product="SLC")
+
     # sentinel_download.copernicus_download(copernicus_username=DownloadParams.username,
     #                                       copernicus_password=DownloadParams.password,
     #                                       download_directory=Paths.download_dir,
@@ -43,19 +46,22 @@ if __name__ == '__main__':
 
     def SBAS_processing(processing_step="multi"):
 
-        SLC_import(polarization=["vv"])
+        # SLC_import(polarization=["vv"])
 
         # define_precise_orbits() # probably not needed anymore
 
-        multilook(processing_step="multi")
+        # multilook(processing_step="multi")
         #
         # gc_map(processing_step="multi", demType="SRTM 1Sec HGT", buffer=0.05)
         #
         # geocode_dem(processing_step)
 
-        # coreg(processing_step, polarization="vv", res=None, clean_flag="0")
+        # coreg(processing_step, polarization="vv", clean_flag="1", bperp_max=136, delta_T_max=48, res=None)
 
-        # sbas_graph()
+        # coherence_calc()
+        # geocode_coherence()
+        sbas_graph(bperp_max=136, delta_T_max=48)
+        # raster_stack(stackname="SLC_coherence.tif")
 
     # coreg_only()
     SBAS_processing()

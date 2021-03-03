@@ -155,6 +155,42 @@ def file_for_sbas_graph():
             file.write("{0}\t{1}\n".format(*x))
 
 
+def sbas_graph(bperp_max, delta_T_max):
+    """
+    Function that generates baseline plot and output file with perpendicular baselines and delta_T values and
+    interferogram table (itab) file specifying SLCs for each interferogram
+    :param bperp_max: int
+        maximum magnitude of bperp (m) (default = all, enter - for default)
+    :param delta_T_max: int
+        maximum number of days between passes
+    :return:
+        rslc_par_list: list
+            returns list of co-registered S1 TOPS burst SLC slaves for use in SBAS-Coregistration
+    """
+    # itab type (enter - for default; 0=single reference (default); 1=all pairs)
+    itab_type = "1 "
+    # bperp plotting flag (enter - for default; 0=none (default); 1=output plot in PNG format; 2=screen output)
+    pltflg = "1 "
+    # minimum magnitude of bperp (m) (default = all, enter - for default)
+    bperp_min = "- "
+    # minimum number of days between passes (default = 0, enter - for default)
+    delta_T_min = "- "
+
+    # get all .rslc.par files from slc folder
+    rslc_path_list = extract_files_to_list(Paths.slc_dir, datatype=".rslc.par", datascenes_file=None)
+    rslc_path_list = sorted(rslc_path_list)
+    # create rslc_par_list for use in GAMMA command
+    rslc_par_list = []
+    for elem in rslc_path_list:
+        rslc_par_list.append(elem[len(Paths.slc_dir):len(elem)])
+
+    os.system("base_calc " + Paths.slc_dir + "/SLC_tab " + Paths.slc_dir + rslc_par_list[0] + " " + Paths.slc_dir +
+              "baseline_plot.out " + Paths.slc_dir + "baselines.txt " + itab_type + pltflg + bperp_min + str(bperp_max)
+              + " " + delta_T_min + str(delta_T_max))
+
+    return rslc_par_list
+
+
 def geocode_back(input_file, range_samples, dem_lut, output_file, out_width):
 
     # TODO: input_file list or string?
