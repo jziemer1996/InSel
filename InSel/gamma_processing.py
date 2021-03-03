@@ -13,7 +13,7 @@ def SLC_import(polarization=None, swath_flag=None):
         burst_number_table_ref, all if no burst_number_table_ref provided), 1,2,3 (1 sub-swath only), 4 (1&2), 5 (2&3))
     """
     # set polarization range
-    pol_default = ["vv", "vh"]
+    pol_default = ["vv"]
     pol_list = []
     if polarization is None:
         polarization = pol_default
@@ -21,6 +21,7 @@ def SLC_import(polarization=None, swath_flag=None):
         pol_list.append("." + elem.lower())
 
     # set subswath range
+    swath_flag = str(swath_flag)
     swath_flag_default = "0"
     if swath_flag is None:
         swath_flag = swath_flag_default
@@ -206,7 +207,6 @@ def geocode_dem(processing_step):
             mli_par_dict = get_par_as_dict(mli_par)
             range_samples = mli_par_dict.get("range_samples")
             azimuth_lines = mli_par_dict.get("azimuth_lines")
-            print(azimuth_lines)
 
             dem_par_dict = get_par_as_dict(dem_par_list[i])
             dem_width = dem_par_dict.get("width")
@@ -214,15 +214,13 @@ def geocode_dem(processing_step):
                       + range_samples + " " + azimuth_lines + " - -")
 
 
-def coreg(processing_step, polarization, clean_flag, bperp_max, delta_T_max, res=None):
+def coreg(processing_step, clean_flag, bperp_max, delta_T_max, polarization=None, res=None):
     """
     Function to coregister a Sentinel-1 TOPS mode burst SLC to a reference burst SLC
     :param processing_step: string
         user specified variable to determine if scenes of a raster stack are only coregistered on the first reference
         burst SLC or (single master approach) or if all files are coregistered dynamically according to their
         spatio-temporal baselines (multi master approach with SBAS technique (Small Baseline Subsets)
-    :param polarization: string
-        string defining the desired polarization considered during processing (choose "vv" or "vh")
     :param clean_flag: string
         flag to indicate if intermediate files are deleted
             - 0: not deleted
@@ -231,6 +229,8 @@ def coreg(processing_step, polarization, clean_flag, bperp_max, delta_T_max, res
         maximum magnitude of bperp (m) (default = all, enter - for default)
     :param delta_T_max: int
         maximum number of days between passes
+    :param polarization: string
+        string defining the desired polarization considered during processing (choose "vv" or "vh")
     :param res: int
         specifies the output multilook resolution by adjusting range and azimuth multipliers accordingly. Currently only
         20 or multiples thereof allowed (default: 40)
@@ -242,7 +242,10 @@ def coreg(processing_step, polarization, clean_flag, bperp_max, delta_T_max, res
     # define range and azimuth looks based on user-specified input or default values
     range_looks, azimuth_looks = calculate_multilook_resolution(res)
 
+    pol_default = "vv"
     pol = polarization
+    if pol is None:
+        pol = pol_default
     # get all .SLC_tab files from slc folder
     tab_file_list = extract_files_to_list(Paths.slc_dir, datatype=".SLC_tab", datascenes_file=None)
     tab_file_list = sorted(tab_file_list)

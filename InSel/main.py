@@ -16,55 +16,44 @@ if __name__ == '__main__':
     start_time = datetime.now()
 
     ##### Data download function: #####
-    # sentinel_download.copernicus_download(satellite="S1A*",
-    #                                       min_overlap=0.1, product="SLC")
-
-    # sentinel_download.copernicus_download(copernicus_username=DownloadParams.username,
-    #                                       copernicus_password=DownloadParams.password,
-    #                                       download_directory=Paths.download_dir,
-    #                                       api_url=DownloadParams.api_url, satellite="S1A*",
-    #                                       min_overlap=0.1, start_date=DownloadParams.start_date,
-    #                                       end_date=DownloadParams.end_date, product="SLC",
-    #                                       orig_shape=Paths.shapefile_dir)
+    sentinel_download.copernicus_download()
 
     ##### GAMMA functions for processing: #####
 
-    def coreg_only(processing_step="single"):
+    def coreg_only(processing_step, swath_flag, polarization, resolution, demType, buffer, clean_flag, bperp_max,
+                   delta_T_max, stackname):
 
-        SLC_import(polarization=["vv"])
+        SLC_import(polarization=[Processing.polarization], swath_flag=swath_flag)
 
-        # define_precise_orbits() # probably not needed anymore
+        multilook(processing_step, resolution)
 
-        multilook(processing_step="single")
+        gc_map(processing_step, demType, buffer)
 
-        # gc_map(processing_step="single", demType="SRTM 1Sec HGT", buffer=0.05)
+        geocode_dem(processing_step)
 
-        # geocode_dem()
-
-        coreg()
+        coreg(processing_step, clean_flag, bperp_max, delta_T_max, polarization, resolution)
 
 
-    def SBAS_processing(processing_step="multi"):
+    def SBAS_processing(processing_step, swath_flag, polarization, resolution, demType, buffer, clean_flag, bperp_max,
+                        delta_T_max, stackname):
 
-        # SLC_import(polarization=["vv"])
+        SLC_import(polarization=[Processing.polarization], swath_flag=swath_flag)
 
-        # define_precise_orbits() # probably not needed anymore
+        multilook(processing_step, resolution)
 
-        # multilook(processing_step="multi")
-        #
-        # gc_map(processing_step="multi", demType="SRTM 1Sec HGT", buffer=0.05)
-        #
-        # geocode_dem(processing_step)
+        gc_map(processing_step, demType, buffer)
 
-        # coreg(processing_step, polarization="vv", clean_flag="1", bperp_max=136, delta_T_max=48, res=None)
+        geocode_dem(processing_step)
+
+        coreg(processing_step, clean_flag, bperp_max, delta_T_max, polarization, resolution)
 
         # coherence_calc()
         # geocode_coherence()
-        sbas_graph(bperp_max=136, delta_T_max=48)
+
         # raster_stack(stackname="SLC_coherence.tif")
 
-    # coreg_only()
-    SBAS_processing()
+    coreg_only()
+    # SBAS_processing()
 
     end_time = datetime.now()
     print("#####################################################")

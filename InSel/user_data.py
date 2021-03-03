@@ -13,13 +13,31 @@ def user_data():
     shapefile_dir = home_path + "GEO410/Scripts/InSel/shapefiles/augrabies_extent.shp"
     orbit_file_dir = home_path + "GEO410_data/orbit_files/"
 
+    # Sentinel-1 download parameters
     username = "marlinmm2"
     password = "8DH5BkEre5kykXG"
     api_url = "https://scihub.copernicus.eu/apihub/"
     start_date = "2020-06-01"
     end_date = "2020-07-30"
+    satellite = "S1A*"
+    min_overlap = 0.1
+    product = "SLC"
 
-    return home_path, download_dir, shapefile_dir, orbit_file_dir, username, password, api_url, start_date, end_date
+    # GAMMA processing parameters
+    processing_step = "multi"
+    swath_flag = 0
+    polarization = "vv"
+    resolution = 40
+    demType = "SRTM 1Sec HGT"
+    buffer = 0.05
+    clean_flag = "1"
+    bperp_max = 136
+    delta_T_max = 48
+    stackname = "result_stack.tif"
+
+    return home_path, download_dir, shapefile_dir, orbit_file_dir, username, password, api_url, start_date, end_date, \
+           satellite, min_overlap, product, processing_step, swath_flag, polarization, resolution, demType, buffer, \
+           clean_flag, bperp_max, delta_T_max, stackname
 
 
 class Paths(object):
@@ -56,4 +74,8 @@ class Paths(object):
 
 
 class DownloadParams(object):
-    username, password, api_url, start_date, end_date = user_data()[4:9]
+    username, password, api_url, start_date, end_date, satellite, min_overlap, product = user_data()[4:12]
+
+class Processing(object):
+    processing_step, swath_flag, polarization, resolution, demType, buffer, clean_flag, bperp_max, delta_T_max, \
+    stackname = user_data()[12:]

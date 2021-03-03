@@ -4,7 +4,7 @@ from osgeo import ogr
 from user_data import DownloadParams, Paths
 
 
-def copernicus_download(satellite, min_overlap, product):
+def copernicus_download():
     """
     This function takes the user input to create a API call for the Copernicus Hub and downloads the specified data.
     Args:
@@ -39,8 +39,8 @@ def copernicus_download(satellite, min_overlap, product):
     s1.set_geometries(polygon)
 
     # Search for corresponding data scenes via api
-    s1.search(satellite, min_overlap, Paths.download_dir, DownloadParams.start_date, DownloadParams.end_date,
-              producttype=product)
+    s1.search(DownloadParams.satellite, DownloadParams.min_overlap, Paths.download_dir, DownloadParams.start_date, DownloadParams.end_date,
+              producttype=DownloadParams.product)
 
     # Download data - returns dictionary of downloaded data scenes
     # (Format: {'failed': ['', '', ..], 'success': ['', '', '', ..]})
