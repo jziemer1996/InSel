@@ -33,6 +33,12 @@ if __name__ == '__main__':
 
         coreg(processing_step, clean_flag, bperp_max, delta_T_max, polarization, resolution)
 
+        coherence_calc()
+
+        geocode_coherence()
+
+        raster_stack(stackname=stackname)
+
 
     def SBAS_processing(processing_step, swath_flag, polarization, resolution, demType, buffer, clean_flag, bperp_max,
                         delta_T_max, stackname):
@@ -47,13 +53,16 @@ if __name__ == '__main__':
 
         coreg(processing_step, clean_flag, bperp_max, delta_T_max, polarization, resolution)
 
-        # coherence_calc()
-        # geocode_coherence()
+        coherence_calc()
 
-        # raster_stack(stackname="SLC_coherence.tif")
+        geocode_coherence()
 
-    coreg_only()
-    # SBAS_processing()
+        raster_stack(stackname=stackname)
+
+
+    ######### Decide, which way to execute ############
+    # coreg_only()
+    SBAS_processing()
 
     end_time = datetime.now()
     print("#####################################################")
