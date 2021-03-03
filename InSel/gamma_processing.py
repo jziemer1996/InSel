@@ -57,8 +57,6 @@ def multilook(processing_step, res=None):
         specifies the output multilook resolution by adjusting range and azimuth multipliers accordingly. Currently only
         20 or multiples thereof allowed (default: 40)
     """
-    # TODO: let user select main mli file instead of first file in list (0)
-
     # define range and azimuth looks based on user-specified input or default values
     range_looks, azimuth_looks = calculate_multilook_resolution(res)
 
@@ -90,13 +88,19 @@ def multilook(processing_step, res=None):
 
 def gc_map(processing_step, demType, buffer):
     """
-
-    :param processing_step:
-    :param demType:
-    :param buffer:
+    Function that creates a DEM in Gamma format for a defined spatial geometry and calculates terrain-geocoding lookup
+    table and DEM derived data products
+    :param processing_step: string
+        user specified variable to determine if only main file is processed or all files will be processed
+    :param demType: string
+        the type of DEM to be used; current options:
+            - "AW3D30"
+            - "SRTM 1Sec HGT"
+            - "SRTM 3Sec"
+            - "TDX90m"
+    :param buffer: float
+        a buffer in degrees to create around the geometry
     """
-    # # TODO: let user select main mli file instead of first file in list (0)
-
     # GAMMA default values for additional output parameter represented by "-"
     # oversampling factors (float)
     lat_ovr = "- "
@@ -116,7 +120,7 @@ def gc_map(processing_step, demType, buffer):
     # LUT values for regions with layover,shadows or DEM gaps (can range from 0 to 3 -> default 2)
     ls_mode = "- "
 
-    # Extract first .mli based on date to select as main scene:
+    # get all mli.par files from multilook folder
     mli_file_list = extract_files_to_list(Paths.multilook_dir, datatype=".mli.par", datascenes_file=None)
     mli_file_list = sorted(mli_file_list)
 
@@ -158,31 +162,33 @@ def gc_map(processing_step, demType, buffer):
 
 def geocode_dem(processing_step):
     """
-
+    Function for forward geocoding transformation using a lookup table
+    :param processing_step: string
+        user specified variable to determine if only main file is processed or all files will be processed
     """
-    # TODO: let user select main mli file instead of first file in list (0)
-
-    #
+    # get all .lut files from dem folder
     lut_list = extract_files_to_list(Paths.dem_dir, datatype=".lut", datascenes_file=None)
     lut_list = sorted(lut_list)
-    #
+    # get all mli.par files from multilook folder
     mli_par_list = extract_files_to_list(Paths.multilook_dir, datatype=".mli.par", datascenes_file=None)
     mli_par_list = sorted(mli_par_list)
-    #
+    # get all .dem_seg.par files from dem folder and create a new list
     dem_seg_list = []
     dem_seg_list_in = extract_files_to_list(Paths.dem_dir, datatype=".dem_seg.par", datascenes_file=None)
-    #
+    # need to extract .dem.par files for further processing, but functions finds .dem_seg_par too
+    # thats why: append name of elements without datatype in dem_seg_list_in to new list
     for elem in dem_seg_list_in:
         dem_seg_list.append(elem[:len(elem) - 4])
     dem_seg_list = sorted(dem_seg_list)
-    #
+    # get all .dem.par files from dem folder
     dem_par_list = extract_files_to_list(Paths.dem_dir, datatype=".dem.par", datascenes_file=None)
     dem_par_list = sorted(dem_par_list)
-    #
+    # define names of .dem.par files as output name for hgt
     hgt_out_list = []
     for file in dem_par_list:
         hgt_out_list.append(file[:len(file) - 8] + "_out.rdc_hgt")
 
+    # execute this branch, if only using coreg and normal preprocessing
     if processing_step == "single":
         mli_par_dict = get_par_as_dict(mli_par_list[0])
         range_samples = mli_par_dict.get("range_samples")
@@ -194,6 +200,7 @@ def geocode_dem(processing_step):
         os.system("geocode " + lut_list[0] + " " + dem_seg_list[0] + " " + dem_width + " " + hgt_out_list[0] + " "
                   + range_samples + " " + azimuth_lines + " - -")
 
+    # execute this branch, if using SBAS and special preprocessing
     if processing_step == "multi":
         for i, mli_par in enumerate(mli_par_list):
             mli_par_dict = get_par_as_dict(mli_par)
@@ -207,24 +214,41 @@ def geocode_dem(processing_step):
                       + range_samples + " " + azimuth_lines + " - -")
 
 
-def coreg(processing_step, polarization, res=None, clean_flag="0"):
+def coreg(processing_step, polarization, clean_flag, res=None):
     """
-
+    Function to coregister a Sentinel-1 TOPS mode burst SLC to a reference burst SLC
+    :param processing_step: string
+        user specified variable to determine if scenes of a raster stack are only coregistered on the first reference
+        burst SLC or (single master approach) or if all files are coregistered dynamically according to their
+        spatio-temporal baselines (multi master approach with SBAS technique (Small Baseline Subsets)
+    :param polarization: string
+        string defining the desired polarization considered during processing (choose "vv" or "vh")
+        :param clean_flag: string
+        flag to indicate if intermediate files are deleted
+            - 0: not deleted
+            - 1: deleted (default)
+    :param res: int
+        specifies the output multilook resolution by adjusting range and azimuth multipliers accordingly. Currently only
+        20 or multiples thereof allowed (default: 40)
+        NOTE: resolution must be the same value as in the multilook function; in default mode already accomplished by
+        "None"!!!
     """
-    # TODO: let user select main mli file instead of first file in list (0)
     import shutil
 
+    # define range and azimuth looks based on user-specified input or default values
     range_looks, azimuth_looks = calculate_multilook_resolution(res)
 
-    pol = polarization  # TODO: checken, ob nur VV genutzt wird!?
+    pol = polarization
+    # get all .SLC_tab files from dem folder
     tab_file_list = extract_files_to_list(Paths.slc_dir, datatype=".SLC_tab", datascenes_file=None)
     tab_file_list = sorted(tab_file_list)
     tab_pol_list = []
+    # check, if data scenes fullfill specified polarization type and if yes, append files to new list
     for element in tab_file_list:
         if pol in element:
             tab_pol_list.append(element)
-    print(tab_file_list)
 
+    # generate .RSLC_tab files as input variable for coregistration
     rslc_list = []
     for tab in tab_pol_list:
         if pol in tab:
@@ -242,7 +266,6 @@ def coreg(processing_step, polarization, res=None, clean_flag="0"):
                 file.write(filedata)
 
             rslc_list.append(rslc_file)
-    print(rslc_list)
 
     pol_list = []
     for file in tab_pol_list:
@@ -250,30 +273,23 @@ def coreg(processing_step, polarization, res=None, clean_flag="0"):
             file_name = file[len(Paths.slc_dir):len(file) - 11]
             pol_list.append(file_name)
 
-    print("tab_pol_list=")
-    print(tab_pol_list)
-    print("pol_list=")
-    print(pol_list)
-    print("rslc_list=")
-    print(rslc_list)
-
     os.chdir(Paths.slc_dir)
+    # get all .rdc_hgt files from dem folder
     rdc_hgt_list = extract_files_to_list(Paths.dem_dir, datatype=".rdc_hgt", datascenes_file=None)
     rdc_hgt_list = sorted(rdc_hgt_list)
-    print(rdc_hgt_list)
 
+    # execute this branch, if only using coreg and normal preprocessing
     if processing_step == "single":
         for i in range(0, len(tab_pol_list) - 1):
             os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[i + 1] + " "
                       + pol_list[i + 1] + " " + rslc_list[i + 1] + " " + rdc_hgt_list[0] + " "
                       + range_looks + " " + azimuth_looks + " - - - - - " + clean_flag)
 
+    # execute this branch, if using SBAS and special preprocessing
     if processing_step == "multi":
-
-        # comment, why this needs to be rund here
+        # SBAS function needs to be run here to get SLC_tab file with interferometry pairs for coregistration
         file_for_sbas_graph()
         rslc_par_list = sbas_graph()
-        print(rslc_par_list[0])
 
         if not os.path.exists(rslc_par_list[0]):
             os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[1] + " "
@@ -288,14 +304,7 @@ def coreg(processing_step, polarization, res=None, clean_flag="0"):
             SLC2_tab = coreg_scene_list[i] + "." + polarization + ".SLC_tab"
             RSLC_tab = coreg_scene_list[i] + "." + polarization + ".RSLC_tab"
 
-            # TODO: Marlin wenn du willst, kannst du das noch schoener loesen!
             hgt_list = Paths.dem_dir + ref + "_out.rdc_hgt"
-            print(SLC1_tab)
-            print(hgt_list)
-            print(SLC2_tab)
-            print(coreg_scene_list[i])
-            print(RSLC_tab)
-            # print(rdc_hgt_list[i])
 
             os.system("S1_coreg_TOPS " + Paths.slc_dir + SLC1_tab + " " + ref + " " + Paths.slc_dir + SLC2_tab + " " +
                       coreg_scene_list[i] + " " + Paths.slc_dir + RSLC_tab + " " + hgt_list + " " + range_looks
@@ -304,9 +313,10 @@ def coreg(processing_step, polarization, res=None, clean_flag="0"):
 
 def coherence_calc():
     """
-
-    :return:
+    Function to estimate interferometric correlation coefficient
     """
+    # need to extract .diff files for further processing, but function finds .diff.bmp
+    # thats why: append name of elements without datatype in diff_bmp_list to new list
     diff_bmp_list = extract_files_to_list(Paths.slc_dir, datatype=".diff.bmp", datascenes_file=None)
     diff_bmp_list = sorted(diff_bmp_list)
     diff_list = []
