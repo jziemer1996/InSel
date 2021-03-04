@@ -14,9 +14,7 @@ from datetime import datetime
 if __name__ == '__main__':
     start_time = datetime.now()
 
-
     ##### GAMMA functions for processing #####
-
     def processing(processing_step, swath_flag, polarization, resolution, demType, buffer, clean_flag, bperp_max,
                    delta_T_max, create_rasterstack, stackname):
 
