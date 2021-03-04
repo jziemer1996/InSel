@@ -294,14 +294,18 @@ def coreg(processing_step, clean_flag, bperp_max, delta_T_max, polarization=None
 
     # execute this branch, if using SBAS and special preprocessing
     if processing_step == "multi":
-        # SBAS function needs to be run here to get SLC_tab file with interferometry pairs for coregistration
-        file_for_sbas_graph()
-        rslc_par_list = sbas_graph(bperp_max, delta_T_max)
 
-        if not os.path.exists(rslc_par_list[0]):
+        elem = tab_pol_list[0]
+        rslc_path = elem[:len(elem)-11] + ".rslc.par"
+
+        if not os.path.exists(rslc_path):
             os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[1] + " "
                       + pol_list[1] + " " + rslc_list[1] + " " + rdc_hgt_list[0] + " "
                       + range_looks + " " + azimuth_looks + " - - - - - " + clean_flag)
+
+        # SBAS function needs to be run here to get SLC_tab file with interferometry pairs for coregistration
+        file_for_sbas_graph()
+        rslc_par_list = sbas_graph(bperp_max, delta_T_max)
 
         # extract reference list and coreg list from sbas output
         ref_scene_list, coreg_scene_list = read_file_for_coreg()
