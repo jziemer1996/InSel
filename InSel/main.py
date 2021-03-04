@@ -48,6 +48,7 @@ if __name__ == '__main__':
                stackname=Processing.stackname)
 
     end_time = datetime.now()
+    print("######### Successfully finished processing! #########")
     print("#####################################################")
     print("processing-time = ", end_time - start_time, "Hr:min:sec")
     print("#####################################################")

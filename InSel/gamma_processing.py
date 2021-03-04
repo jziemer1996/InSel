@@ -43,6 +43,7 @@ def SLC_import(polarization=None, swath_flag=None):
                     os.system("S1_import_SLC_from_zipfiles " + one_scene_file + " " + element[:len(element) - 4] +
                               "burst_number_table" + " " + pol_type + " 0 " + swath_flag + " " +
                               Paths.orbit_file_dir + " 1")
+                    print("############# Succesfully finished SLC import! #############")
                 except:
                     print("This error comes with SLC import! Check previous processing results and try it again!")
 
@@ -81,6 +82,7 @@ def multilook(processing_step, res=None):
         try:
             os.system("multi_look_ScanSAR " + tab_file_list[0] + " " + output_name + ".mli " + output_name + ".mli.par "
                   + rlks_azlks_var + " " + str(default_burst_window_calc_flag))
+            print("############# Succesfully finished single multilooking! #############")
         except:
             print("This error comes with single multilooking! Check previous processing results and try it again!")
 
@@ -93,6 +95,7 @@ def multilook(processing_step, res=None):
             try:
                 os.system("multi_look_ScanSAR " + slc + " " + output_name + ".mli " + output_name + ".mli.par "
                           + rlks_azlks_var + " " + str(default_burst_window_calc_flag))
+                print("############# Succesfully finished SBAS multilooking! #############")
             except:
                 print("This error comes with SBAS multilooking! Check previous processing results and try it again!")
 
@@ -152,6 +155,7 @@ def gc_map(processing_step, demType, buffer):
             os.system("gc_map " + main_mli + " - " + dem_par + dem + dem_seg_par + dem_seg + dem_lut + lat_ovr + lon_ovr
                       + sim_sar + zen_angle + ori_angle + loc_inc_angle + proj_angle + pix_norm_factor + frame + ls_mode
                       + r_ovr)
+            print("############# Succesfully finished single gc_map! #############")
         except:
             print("This error comes with single gc_map! Check previous processing results and try it again!")
 
@@ -171,6 +175,7 @@ def gc_map(processing_step, demType, buffer):
                 os.system("gc_map " + mli + " - " + dem_par + dem + dem_seg_par + dem_seg + dem_lut + lat_ovr + lon_ovr
                           + sim_sar + zen_angle + ori_angle + loc_inc_angle + proj_angle + pix_norm_factor + frame +
                           ls_mode + r_ovr)
+                print("############# Succesfully finished multi gc_map! #############")
             except:
                 print("This error comes with multi gc_map! Check previous processing results and try it again!")
 
@@ -215,6 +220,7 @@ def geocode_dem(processing_step):
         try:
             os.system("geocode " + lut_list[0] + " " + dem_seg_list[0] + " " + dem_width + " " + hgt_out_list[0] + " "
                       + range_samples + " " + azimuth_lines + " - -")
+            print("############# Succesfully finished single geocoding! #############")
         except:
             print("This error comes with single geocoding! Check previous processing results and try it again!")
 
@@ -230,6 +236,7 @@ def geocode_dem(processing_step):
             try:
                 os.system("geocode " + lut_list[i] + " " + dem_seg_list[i] + " " + dem_width + " " + hgt_out_list[i]
                           + " " + range_samples + " " + azimuth_lines + " - -")
+                print("############# Succesfully finished multi geocoding! #############")
             except:
                 print("This error comes with multi geocoding! Check previous processing results and try it again!")
 
@@ -312,6 +319,7 @@ def coreg(processing_step, clean_flag, bperp_max, delta_T_max, polarization=None
                 os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[i + 1] + " "
                           + pol_list[i + 1] + " " + rslc_list[i + 1] + " " + rdc_hgt_list[0] + " "
                           + range_looks + " " + azimuth_looks + " - - - - - " + clean_flag)
+                print("############# Succesfully finished single coregistration! #############")
             except:
                 print("This error comes with single reference coregistration! ")
                 print("Check previous processing results and try it again!")
@@ -345,6 +353,7 @@ def coreg(processing_step, clean_flag, bperp_max, delta_T_max, polarization=None
                 os.system("S1_coreg_TOPS " + Paths.slc_dir + SLC1_tab + " " + ref + " " + Paths.slc_dir + SLC2_tab +
                           " " + coreg_scene_list[i] + " " + Paths.slc_dir + RSLC_tab + " " + hgt_list + " " +
                           range_looks + " " + azimuth_looks + " - - - - - " + clean_flag)
+                print("############# Succesfully finished SBAS coregistration! #############")
             except:
                 print("This error comes with multi-reference coregistration (SBAS)! ")
                 print("Check previous processing results and try it again!")
@@ -382,6 +391,7 @@ def coherence_calc():
     for diff in diff_list:
         try:
             os.system("cc_wave " + diff + " - - " + diff[:len(diff) - 5] + ".cc " + range_samples)
+            print("############# Succesfully finished coherence estimation! #############")
         except:
             print("This error comes with coherence estimation! Check previous processing results and try it again!")
 
@@ -436,6 +446,7 @@ def geocode_coherence(create_rasterstack, stackname):
                          output_file=geocode_file, out_width=out_width)
 
             data2geotiff(dem_par_file=dem_par_list[i], geocode_mli=geocode_file, output_file=output_file)
+            print("############# Succesfully finished back geocoding and data export! #############")
         except:
             print("This error comes with the back geocoding of the output coherence images! ")
             print("Check previous processing results and try it again!")
