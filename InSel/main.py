@@ -43,19 +43,19 @@ if __name__ == '__main__':
     def SBAS_processing(processing_step, swath_flag, polarization, resolution, demType, buffer, clean_flag, bperp_max,
                         delta_T_max, stackname):
 
-        SLC_import(polarization=[Processing.polarization], swath_flag=swath_flag)
+        # SLC_import(polarization=[Processing.polarization], swath_flag=swath_flag)
+        #
+        # multilook(processing_step, resolution)
+        #
+        # gc_map(processing_step, demType, buffer)
+        #
+        # geocode_dem(processing_step)
 
-        multilook(processing_step, resolution)
+        # coreg(processing_step, clean_flag, bperp_max, delta_T_max, polarization, resolution)
 
-        gc_map(processing_step, demType, buffer)
+        # coherence_calc()
 
-        geocode_dem(processing_step)
-
-        coreg(processing_step, clean_flag, bperp_max, delta_T_max, polarization, resolution)
-
-        coherence_calc()
-
-        geocode_coherence()
+        # geocode_coherence()
 
         raster_stack(stackname)
 

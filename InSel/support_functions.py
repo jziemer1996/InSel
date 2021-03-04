@@ -248,11 +248,11 @@ def raster_stack(stackname):
     meta.update(count=counts)
 
     # Check if filename already exists
-    if os.path.exists(Paths.slc_dir + stackname):
+    if os.path.exists(Paths.stack_dir + stackname):
         raise Exception("Name for raster stack already exists! Please delete it or specify a new one first!")
 
     # Write coherence rasterstacks
-    with rio.open(Paths.slc_dir + stackname, 'w', **meta) as ff:
+    with rio.open(Paths.stack_dir + stackname, 'w', **meta) as ff:
         for ii, ifile in enumerate(geotiff_list):
             bands = rio.open(ifile, 'r').read()
             for band in bands:

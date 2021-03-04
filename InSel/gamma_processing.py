@@ -397,8 +397,9 @@ def geocode_coherence():
                 out_width = dem_width_dict.get("width")
 
     for i, cc in enumerate(cc_list):
-        geocode_file = cc[:len(cc)-3] + ".mli"
-        output_file = cc[:len(cc)-3] + ".tif"
+        geocode_file = Paths.results_dir + cc[len(cc)-20:len(cc)-3] + ".mli"
+        output_file = Paths.results_dir + cc[len(cc)-20:len(cc)-3] + ".tif"
+
         geocode_back(input_file=cc, range_samples=range_samples, dem_lut=lut_list[i],
                      output_file=geocode_file, out_width=out_width)
 
