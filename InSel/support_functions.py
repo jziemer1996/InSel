@@ -254,7 +254,7 @@ def raster_stack(stackname):
     :param stackname: string
         name of output raster stack of coherence images
     """
-    geotiff_list = extract_files_to_list(path_to_folder=Paths.slc_dir, datatype=".tif", datascenes_file=None)
+    geotiff_list = extract_files_to_list(path_to_folder=Paths.results_dir, datatype=".tif", datascenes_file=None)
     geotiff_list = sorted(geotiff_list)
 
     first_band = rio.open(geotiff_list[0], "r")
