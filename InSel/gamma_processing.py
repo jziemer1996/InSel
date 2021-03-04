@@ -142,7 +142,7 @@ def gc_map(processing_step, demType, buffer):
     if processing_step == "single":
         main_mli = mli_file_list[0]
 
-        # Automatically create DEM and DEM_par files using pyroSAR:
+        # automatically create DEM and DEM_par files using pyroSAR:
         dem_name = main_mli[len(main_mli) - 16:len(main_mli) - 8] + ".dem"
         create_dem_for_gamma(Paths.dem_dir, dem_name, demType, Paths.shapefile_dir, buffer)
 
@@ -162,7 +162,7 @@ def gc_map(processing_step, demType, buffer):
     # execute this branch, if using SBAS and special preprocessing
     if processing_step == "multi":
         for mli in mli_file_list:
-            # Automatically create DEM and DEM_par files using pyroSAR:
+            # automatically create DEM and DEM_par files using pyroSAR:
             dem_name = mli[len(mli) - 16:len(mli) - 8] + ".dem"
             create_dem_for_gamma(Paths.dem_dir, dem_name, demType, Paths.shapefile_dir, buffer)
 
@@ -288,14 +288,14 @@ def coreg(processing_step, clean_flag, bperp_max, delta_T_max, polarization=None
         if pol in tab:
             rslc_file = tab[:len(tab) - 8] + ".RSLC_tab"
             shutil.copy2(tab, rslc_file)
-            # Read in the file
+            # read in the file
             with open(rslc_file, 'r') as file:
                 filedata = file.read()
 
-            # Replace the target string
+            # replace the target string
             filedata = filedata.replace('slc', 'rslc')
 
-            # Write the file out again
+            # write the file out again
             with open(rslc_file, 'w') as file:
                 file.write(filedata)
 
