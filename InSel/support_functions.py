@@ -35,7 +35,9 @@ def deburst_S1_SLC(datascenes_file):
     :param datascenes_file: string
         if filename is specified, list is exported to file
     """
+    # get all zip files from download folder
     zip_file_list = extract_files_to_list(Paths.download_dir, datatype=".zip", datascenes_file=datascenes_file)
+    # deburst all files in zip_file_list
     for file in zip_file_list:
         file_name = file[file.find("S1A"):len(file) - 4] + ".burst_number_table"
         print("Mainfile is...:" + file)
@@ -61,6 +63,7 @@ def create_dem_for_gamma(dem_dir, dem_name, demType, shapefile_path, buffer):
     from spatialist.vector import Vector
     from pyroSAR.gamma.dem import dem_autocreate
     shape_vector = Vector(filename=shapefile_path)
+    # specify name of output dem
     dem_output = dem_dir + dem_name
     dem_autocreate(geometry=shape_vector, demType=demType, outfile=dem_output, buffer=buffer)
 
@@ -134,14 +137,17 @@ def read_file_for_coreg():
         coreg_scene_list: list
             returns list of scenes which will be coregistered with their corresponding reference scene
     """
+    # specify input filename
     file = Paths.slc_dir + "baseline_plot.out"
     columns = []
+    # split input file into two lists for use in SBAS
     ref_scene_list = []
     coreg_scene_list = []
     with open(file, 'r') as token:
         for line in token:
             test = line.splitlines()[0]
             columns.append(test.split())
+        # write lists
         for elem in columns:
             ref_scene_list.append(elem[1])
             coreg_scene_list.append(elem[2])
@@ -151,14 +157,17 @@ def read_file_for_coreg():
 
 def file_for_sbas_graph():
     """
-    Function to write SLC_tab list for SBAS inteferogram pairs
+    Function to write SLC_tab list for SBAS interferogram pairs
     """
+    # get all vv.slc.iw1.par files from slc folder
     sbas_list = extract_files_to_list(Paths.slc_dir, datatype="vv.slc.iw1.par", datascenes_file=None)
     sbas_list = sorted(sbas_list)
+    # generate SBAS list
     sbas_nopar_list = []
     for element in sbas_list:
         sbas_nopar_list.append(element[:len(element) - 4])
     merge_list = [sbas_nopar_list, sbas_list]
+    # write SLC_tab file
     with open(Paths.slc_dir + "SLC_tab", "w") as file:
         for x in zip(*merge_list):
             file.write("{0}\t{1}\n".format(*x))
@@ -193,16 +202,17 @@ def sbas_graph(bperp_max, delta_T_max):
     for elem in rslc_path_list:
         rslc_par_list.append(elem[len(Paths.slc_dir):len(elem)])
 
-    os.system("base_calc " + Paths.slc_dir + "/SLC_tab " + Paths.slc_dir + rslc_par_list[0] + " " + Paths.slc_dir +
-              "baseline_plot.out " + Paths.slc_dir + "baselines.txt " + itab_type + pltflg + bperp_min + str(bperp_max)
-              + " " + delta_T_min + str(delta_T_max))
+    try:
+        os.system("base_calc " + Paths.slc_dir + "/SLC_tab " + Paths.slc_dir + rslc_par_list[0] + " " + Paths.slc_dir +
+                  "baseline_plot.out " + Paths.slc_dir + "baselines.txt " + itab_type + pltflg + bperp_min +
+                  str(bperp_max) + " " + delta_T_min + str(delta_T_max))
+    except:
+        print("This error comes with SBAS graph generation! Check previous processing results and try it again!")
 
     return rslc_par_list
 
 
 def geocode_back(input_file, range_samples, dem_lut, output_file, out_width):
-
-    # TODO: input_file list or string?
     """
     Function used to geocode image data using a geocoding lookup table
     :param input_file: string
@@ -221,8 +231,6 @@ def geocode_back(input_file, range_samples, dem_lut, output_file, out_width):
 
 
 def data2geotiff(dem_par_file, geocode_mli, output_file):
-
-    # TODO: input_file list or string?
     """
     Function to convert geocoded data with DEM parameter file to GeoTIFF format
     :param dem_par_file: string
@@ -236,7 +244,6 @@ def data2geotiff(dem_par_file, geocode_mli, output_file):
 
 
 def raster_stack(stackname):
-    # TODO: ADD OVERWRITE OPTION!?
     """
     This function stacks the clipped raster files to one raster time series stack for each polarization and flight
     direction
@@ -249,18 +256,18 @@ def raster_stack(stackname):
     first_band = rio.open(geotiff_list[0], "r")
     meta = first_band.meta.copy()
 
-    # Replace metadata with new count and create a new file
+    # replace metadata with new count and create a new file
     counts = 0
     for ifile in geotiff_list:
         with rio.open(ifile, 'r') as ff:
             counts += ff.meta['count']
     meta.update(count=counts)
 
-    # Check if filename already exists
+    # check if filename already exists
     if os.path.exists(Paths.stack_dir + stackname):
         raise Exception("Name for raster stack already exists! Please delete it or specify a new one first!")
 
-    # Write coherence rasterstacks
+    # write coherence rasterstacks
     with rio.open(Paths.stack_dir + stackname, 'w', **meta) as ff:
         for ii, ifile in enumerate(geotiff_list):
             bands = rio.open(ifile, 'r').read()
