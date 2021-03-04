@@ -17,11 +17,13 @@ def extract_files_to_list(path_to_folder, datatype, datascenes_file=None):
             returns list of paths to files
     """
     new_list = []
+    # iterate through given directory and collect all files with specified datatype
     for filename in os.listdir(path_to_folder):
         if datatype in filename:
             new_list.append(os.path.join(path_to_folder, filename))
         else:
             continue
+    # if datascenes_file is specified, list will be saved as file
     if datascenes_file is not None:
         with open(datascenes_file, 'w') as f:
             for item in new_list:
@@ -80,13 +82,15 @@ def calculate_multilook_resolution(res):
         azimuth_looks: string:
             number of azimuth looks to archive desired multilook resolution
     """
-    # allow user-defined resolutions in increments of 20m
     default_resolution = 40
 
+    # set default resolution, if none is specified
     if res is None:
         res = default_resolution
         range_looks = 8
         azimuth_looks = 2
+
+    # allow user-defined resolutions in increments of 20m
     if res is not None and res % 20 == 0:
         range_looks = int(res / 5)
         azimuth_looks = int(res / 20)
