@@ -39,8 +39,12 @@ def SLC_import(polarization=None, swath_flag=None):
                 f.write(element)
                 print(element[:len(element) - 4])
             for pol_type in polarization:
-                os.system("S1_import_SLC_from_zipfiles " + one_scene_file + " " + element[:len(element) - 4] +
-                          "burst_number_table" + " " + pol_type + " 0 " + swath_flag + " " + Paths.orbit_file_dir + " 1")
+                try:
+                    os.system("S1_import_SLC_from_zipfiles " + one_scene_file + " " + element[:len(element) - 4] +
+                              "burst_number_table" + " " + pol_type + " 0 " + swath_flag + " " +
+                              Paths.orbit_file_dir + " 1")
+                except:
+                    print("This error comes with SLC import! Check previous processing results and try it again!")
 
         delete_files = ".burst_number_table"
         delete_list = extract_files_to_list(path_to_folder=Paths.slc_dir, datatype=delete_files, datascenes_file=None)
@@ -74,8 +78,11 @@ def multilook(processing_step, res=None):
     if processing_step == "single":
         output_name = Paths.multilook_dir + tab_file_list[0][len(Paths.slc_dir):len(tab_file_list[0]) - 11]
         os.chdir(Paths.slc_dir)
-        os.system("multi_look_ScanSAR " + tab_file_list[0] + " " + output_name + ".mli " + output_name + ".mli.par "
+        try:
+            os.system("multi_look_ScanSAR " + tab_file_list[0] + " " + output_name + ".mli " + output_name + ".mli.par "
                   + rlks_azlks_var + " " + str(default_burst_window_calc_flag))
+        except:
+            print("This error comes with single multilooking! Check previous processing results and try it again!")
 
     # execute this branch, if using SBAS and special preprocessing
     if processing_step == "multi":
@@ -83,8 +90,11 @@ def multilook(processing_step, res=None):
         for slc in tab_file_list:
             output_name = Paths.multilook_dir + slc[len(Paths.slc_dir):len(slc) - 11]
             # os.chdir(Paths.slc_dir)
-            os.system("multi_look_ScanSAR " + slc + " " + output_name + ".mli " + output_name + ".mli.par "
-                      + rlks_azlks_var + " " + str(default_burst_window_calc_flag))
+            try:
+                os.system("multi_look_ScanSAR " + slc + " " + output_name + ".mli " + output_name + ".mli.par "
+                          + rlks_azlks_var + " " + str(default_burst_window_calc_flag))
+            except:
+                print("This error comes with SBAS multilooking! Check previous processing results and try it again!")
 
 
 def gc_map(processing_step, demType, buffer):
@@ -138,10 +148,12 @@ def gc_map(processing_step, demType, buffer):
         dem_seg_par = Paths.dem_dir + dem_name + "_seg.par "
         dem_seg = Paths.dem_dir + dem_name + "_seg "
         dem_lut = Paths.dem_dir + dem_name + "_lookup.lut "
-
-        os.system("gc_map " + main_mli + " - " + dem_par + dem + dem_seg_par + dem_seg + dem_lut + lat_ovr + lon_ovr
-                  + sim_sar + zen_angle + ori_angle + loc_inc_angle + proj_angle + pix_norm_factor + frame + ls_mode
-                  + r_ovr)
+        try:
+            os.system("gc_map " + main_mli + " - " + dem_par + dem + dem_seg_par + dem_seg + dem_lut + lat_ovr + lon_ovr
+                      + sim_sar + zen_angle + ori_angle + loc_inc_angle + proj_angle + pix_norm_factor + frame + ls_mode
+                      + r_ovr)
+        except:
+            print("This error comes with single gc_map! Check previous processing results and try it again!")
 
     # execute this branch, if using SBAS and special preprocessing
     if processing_step == "multi":
@@ -155,10 +167,12 @@ def gc_map(processing_step, demType, buffer):
             dem_seg_par = Paths.dem_dir + dem_name + "_seg.par "
             dem_seg = Paths.dem_dir + dem_name + "_seg "
             dem_lut = Paths.dem_dir + dem_name + "_lookup.lut "
-
-            os.system("gc_map " + mli + " - " + dem_par + dem + dem_seg_par + dem_seg + dem_lut + lat_ovr + lon_ovr
-                      + sim_sar + zen_angle + ori_angle + loc_inc_angle + proj_angle + pix_norm_factor + frame + ls_mode
-                      + r_ovr)
+            try:
+                os.system("gc_map " + mli + " - " + dem_par + dem + dem_seg_par + dem_seg + dem_lut + lat_ovr + lon_ovr
+                          + sim_sar + zen_angle + ori_angle + loc_inc_angle + proj_angle + pix_norm_factor + frame +
+                          ls_mode + r_ovr)
+            except:
+                print("This error comes with multi gc_map! Check previous processing results and try it again!")
 
 
 def geocode_dem(processing_step):
@@ -198,8 +212,11 @@ def geocode_dem(processing_step):
         dem_par_dict = get_par_as_dict(dem_par_list[0])
         dem_width = dem_par_dict.get("width")
 
-        os.system("geocode " + lut_list[0] + " " + dem_seg_list[0] + " " + dem_width + " " + hgt_out_list[0] + " "
-                  + range_samples + " " + azimuth_lines + " - -")
+        try:
+            os.system("geocode " + lut_list[0] + " " + dem_seg_list[0] + " " + dem_width + " " + hgt_out_list[0] + " "
+                      + range_samples + " " + azimuth_lines + " - -")
+        except:
+            print("This error comes with single geocoding! Check previous processing results and try it again!")
 
     # execute this branch, if using SBAS and special preprocessing
     if processing_step == "multi":
@@ -210,8 +227,11 @@ def geocode_dem(processing_step):
 
             dem_par_dict = get_par_as_dict(dem_par_list[i])
             dem_width = dem_par_dict.get("width")
-            os.system("geocode " + lut_list[i] + " " + dem_seg_list[i] + " " + dem_width + " " + hgt_out_list[i] + " "
-                      + range_samples + " " + azimuth_lines + " - -")
+            try:
+                os.system("geocode " + lut_list[i] + " " + dem_seg_list[i] + " " + dem_width + " " + hgt_out_list[i]
+                          + " " + range_samples + " " + azimuth_lines + " - -")
+            except:
+                print("This error comes with multi geocoding! Check previous processing results and try it again!")
 
 
 def coreg(processing_step, clean_flag, bperp_max, delta_T_max, polarization=None, res=None):
@@ -288,15 +308,19 @@ def coreg(processing_step, clean_flag, bperp_max, delta_T_max, polarization=None
     # execute this branch, if only using coreg and normal preprocessing
     if processing_step == "single":
         for i in range(0, len(tab_pol_list) - 1):
-            os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[i + 1] + " "
-                      + pol_list[i + 1] + " " + rslc_list[i + 1] + " " + rdc_hgt_list[0] + " "
-                      + range_looks + " " + azimuth_looks + " - - - - - " + clean_flag)
+            try:
+                os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[i + 1] + " "
+                          + pol_list[i + 1] + " " + rslc_list[i + 1] + " " + rdc_hgt_list[0] + " "
+                          + range_looks + " " + azimuth_looks + " - - - - - " + clean_flag)
+            except:
+                print("This error comes with single reference coregistration! ")
+                print("Check previous processing results and try it again!")
 
     # execute this branch, if using SBAS and special preprocessing
     if processing_step == "multi":
 
         elem = tab_pol_list[0]
-        rslc_path = elem[:len(elem)-11] + ".rslc.par"
+        rslc_path = elem[:len(elem) - 11] + ".rslc.par"
 
         if not os.path.exists(rslc_path):
             os.system("S1_coreg_TOPS " + tab_pol_list[0] + " " + pol_list[0] + " " + tab_pol_list[1] + " "
@@ -317,9 +341,13 @@ def coreg(processing_step, clean_flag, bperp_max, delta_T_max, polarization=None
 
             hgt_list = Paths.dem_dir + ref + "_out.rdc_hgt"
 
-            os.system("S1_coreg_TOPS " + Paths.slc_dir + SLC1_tab + " " + ref + " " + Paths.slc_dir + SLC2_tab + " " +
-                      coreg_scene_list[i] + " " + Paths.slc_dir + RSLC_tab + " " + hgt_list + " " + range_looks
-                      + " " + azimuth_looks + " - - - - - " + clean_flag)
+            try:
+                os.system("S1_coreg_TOPS " + Paths.slc_dir + SLC1_tab + " " + ref + " " + Paths.slc_dir + SLC2_tab +
+                          " " + coreg_scene_list[i] + " " + Paths.slc_dir + RSLC_tab + " " + hgt_list + " " +
+                          range_looks + " " + azimuth_looks + " - - - - - " + clean_flag)
+            except:
+                print("This error comes with multi-reference coregistration (SBAS)! ")
+                print("Check previous processing results and try it again!")
 
 
 def coherence_calc():
@@ -352,7 +380,10 @@ def coherence_calc():
             range_samples = mli_par_dict.get("range_samples")
 
     for diff in diff_list:
-        os.system("cc_wave " + diff + " - - " + diff[:len(diff)-5] + ".cc " + range_samples)
+        try:
+            os.system("cc_wave " + diff + " - - " + diff[:len(diff) - 5] + ".cc " + range_samples)
+        except:
+            print("This error comes with coherence estimation! Check previous processing results and try it again!")
 
 
 def geocode_coherence(create_rasterstack, stackname):
@@ -397,13 +428,17 @@ def geocode_coherence(create_rasterstack, stackname):
                 out_width = dem_width_dict.get("width")
 
     for i, cc in enumerate(cc_list):
-        geocode_file = Paths.results_dir + cc[len(cc)-20:len(cc)-3] + ".mli"
-        output_file = Paths.results_dir + cc[len(cc)-20:len(cc)-3] + ".tif"
+        geocode_file = Paths.results_dir + cc[len(cc) - 20:len(cc) - 3] + ".mli"
+        output_file = Paths.results_dir + cc[len(cc) - 20:len(cc) - 3] + ".tif"
 
-        geocode_back(input_file=cc, range_samples=range_samples, dem_lut=lut_list[i],
-                     output_file=geocode_file, out_width=out_width)
+        try:
+            geocode_back(input_file=cc, range_samples=range_samples, dem_lut=lut_list[i],
+                         output_file=geocode_file, out_width=out_width)
 
-        data2geotiff(dem_par_file=dem_par_list[i], geocode_mli=geocode_file, output_file=output_file)
+            data2geotiff(dem_par_file=dem_par_list[i], geocode_mli=geocode_file, output_file=output_file)
+        except:
+            print("This error comes with the back geocoding of the output coherence images! ")
+            print("Check previous processing results and try it again!")
 
     if create_rasterstack:
         raster_stack(stackname)
