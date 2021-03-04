@@ -164,6 +164,7 @@ def gc_map(processing_step, demType, buffer):
         for mli in mli_file_list:
             # automatically create DEM and DEM_par files using pyroSAR:
             dem_name = mli[len(mli) - 16:len(mli) - 8] + ".dem"
+            # see support_functions for source code, credit to John Truckenbrodt
             create_dem_for_gamma(Paths.dem_dir, dem_name, demType, Paths.shapefile_dir, buffer)
 
             dem_par = Paths.dem_dir + dem_name + ".par "
