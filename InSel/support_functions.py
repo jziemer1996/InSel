@@ -45,12 +45,18 @@ def deburst_S1_SLC(datascenes_file):
 
 def create_dem_for_gamma(dem_dir, dem_name, demType, shapefile_path, buffer):
     """
-    # TODO: add docstrings!
-    :param dem_dir:
-    :param dem_name:
-    :param demType:
-    :param shapefile_path:
-    :param buffer:
+    Function to automatically create a DEM in Gamma format for a defined spatial geometry (from pyroSAR docs:
+        https://pyrosar.readthedocs.io/en/latest/pyroSAR.html#pyroSAR.gamma.dem.dem_autocreate)
+    :param dem_dir: str
+        the output path of the final DEM file
+    :param dem_name: str
+        the name of the final DEM file
+    :param demType: str
+         the type of DEM to be used
+    :param shapefile_path: str
+        path of the shapefile to specify the spatial dimensions
+    :param buffer: float
+        a buffer in degrees to create around the geometry
     """
     from spatialist.vector import Vector
     from pyroSAR.gamma.dem import dem_autocreate
@@ -88,10 +94,13 @@ def calculate_multilook_resolution(res):
 
 
 def get_par_as_dict(path):
-    # TODO: add docstrings!
     """
-
+    Function that imports parameter file as python readable dictionary to extract needed values based on specified keys
+    :param path: string
+        specifies path to desired par file
     :return:
+        par_dict: dict:
+            dictionary containing all lines from the par files with information about the file in key value pairs
     """
     par_file = open(path, 'r')
     par_dict = {}
