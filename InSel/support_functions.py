@@ -279,3 +279,132 @@ def raster_stack(stackname):
                 ff.write(band, ii + 1)
 
 
+
+def import_polygons(shape_path):
+    import fiona
+    """
+    This function imports shapefile from given directory to python
+    :param shape_path: string
+        Path to shapefile
+    :return: list
+        Returns a list of all elements in shapefile
+    """
+    active_shapefile = fiona.open(shape_path, "r")
+    for i in range(0, len(list(active_shapefile))):
+        shapes = [feature["geometry"] for feature in active_shapefile]
+    return shapes
+
+
+def create_point_buffer(point_path, buffer_size):
+    """
+    This function is similar to create_shape_buffer but works for point shapefiles
+    :param point_path: string
+        Path to the shapefile
+    :param buffer_size: int
+        Buffer size corresponds to the length of the square buffer around the vertex point
+    :return: list
+        Returns a list with buffered polygons around each point of input polygon
+    """
+    import_list = import_polygons(shape_path=point_path)
+    buffer_size = buffer_size / 2
+    buffer_list = []
+    for i in range(0, len(import_list)):
+        lon = import_list[i]["coordinates"][0]
+        lat = import_list[i]["coordinates"][1]
+
+        def create_buffer(lat, lon, buffer_size):
+            upper_left = (lon - buffer_size, lat + buffer_size)
+            upper_right = (lon + buffer_size, lat + buffer_size)
+            lower_left = (lon - buffer_size, lat - buffer_size)
+            lower_right = (lon + buffer_size, lat - buffer_size)
+            return upper_left, upper_right, lower_left, lower_right
+
+        upper_left, upper_right, lower_left, lower_right = create_buffer(lat, lon, buffer_size)
+
+        buffer_coord = [[upper_left, upper_right, lower_right, lower_left, upper_left]]
+        buffer = {"type": "Polygon", "coordinates": buffer_coord}
+        buffer_list.append(buffer)
+    return buffer_list
+
+
+def extract_dates(directory):
+    """
+    Extracts dates from list of preprocessed S-1 GRD files (need to be in standard pyroSAR exported naming scheme!)
+    :param directory: string
+        Path to folder, where files are stored
+    :return: list
+        returns list of acquisition dates of S-1 GRD files
+    """
+    file_list = extract_files_to_list(path_to_folder=directory, datatype=".tif")
+    date_list = []
+    for file in file_list:
+        date_list.append(int(file[2:10]))
+    return date_list
+
+
+def extract_time_series(results_dir, shapefile, buffer_size):
+    import numpy as np
+    import rasterio.mask
+    import rasterio as rio
+    import matplotlib.pyplot as plt
+    """
+    Extracts time series information from patches of pixels using points and a buffer size to specify the size of the
+    patch
+    :param shapefile: string
+        Path to point shapefile including name of shapefile
+    :param results_dir: string
+        Path to results directory, where layerstacks are stored and csv files will be stored
+    :param point_path: string
+        Path to point shapefile directory
+    :param buffer_size: int
+        Buffer size specifies the length of the rectangular buffer around the point
+    """
+    # Import Patches for each class and all 4 layerstacks (VH/VV/Asc/Desc)
+    patches = create_point_buffer(shapefile, buffer_size=buffer_size)
+    layer_stacks = extract_files_to_list(path_to_folder=results_dir, datatype=".tif")
+    class_list = []
+    # Iterate through all layerstacks:
+    for file in layer_stacks:
+        src1 = rio.open(file)
+        patch_mean = []
+        # Iterate through all patches of current class
+        for patch in patches:
+            pixel_mean = []
+            out_image, out_transform = rio.mask.mask(src1, [patch], all_touched=1, crop=True, nodata=np.nan)
+            # print(len(out_image[0]))
+            # Calculate Mean for each patch:
+            for pixel in out_image:
+                pixel_mean.append(np.nanmean(pixel))
+            patch_mean.append(pixel_mean)
+
+        # TODO: add date extract function???
+        # patch_mean.append(extract_dates(results_dir + "temp" + "/"))
+
+        patch_mean = np.rot90(patch_mean)
+        patch_mean = np.rot90(patch_mean)
+        patch_mean = np.rot90(patch_mean)
+        patch_mean = patch_mean.tolist()
+        src1.close()
+        class_list.append(patch_mean)
+
+    class_time_series = []
+    for example_class in class_list:
+        mean_list = []
+        for time in example_class:
+            mean_list.append(np.mean(time))
+    return mean_list
+
+
+def plot_time_series(point_path, coherence_stack_dir):
+    import matplotlib.pyplot as plt
+    # point_path = "C:/Users/marli/PycharmProjects/InSel/InSel/shapefiles/point_samples/"
+    # results_dir = "C:/Users/marli/Google Drive/Studium/Master/2.Semester/GEO410/Daten/Koheränzen/"
+    point_list = extract_files_to_list(path_to_folder=point_path, datatype=".shp")
+    print(point_list)
+    test_list = []
+    for shapefile in point_list:
+        test_list.append(extract_time_series(results_dir=coherence_stack_dir, shapefile=shapefile, buffer_size=0.001))
+    print(test_list)
+    for elem in test_list:
+        plt.plot(elem)
+    plt.show()

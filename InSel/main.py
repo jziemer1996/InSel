@@ -38,11 +38,14 @@ if __name__ == '__main__':
         sentinel_download.copernicus_download()
 
     ##### GAMMA processing function #####
-    processing(processing_step=Processing.processing_step, swath_flag=Processing.swath_flag,
-               polarization=Processing.polarization, resolution=Processing.resolution, demType=Processing.demType,
-               buffer=Processing.buffer, clean_flag=Processing.clean_flag, bperp_max=Processing.bperp_max,
-               delta_T_max=Processing.delta_T_max, create_rasterstack=Processing.create_rasterstack,
-               stackname=Processing.stackname)
+    # processing(processing_step=Processing.processing_step, swath_flag=Processing.swath_flag,
+    #            polarization=Processing.polarization, resolution=Processing.resolution, demType=Processing.demType,
+    #            buffer=Processing.buffer, clean_flag=Processing.clean_flag, bperp_max=Processing.bperp_max,
+    #            delta_T_max=Processing.delta_T_max, create_rasterstack=Processing.create_rasterstack,
+    #            stackname=Processing.stackname)
+
+    if Processing.plot_bool:
+        plot_time_series(point_path=Paths.point_samples_dir, coherence_stack_dir=Paths.stack_dir)
 
     end_time = datetime.now()
 

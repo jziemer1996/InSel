@@ -11,6 +11,7 @@ def user_data():
 
     # text
     shapefile_dir = home_path + "GEO410/Scripts/InSel/shapefiles/augrabies_extent.shp"
+    point_samples_dir = home_path + "GEO410/Scripts/InSel/shapefiles/points/"
     # TODO: ORBIT FILES DIRECTORY??????
     orbit_file_dir = home_path + "GEO410_data/orbit_files/"
 
@@ -37,24 +38,25 @@ def user_data():
     delta_T_max = 48
     create_rasterstack = False
     stackname = "res_stack_in_dir.tif"
+    plot_bool = False
 
-    return home_path, download_dir, shapefile_dir, orbit_file_dir, username, password, api_url, start_date, end_date, \
-           satellite, min_overlap, product, download, processing_step, swath_flag, polarization, resolution, demType, \
-           buffer, clean_flag, bperp_max, delta_T_max, create_rasterstack, stackname
+    return home_path, download_dir, shapefile_dir, point_samples_dir, orbit_file_dir, username, password, api_url, \
+           start_date, end_date, satellite, min_overlap, product, download, processing_step, swath_flag, polarization, \
+           resolution, demType, buffer, clean_flag, bperp_max, delta_T_max, create_rasterstack, stackname, plot_bool
 
 
 class Paths(object):
-    home_path, download_dir, shapefile_dir, orbit_file_dir = user_data()[0:4]
+    home_path, download_dir, shapefile_dir, point_samples_dir, orbit_file_dir = user_data()[0:5]
 
-    # processing_dir = home_path + "GEO410_data/"
-    # list_dir = home_path + "GEO410_data/lists/"
-    # slc_dir = home_path + "GEO410_data/slc/"
-    # dem_dir = home_path + "GEO410_data/DEM/"
+    processing_dir = home_path + "GEO410_data/"
+    list_dir = home_path + "GEO410_data/lists/"
+    slc_dir = home_path + "GEO410_data/slc/"
+    dem_dir = home_path + "GEO410_data/DEM/"
 
-    processing_dir = home_path + "GAMMA_testdata_1/"
-    list_dir = home_path + "GAMMA_testdata_1/lists/"
-    slc_dir = home_path + "GAMMA_testdata_1/slc/"
-    dem_dir = home_path + "GAMMA_testdata_1/DEM/"
+    # processing_dir = home_path + "GAMMA_testdata_1/"
+    # list_dir = home_path + "GAMMA_testdata_1/lists/"
+    # slc_dir = home_path + "GAMMA_testdata_1/slc/"
+    # dem_dir = home_path + "GAMMA_testdata_1/DEM/"
 
     multilook_dir = slc_dir + "multilook/"
     results_dir = slc_dir + "coherence_results/"
@@ -83,9 +85,9 @@ class Paths(object):
 
 
 class DownloadParams(object):
-    username, password, api_url, start_date, end_date, satellite, min_overlap, product, download = user_data()[4:13]
+    username, password, api_url, start_date, end_date, satellite, min_overlap, product, download = user_data()[5:14]
 
 
 class Processing(object):
     processing_step, swath_flag, polarization, resolution, demType, buffer, clean_flag, bperp_max, delta_T_max, \
-    create_rasterstack, stackname = user_data()[13:]
+    create_rasterstack, stackname, plot_bool = user_data()[14:]
