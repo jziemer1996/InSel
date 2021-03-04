@@ -355,7 +355,7 @@ def coherence_calc():
         os.system("cc_wave " + diff + " - - " + diff[:len(diff)-5] + ".cc " + range_samples)
 
 
-def geocode_coherence():
+def geocode_coherence(create_rasterstack, stackname):
     """
     Function to geocode back resulting files (.cc) of coherence_calc function for export preparation (.tif)
     """
@@ -404,3 +404,6 @@ def geocode_coherence():
                      output_file=geocode_file, out_width=out_width)
 
         data2geotiff(dem_par_file=dem_par_list[i], geocode_mli=geocode_file, output_file=output_file)
+
+    if create_rasterstack:
+        raster_stack(stackname)
