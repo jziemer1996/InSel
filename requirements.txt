@@ -1,3 +1,7 @@
-gamma_processing
 GDAL
+rasterio
+fiona
+numpy
+matplotlib
 sentinelsat
+pyroSAR
