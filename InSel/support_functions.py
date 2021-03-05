@@ -7,14 +7,14 @@ def extract_files_to_list(path_to_folder, datatype, datascenes_file=None):
     """
     Function to extract files of given datatype from given directory and return as a list
     :param path_to_folder: string
-        path to folder, where files are to be extracted from
+        Path to folder, where files are to be extracted from
     :param datatype: string
-        datatype of files to return from given folder
+        Datatype of files to return from given folder
     :param datascenes_file: string
-        if filename is specified, list is exported to file
+        If filename is specified, list is exported to file
     :return:
         new_list: list
-            returns list of paths to files
+            Returns list of paths to files
     """
     new_list = []
     # iterate through given directory and collect all files with specified datatype
@@ -35,7 +35,7 @@ def deburst_S1_SLC(datascenes_file):
     """
     Function used to generate S1_BURST_tab to support burst selection
     :param datascenes_file: string
-        if filename is specified, list is exported to file
+        If filename is specified, list is exported to file
     """
     # get all zip files from download folder
     zip_file_list = extract_files_to_list(Paths.download_dir, datatype=".zip", datascenes_file=datascenes_file)
@@ -52,15 +52,15 @@ def create_dem_for_gamma(dem_dir, dem_name, demType, shapefile_path, buffer):
     Function to automatically create a DEM in Gamma format for a defined spatial geometry (from pyroSAR docs:
         https://pyrosar.readthedocs.io/en/latest/pyroSAR.html#pyroSAR.gamma.dem.dem_autocreate)
     :param dem_dir: str
-        the output path of the final DEM file
+        The output path of the final DEM file
     :param dem_name: str
-        the name of the final DEM file
+        The name of the final DEM file
     :param demType: str
-         the type of DEM to be used
+         The type of DEM to be used
     :param shapefile_path: str
-        path of the shapefile to specify the spatial dimensions
+        Path of the shapefile to specify the spatial dimensions
     :param buffer: float
-        a buffer in degrees to create around the geometry
+        A buffer in degrees to create around the geometry
     """
     from spatialist.vector import Vector
     from pyroSAR.gamma.dem import dem_autocreate
@@ -74,13 +74,13 @@ def calculate_multilook_resolution(res):
     """
     Function that calculates number of range and azimuth looks according to desired resolution
     :param res: int
-        specifies the output multilook resolution by adjusting range and azimuth multipliers accordingly. Currently only
+        Specifies the output multilook resolution by adjusting range and azimuth multipliers accordingly. Currently only
         20 or multiples thereof allowed (default: 40)
     :return:
-        range_looks: string:
-            number of range looks to archive desired multilook resolution
-        azimuth_looks: string:
-            number of azimuth looks to archive desired multilook resolution
+        range_looks: string
+            Number of range looks to archive desired multilook resolution
+        azimuth_looks: string
+            Number of azimuth looks to archive desired multilook resolution
     """
     default_resolution = 40
 
@@ -104,10 +104,10 @@ def get_par_as_dict(path):
     """
     Function that imports parameter file as python readable dictionary to extract needed values based on specified keys
     :param path: string
-        specifies path to desired par file
+        Specifies path to desired par file
     :return:
-        par_dict: dict:
-            dictionary containing all lines from the par files with information about the file in key value pairs
+        par_dict: dict
+            Dictionary containing all lines from the par files with information about the file in key value pairs
     """
     par_file = open(path, 'r')
     par_dict = {}
@@ -137,9 +137,9 @@ def read_file_for_coreg():
     Function to read textfile with interferogram pairs generated in sbas_graph function
     :return:
         ref_scene_list: list
-            returns list of reference scenes according to the SBAS procedure
+            Returns list of reference scenes according to the SBAS procedure
         coreg_scene_list: list
-            returns list of scenes which will be coregistered with their corresponding reference scene
+            Returns list of scenes which will be coregistered with their corresponding reference scene
     """
     # specify input filename
     file = Paths.slc_dir + "baseline_plot.out"
@@ -182,12 +182,12 @@ def sbas_graph(bperp_max, delta_T_max):
     Function that generates baseline plot and output file with perpendicular baselines and delta_T values and
     interferogram table (itab) file specifying SLCs for each interferogram
     :param bperp_max: int
-        maximum magnitude of bperp (m) (default = all, enter - for default)
+        Maximum magnitude of bperp (m) (default = all, enter - for default)
     :param delta_T_max: int
-        maximum number of days between passes
+        Maximum number of days between passes
     :return:
         rslc_par_list: list
-            returns list of co-registered S1 TOPS burst SLC slaves for use in SBAS-Coregistration
+            Returns list of co-registered S1 TOPS burst SLC slaves for use in SBAS-Coregistration
     """
     # itab type (enter - for default; 0=single reference (default); 1=all pairs)
     itab_type = "1 "
@@ -222,13 +222,13 @@ def geocode_back(input_file, range_samples, dem_lut, output_file, out_width):
     :param input_file: string
         (input) data file to be geocoded
     :param range_samples: integer
-        width of input data file
+        Width of input data file
     :param dem_lut: string
         (input) lookup table containing pairs of real-valued input data coordinates
     :param output_file: string
         (output) output data file
     :param out_width: integer
-        width of gc_map lookup table, output file has the same width
+        Width of gc_map lookup table, output file has the same width
     """
     os.system("geocode_back " + input_file + " " + range_samples + " " + dem_lut + " " +
               output_file + " " + out_width + " - 2 0")
@@ -252,7 +252,7 @@ def raster_stack(stackname):
     This function stacks the clipped raster files to one raster time series stack for each polarization and flight
     direction
     :param stackname: string
-        name of output raster stack of coherence images
+        Name of output raster stack of coherence images
     """
     geotiff_list = extract_files_to_list(path_to_folder=Paths.results_dir, datatype=".tif", datascenes_file=None)
     geotiff_list = sorted(geotiff_list)
@@ -280,17 +280,20 @@ def raster_stack(stackname):
 
 
 def import_polygons(shape_path):
-    import fiona
     """
     This function imports shapefile from given directory to python
     :param shape_path: string
         Path to shapefile
-    :return: list
+    :return:
+        shape: list
         Returns a list of all elements in shapefile
     """
+    import fiona
+
     active_shapefile = fiona.open(shape_path, "r")
     for i in range(0, len(list(active_shapefile))):
         shapes = [feature["geometry"] for feature in active_shapefile]
+
     return shapes
 
 
@@ -301,8 +304,9 @@ def create_point_buffer(point_path, buffer_size):
         Path to the shapefile
     :param buffer_size: int
         Buffer size corresponds to the length of the square buffer around the vertex point
-    :return: list
-        Returns a list with buffered polygons around each point of input polygon
+    :return:
+        buffer_list: list
+            Returns a list with buffered polygons around each point of input polygon
     """
     import_list = import_polygons(shape_path=point_path)
     buffer_size = buffer_size / 2
@@ -323,6 +327,7 @@ def create_point_buffer(point_path, buffer_size):
         buffer_coord = [[upper_left, upper_right, lower_right, lower_left, upper_left]]
         buffer = {"type": "Polygon", "coordinates": buffer_coord}
         buffer_list.append(buffer)
+
     return buffer_list
 
 
@@ -331,8 +336,9 @@ def extract_dates(directory):
     Extracts dates from list of preprocessed S-1 GRD files (need to be in standard pyroSAR exported naming scheme!)
     :param directory: string
         Path to folder, where files are stored
-    :return: list
-        returns list of acquisition dates of S-1 GRD files
+    :return:
+        date_list: list
+            Returns list of acquisition dates of S-1 GRD files
     """
     from datetime import datetime
     file_list = extract_files_to_list(path_to_folder=directory, datatype=".tif")
@@ -345,14 +351,11 @@ def extract_dates(directory):
         merged_date = year + "-" + month + "-" + day
         date_list.append(merged_date)
     date_list = sorted(date_list)
+
     return date_list
 
 
 def extract_time_series(results_dir, stack_dir, shapefile, buffer_size):
-    import numpy as np
-    import rasterio.mask
-    import rasterio as rio
-    import matplotlib.pyplot as plt
     """
     Extracts time series information from patches of pixels using points and a buffer size to specify the size of the
     patch
@@ -364,7 +367,17 @@ def extract_time_series(results_dir, stack_dir, shapefile, buffer_size):
         Path to point shapefile directory
     :param buffer_size: int
         Buffer size specifies the length of the rectangular buffer around the point
+    :return:
+        mean_list: list
+            Returns list of means for each patch with given buffer size of a class
+        date_list: list
+            Returns list of dates used for analysis
     """
+    import numpy as np
+    import rasterio.mask
+    import rasterio as rio
+    import matplotlib.pyplot as plt
+
     # Import Patches for each class and all 4 layerstacks (VH/VV/Asc/Desc)
     patches = create_point_buffer(shapefile, buffer_size=buffer_size)
     layer_stacks = extract_files_to_list(path_to_folder=stack_dir, datatype=".tif")
@@ -402,7 +415,20 @@ def extract_time_series(results_dir, stack_dir, shapefile, buffer_size):
     return mean_list, date_list
 
 
-def plot_time_series(point_path, stack_dir, results_dir):
+def plot_time_series(processing_step, point_path, stack_dir, results_dir):
+    """
+    Function to plot coherence processed with single master approach over time
+    :param processing_step: string
+        User specified variable to determine if scenes of a raster stack are preprocessed with single master technique
+        and therefore must be plotted with "single" flag or preprocessed with SBAS technique and therefore must be
+        plotted with "multi" flag
+    :param point_path: string
+        Path to point samples used for analysis and selected by the user
+    :param stack_dir: string
+        Directory where the raster stack of tifs is located
+    :param results_dir: string
+        Directory where all coherence tifs are located
+    """
     import matplotlib.pyplot as plt
     # point_path = "C:/Users/marli/PycharmProjects/InSel/InSel/shapefiles/point_samples/"
     # results_dir = "C:/Users/marli/Google Drive/Studium/Master/2.Semester/GEO410/Daten/Koheränzen/"
@@ -418,8 +444,13 @@ def plot_time_series(point_path, stack_dir, results_dir):
                                              buffer_size=0.001)[1]
         label_list.append(shapefile[len(point_path):len(shapefile)-12])
     color_list = ["limegreen", "darkgreen", "blue", "saddlebrown", "gold", "red"]
-    for i, elem in enumerate(test_list):
-        plt.plot(date_list[0], elem, color=color_list[i], label=label_list[i])
+    if processing_step == "single":
+        for i, elem in enumerate(test_list):
+            plt.plot(date_list[0], elem, color=color_list[i], label=label_list[i])
+    if processing_step == "multi":
+        for i, elem in enumerate(test_list):
+            plt.plot(elem, color=color_list[i], label=label_list[i])
+
     plt.xlabel("Dates")
     plt.ylabel("Coherence")
     plt.ylim(0, 1)
