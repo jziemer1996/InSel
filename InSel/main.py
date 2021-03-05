@@ -46,7 +46,7 @@ if __name__ == '__main__':
 
     ##### Plot function #####
     if Processing.plot_bool:
-        plot_time_series(point_path=Paths.point_samples_dir, stack_dir=Paths.stack_dir,
+        plot_time_series(processing_step=Processing.processing_step, point_path=Paths.point_samples_dir, stack_dir=Paths.stack_dir,
                          results_dir=Paths.results_dir)
 
     end_time = datetime.now()
