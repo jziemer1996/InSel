@@ -8,71 +8,49 @@ Authors: Marlin Mueller <marlin.markus.mueller@uni-jena.de>, Jonas Ziemer <jonas
 ###########################################################
 import os
 import sentinel_download
-import gamma_processing
+from gamma_processing import *
 from datetime import datetime
 
-
-def main():
+if __name__ == '__main__':
     start_time = datetime.now()
-    home_path = "/home/ki73did/"
-    # home_path = "/home/ni82xoj/"
 
-    # download_dir = "/geonfs03_vol1/SALDI_EMS/S1_SLC/04_Augrabies/"
-    download_dir = home_path + "GEO410_data/"
+    ##### GAMMA functions for processing #####
+    def processing(processing_step, swath_flag, polarization, resolution, demType, buffer, clean_flag, bperp_max,
+                   delta_T_max, create_rasterstack, stackname):
 
-    dem_dir = download_dir + "DEM/"
+        SLC_import(polarization=[Processing.polarization], swath_flag=swath_flag)
 
-    shapefile_dir = home_path + "GEO410/Scripts/InSel/shapefiles/augrabies_extent.shp"
+        multilook(processing_step, resolution)
 
-    processing_dir = home_path + "GEO410_data/"
-    list_dir = home_path + "GEO410_data/lists/"
-    slc_dir = home_path + "GEO410_data/slc/"
-    orbit_dir = home_path + "GEO410_data/orbit_files/"
+        gc_map(processing_step, demType, buffer)
 
-    # Settings for data download:
-    if not os.path.exists(download_dir):
-        os.makedirs(download_dir)
+        geocode_dem(processing_step)
 
-    username = "marlinmm2"
-    password = "8DH5BkEre5kykXG"
-    api_url = "https://scihub.copernicus.eu/apihub/"
-    start_date = "2020-06-01"
-    end_date = "2020-07-30"
+        coreg(processing_step, clean_flag, bperp_max, delta_T_max, polarization, resolution)
 
-    # Data download function:
-    # sentinel_download.copernicus_download(copernicus_username=username, copernicus_password=password,
-    #                                       download_directory=download_dir, api_url=api_url, satellite="S1A*",
-    #                                       min_overlap=0.1, start_date=start_date, end_date=end_date,
-    #                                       product="SLC", orig_shape=shapefile_dir)
+        coherence_calc()
 
-    # GAMMA functions for processing:
-    # gamma_function_test.display_slc()
+        geocode_coherence(create_rasterstack, stackname)
 
-    # gamma_processing.deburst_S1_SLC(processing_dir=processing_dir, download_dir=download_dir, list_dir=list_dir)
-    #
-    # gamma_processing.SLC_import(slc_dir=slc_dir, list_dir=list_dir)
-    #
-    # gamma_processing.define_precise_orbits(slc_dir=slc_dir, orbit_dir=orbit_dir)
-    #
-    # gamma_processing.multilook(slc_dir=slc_dir)
-    # TODO: hier funktioniert der Übergang zwischen den Funktionen nicht fehlerfrei <-- Bei mir schon... ;)
 
-    gamma_processing.gc_map(slc_dir=slc_dir, dem_dir=dem_dir, shapefile_path=shapefile_dir)
+    ##### Data download function #####
+    if DownloadParams.download:
+        sentinel_download.copernicus_download()
 
-    gamma_processing.geocode_dem(dem_dir=dem_dir)
+    ##### GAMMA processing function #####
+    processing(processing_step=Processing.processing_step, swath_flag=Processing.swath_flag,
+               polarization=Processing.polarization, resolution=Processing.resolution, demType=Processing.demType,
+               buffer=Processing.buffer, clean_flag=Processing.clean_flag, bperp_max=Processing.bperp_max,
+               delta_T_max=Processing.delta_T_max, create_rasterstack=Processing.create_rasterstack,
+               stackname=Processing.stackname)
 
-    gamma_processing.coreg(slc_dir=slc_dir, dem_dir=dem_dir)
-
-    # gamma_function_test.geocode_back(slc_dir=slc_dir, dem_dir=dem_dir)
-    #
-    # gamma_function_test.data2geotiff(dem_dir=dem_dir, slc_dir=slc_dir)
+    ##### Plot function #####
+    if Processing.plot_bool:
+        plot_time_series(processing_step=Processing.processing_step, point_path=Paths.point_samples_dir,
+                         stack_dir=Paths.stack_dir, results_dir=Paths.results_dir)
 
     end_time = datetime.now()
+
     print("#####################################################")
     print("processing-time = ", end_time - start_time, "Hr:min:sec")
     print("#####################################################")
-
-
-if __name__ == '__main__':
-    main()
-
