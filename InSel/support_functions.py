@@ -454,7 +454,6 @@ def plot_time_series(processing_step, point_path, stack_dir, results_dir):
     plt.xlabel("Dates")
     plt.ylabel("Coherence")
     plt.ylim(0, 1)
-    plt.gcf().autofmt_xdate()
     plt.grid()
     plt.legend(loc="lower right", ncol=6, fancybox=True, shadow=True)
     plt.show()
