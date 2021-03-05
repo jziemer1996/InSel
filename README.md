@@ -17,6 +17,8 @@ Basic functionality includes:
     * creation of the geocoding lookup table based on auto-created DEM using [pyroSARs](https://github.com/johntruckenbrodt/pyroSAR) 
       autocreate function found [here](https://pyrosar.readthedocs.io/en/latest/pyroSAR.html#module-pyroSAR.gamma.dem)
     * coregistration of multiple files
+    * calculation of coherence pairs
+    * plotting of coherence time series data
     
 Notice, you need a full version of the _GAMMA remote sensing_ software and a high-performance computer.
 
