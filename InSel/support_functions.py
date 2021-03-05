@@ -344,7 +344,7 @@ def extract_dates(directory):
     file_list = extract_files_to_list(path_to_folder=directory, datatype=".tif")
     date_list = []
     for file in file_list:
-        date = str(file[len(directory)+9:len(directory)+17])
+        date = str(file[len(directory) + 9:len(directory) + 17])
         year = date[0:4]
         month = date[4:6]
         day = date[6:8]
@@ -430,8 +430,7 @@ def plot_time_series(processing_step, point_path, stack_dir, results_dir):
         Directory where all coherence tifs are located
     """
     import matplotlib.pyplot as plt
-    # point_path = "C:/Users/marli/PycharmProjects/InSel/InSel/shapefiles/point_samples/"
-    # results_dir = "C:/Users/marli/Google Drive/Studium/Master/2.Semester/GEO410/Daten/Koheränzen/"
+
     point_list = extract_files_to_list(path_to_folder=point_path, datatype=".shp")
     point_list = sorted(point_list)
     date_list = []
@@ -441,8 +440,8 @@ def plot_time_series(processing_step, point_path, stack_dir, results_dir):
         test_list.append(extract_time_series(results_dir=results_dir, stack_dir=stack_dir, shapefile=shapefile,
                                              buffer_size=0.001)[0])
         date_list = extract_time_series(results_dir=results_dir, stack_dir=stack_dir, shapefile=shapefile,
-                                             buffer_size=0.001)[1]
-        label_list.append(shapefile[len(point_path):len(shapefile)-12])
+                                        buffer_size=0.001)[1]
+        label_list.append(shapefile[len(point_path):len(shapefile) - 12])
     color_list = ["limegreen", "darkgreen", "blue", "saddlebrown", "gold", "red"]
     if processing_step == "single":
         for i, elem in enumerate(test_list):
