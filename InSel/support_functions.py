@@ -431,18 +431,27 @@ def plot_time_series(processing_step, point_path, stack_dir, results_dir):
     """
     import matplotlib.pyplot as plt
 
+    # import all shapefiles from specified directory
     point_list = extract_files_to_list(path_to_folder=point_path, datatype=".shp")
     point_list = sorted(point_list)
+
+    # initilaize lists
     date_list = []
     label_list = []
     test_list = []
+
+    # extract time series data and corresponding dates for each shapefile and append to lists
     for shapefile in point_list:
         test_list.append(extract_time_series(results_dir=results_dir, stack_dir=stack_dir, shapefile=shapefile,
                                              buffer_size=0.001)[0])
         date_list = extract_time_series(results_dir=results_dir, stack_dir=stack_dir, shapefile=shapefile,
                                         buffer_size=0.001)[1]
         label_list.append(shapefile[len(point_path):len(shapefile) - 12])
+
+    # specify color list for different landcover types
     color_list = ["limegreen", "darkgreen", "blue", "saddlebrown", "gold", "red"]
+
+    # plot time series
     if processing_step == "single":
         for i, elem in enumerate(test_list):
             plt.plot(date_list[0], elem, color=color_list[i], label=label_list[i])
