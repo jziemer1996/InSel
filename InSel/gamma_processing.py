@@ -7,10 +7,10 @@ def SLC_import(polarization=None, swath_flag=None):
     """
     Function to read in and concatenate S1 TOPS SLC from zip files
     :param polarization: list
-        list containing strings defining the desired polarizations considered during processing e.g. <["vv", "vh"]>
+        List containing strings defining the desired polarizations considered during processing e.g. <["vv", "vh"]>
     :param swath_flag: string
-        define subswaths to be considered during processing (default = 0 (as listed in
-        burst_number_table_ref, all if no burst_number_table_ref provided), 1,2,3 (1 sub-swath only), 4 (1&2), 5 (2&3))
+        Define subswaths to be considered during processing (default = 0 (as listed in burst_number_table_ref,
+        all if no burst_number_table_ref provided), 1,2,3 (1 sub-swath only), 4 (1&2), 5 (2&3))
     """
     # set polarization range
     pol_default = ["vv"]
@@ -57,10 +57,10 @@ def multilook(processing_step, res=None):
     """
     Function to calculate MLI mosaic from ScanSAR SLC burst data
     :param processing_step: string
-        user specified variable to determine if only main file is multilooked (<"single">) or all
-        files (<"multi">) in slc directory are multilooked
+        User specified variable to determine if only main file is multilooked (<"single">) or all files (<"multi">) in
+        slc directory are multilooked
     :param res: int
-        specifies the output multilook resolution by adjusting range and azimuth multipliers accordingly. Currently only
+        Specifies the output multilook resolution by adjusting range and azimuth multipliers accordingly. Currently only
         20 or multiples thereof allowed (default: 40)
     """
     # define range and azimuth looks based on user-specified input or default values
@@ -105,15 +105,15 @@ def gc_map(processing_step, demType, buffer):
     Function that creates a DEM in Gamma format for a defined spatial geometry and calculates terrain-geocoding lookup
     table and DEM derived data products
     :param processing_step: string
-        user specified variable to determine if only main file is processed or all files will be processed
+        User specified variable to determine if only main file is processed or all files will be processed
     :param demType: string
-        the type of DEM to be used; current options:
+        The type of DEM to be used; current options:
             - "AW3D30"
             - "SRTM 1Sec HGT"
             - "SRTM 3Sec"
             - "TDX90m"
     :param buffer: float
-        a buffer in degrees to create around the geometry
+        A buffer in degrees to create around the geometry
     """
     # GAMMA default values for additional output parameter represented by "-"
     # oversampling factors (float)
@@ -185,7 +185,7 @@ def geocode_dem(processing_step):
     """
     Function for forward geocoding transformation using a lookup table
     :param processing_step: string
-        user specified variable to determine if only main file is processed or all files will be processed
+        User specified variable to determine if only main file is processed or all files will be processed
     """
     # get all .lut files from dem folder
     lut_list = extract_files_to_list(Paths.dem_dir, datatype=".lut", datascenes_file=None)
@@ -246,21 +246,21 @@ def coreg(processing_step, clean_flag, bperp_max, delta_T_max, polarization=None
     """
     Function to coregister a Sentinel-1 TOPS mode burst SLC to a reference burst SLC
     :param processing_step: string
-        user specified variable to determine if scenes of a raster stack are only coregistered on the first reference
+        User specified variable to determine if scenes of a raster stack are only coregistered on the first reference
         burst SLC or (single master approach) or if all files are coregistered dynamically according to their
         spatio-temporal baselines (multi master approach with SBAS technique (Small Baseline Subsets)
     :param clean_flag: string
-        flag to indicate if intermediate files are deleted
+        Flag to indicate if intermediate files are deleted
             - 0: not deleted
             - 1: deleted (default)
     :param bperp_max: int
-        maximum magnitude of bperp (m) (default = all, enter - for default)
+        Maximum magnitude of bperp (m) (default = all, enter - for default)
     :param delta_T_max: int
-        maximum number of days between passes
+        Maximum number of days between passes
     :param polarization: string
-        string defining the desired polarization considered during processing (choose "vv" or "vh")
+        String defining the desired polarization considered during processing (choose "vv" or "vh")
     :param res: int
-        specifies the output multilook resolution by adjusting range and azimuth multipliers accordingly. Currently only
+        Specifies the output multilook resolution by adjusting range and azimuth multipliers accordingly. Currently only
         20 or multiples thereof allowed (default: 40)
         NOTE: resolution must be the same value as in the multilook function; in default mode already accomplished by
         "None"!!!
