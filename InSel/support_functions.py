@@ -279,7 +279,6 @@ def raster_stack(stackname):
                 ff.write(band, ii + 1)
 
 
-
 def import_polygons(shape_path):
     import fiona
     """
@@ -335,14 +334,21 @@ def extract_dates(directory):
     :return: list
         returns list of acquisition dates of S-1 GRD files
     """
+    from datetime import datetime
     file_list = extract_files_to_list(path_to_folder=directory, datatype=".tif")
     date_list = []
     for file in file_list:
-        date_list.append(int(file[2:10]))
+        date = str(file[len(directory)+9:len(directory)+17])
+        year = date[0:4]
+        month = date[4:6]
+        day = date[6:8]
+        merged_date = year + "-" + month + "-" + day
+        date_list.append(merged_date)
+    date_list = sorted(date_list)
     return date_list
 
 
-def extract_time_series(results_dir, shapefile, buffer_size):
+def extract_time_series(results_dir, stack_dir, shapefile, buffer_size):
     import numpy as np
     import rasterio.mask
     import rasterio as rio
@@ -361,8 +367,9 @@ def extract_time_series(results_dir, shapefile, buffer_size):
     """
     # Import Patches for each class and all 4 layerstacks (VH/VV/Asc/Desc)
     patches = create_point_buffer(shapefile, buffer_size=buffer_size)
-    layer_stacks = extract_files_to_list(path_to_folder=results_dir, datatype=".tif")
+    layer_stacks = extract_files_to_list(path_to_folder=stack_dir, datatype=".tif")
     class_list = []
+    date_list = []
     # Iterate through all layerstacks:
     for file in layer_stacks:
         src1 = rio.open(file)
@@ -377,8 +384,7 @@ def extract_time_series(results_dir, shapefile, buffer_size):
                 pixel_mean.append(np.nanmean(pixel))
             patch_mean.append(pixel_mean)
 
-        # TODO: add date extract function???
-        # patch_mean.append(extract_dates(results_dir + "temp" + "/"))
+        date_list.append(extract_dates(results_dir))
 
         patch_mean = np.rot90(patch_mean)
         patch_mean = np.rot90(patch_mean)
@@ -392,19 +398,32 @@ def extract_time_series(results_dir, shapefile, buffer_size):
         mean_list = []
         for time in example_class:
             mean_list.append(np.mean(time))
-    return mean_list
+
+    return mean_list, date_list
 
 
-def plot_time_series(point_path, coherence_stack_dir):
+def plot_time_series(point_path, stack_dir, results_dir):
     import matplotlib.pyplot as plt
     # point_path = "C:/Users/marli/PycharmProjects/InSel/InSel/shapefiles/point_samples/"
     # results_dir = "C:/Users/marli/Google Drive/Studium/Master/2.Semester/GEO410/Daten/Koheränzen/"
     point_list = extract_files_to_list(path_to_folder=point_path, datatype=".shp")
-    print(point_list)
+    point_list = sorted(point_list)
+    date_list = []
+    label_list = []
     test_list = []
     for shapefile in point_list:
-        test_list.append(extract_time_series(results_dir=coherence_stack_dir, shapefile=shapefile, buffer_size=0.001))
-    print(test_list)
-    for elem in test_list:
-        plt.plot(elem)
+        test_list.append(extract_time_series(results_dir=results_dir, stack_dir=stack_dir, shapefile=shapefile,
+                                             buffer_size=0.001)[0])
+        date_list = extract_time_series(results_dir=results_dir, stack_dir=stack_dir, shapefile=shapefile,
+                                             buffer_size=0.001)[1]
+        label_list.append(shapefile[len(point_path):len(shapefile)-12])
+    color_list = ["limegreen", "darkgreen", "blue", "saddlebrown", "gold", "red"]
+    for i, elem in enumerate(test_list):
+        plt.plot(date_list[0], elem, color=color_list[i], label=label_list[i])
+    plt.xlabel("Dates")
+    plt.ylabel("Coherence")
+    plt.ylim(0, 1)
+    plt.gcf().autofmt_xdate()
+    plt.grid()
+    plt.legend(loc="lower right", ncol=6, fancybox=True, shadow=True)
     plt.show()

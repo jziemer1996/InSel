@@ -37,8 +37,8 @@ def user_data():
     bperp_max = 136
     delta_T_max = 48
     create_rasterstack = False
-    stackname = "res_stack_in_dir.tif"
-    plot_bool = False
+    stackname = "coherence_stack.tif"
+    plot_bool = True
 
     return home_path, download_dir, shapefile_dir, point_samples_dir, orbit_file_dir, username, password, api_url, \
            start_date, end_date, satellite, min_overlap, product, download, processing_step, swath_flag, polarization, \
@@ -48,15 +48,15 @@ def user_data():
 class Paths(object):
     home_path, download_dir, shapefile_dir, point_samples_dir, orbit_file_dir = user_data()[0:5]
 
-    processing_dir = home_path + "GEO410_data/"
-    list_dir = home_path + "GEO410_data/lists/"
-    slc_dir = home_path + "GEO410_data/slc/"
-    dem_dir = home_path + "GEO410_data/DEM/"
+    # processing_dir = home_path + "GEO410_data/"
+    # list_dir = home_path + "GEO410_data/lists/"
+    # slc_dir = home_path + "GEO410_data/slc/"
+    # dem_dir = home_path + "GEO410_data/DEM/"
 
-    # processing_dir = home_path + "GAMMA_testdata_1/"
-    # list_dir = home_path + "GAMMA_testdata_1/lists/"
-    # slc_dir = home_path + "GAMMA_testdata_1/slc/"
-    # dem_dir = home_path + "GAMMA_testdata_1/DEM/"
+    processing_dir = home_path + "GAMMA_testdata_1/"
+    list_dir = home_path + "GAMMA_testdata_1/lists/"
+    slc_dir = home_path + "GAMMA_testdata_1/slc_processing/"
+    dem_dir = home_path + "GAMMA_testdata_1/dem/"
 
     multilook_dir = slc_dir + "multilook/"
     results_dir = slc_dir + "coherence_results/"
