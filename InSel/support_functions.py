@@ -359,12 +359,12 @@ def extract_time_series(results_dir, stack_dir, shapefile, buffer_size):
     """
     Extracts time series information from patches of pixels using points and a buffer size to specify the size of the
     patch
-    :param shapefile: string
-        Path to point shapefile including name of shapefile
     :param results_dir: string
         Path to results directory, where layerstacks are stored and csv files will be stored
-    :param point_path: string
-        Path to point shapefile directory
+    :param stack_dir: string
+        Directory where the raster stack of tifs is located
+    :param shapefile: string
+        Path to point shapefile including name of shapefile
     :param buffer_size: int
         Buffer size specifies the length of the rectangular buffer around the point
     :return:
