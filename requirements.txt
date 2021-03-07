@@ -3,5 +3,5 @@ rasterio
 fiona
 numpy
 matplotlib
-sentinelsat
+esa_sentinel
 pyroSAR
