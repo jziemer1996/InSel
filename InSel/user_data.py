@@ -47,6 +47,7 @@ def user_data():
     # NOTE: if name already exists, rename it, otherwise the creation of the stack will fail
     stackname = "coherence_stack.tif"
     # Do you want to plot the coherence of different land cover classes over time?
+    # TODO: if no rasterstack, plot cant be true oder so....
     plot_bool = True
 
     ############################## Auto-creation of needed directories ##############################
