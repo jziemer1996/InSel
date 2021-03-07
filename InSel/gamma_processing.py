@@ -338,7 +338,7 @@ def coreg(processing_step, clean_flag, bperp_max, delta_T_max, polarization=None
 
         # SBAS function needs to be run here to get SLC_tab file with interferometry pairs for coregistration
         file_for_sbas_graph()
-        rslc_par_list = sbas_graph(bperp_max, delta_T_max)
+        sbas_graph(bperp_max, delta_T_max)
 
         # extract reference list and coreg list from sbas output
         ref_scene_list, coreg_scene_list = read_file_for_coreg()
