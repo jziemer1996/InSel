@@ -6,23 +6,9 @@ from user_data import DownloadParams, Paths
 
 def copernicus_download():
     """
-    This function takes the user input to create a API call for the Copernicus Hub and downloads the specified data.
-    Args:
-        copernicus_username: Username for the Copernicus Hub (string)
-        copernicus_password: Password for the Copernicus Hub (string)
-        download_directory: Directory where downloaded files are stored (string)
-        api_url: URL for the API (string)
-        satellite: Satellite, from which data should be downloaded (write as: "S3A*" oder "S3B*" or "Sentinel-3" for the
-            different Sentinel-3 satellite platforms or both) (string)
-        min_overlap: Define minimum overlap (0-1) between area of interest and scene footprint (Default: 0) (float)
-        timeliness: Define recent and historical scenes (write: "Near Real Time" or "Short Time Critical" or "Non Time
-            Critical") (string)
-        start_date: Define starting date of search (Default: None, all data) (string)
-        end_date: Define ending date of search (Default: None, all data) (string)
-        product: Select wanted Sentinel product (write as: "*LST*" or "*WST*") (string)
-        orig_shape: Path to shapefile specified in settings.txt for download and subsequent clipping (string)
+    This function takes the user input specified in user_data.py to create a API call for the Copernicus Hub and
+    downloads the specified data.
     """
-
     start_time = datetime.now()
 
     ############## Sentinel Download ##############
@@ -39,8 +25,8 @@ def copernicus_download():
     s1.set_geometries(polygon)
 
     # Search for corresponding data scenes via api
-    s1.search(DownloadParams.satellite, DownloadParams.min_overlap, Paths.download_dir, DownloadParams.start_date, DownloadParams.end_date,
-              producttype=DownloadParams.product)
+    s1.search(DownloadParams.satellite, DownloadParams.min_overlap, Paths.download_dir, DownloadParams.start_date,
+              DownloadParams.end_date, producttype=DownloadParams.product)
 
     # Download data - returns dictionary of downloaded data scenes
     # (Format: {'failed': ['', '', ..], 'success': ['', '', '', ..]})
@@ -57,9 +43,7 @@ def get_extent(shapefile):
         shapefile: Path to shapefile (string)
     Returns:
         extent_copernicus: Extent of the shapefile formatted to work with the Copernicus API (string)
-        extent_dias: Extent of the shapefile formatted to work with the DIAS API (string)
     """
-
     driver = ogr.GetDriverByName("ESRI Shapefile")
     dataSource = driver.Open(shapefile, 1)
     inLayer = dataSource.GetLayer()
