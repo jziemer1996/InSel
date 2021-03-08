@@ -3,10 +3,18 @@ import os
 
 def user_data():
     ###################################     INPUT    ########################################
+    # Home directory path for processing
     home_path = "/home/ki73did/"
     # home_path = "/home/ni82xoj/"
 
+    # Path to the shapefile for the download and subsequent processing in GAMMA
+    shapefile_dir = home_path + "GEO410/Scripts/InSel/shapefiles/augrabies_extent.shp"
+    # Path to sample points for extraction of time series
+    point_samples_dir = home_path + "GEO410/Scripts/InSel/shapefiles/points/"
+    orbit_file_dir = home_path + "GEO410_data/orbit_files/"
+
     ############################# Sentinel-1 download parameters ############################
+    # General info: https://scihub.copernicus.eu/twiki/do/view/SciHubUserGuide/FullTextSearch?redirectedfrom=SciHubUserGuide.3FullTextSearch#Search_Keywords
     username = "marlinmm2"
     password = "8DH5BkEre5kykXG"
     api_url = "https://scihub.copernicus.eu/apihub/"
@@ -14,7 +22,7 @@ def user_data():
     start_date = "2020-06-01"
     # Choose the end date of the download interval
     end_date = "2020-07-30"
-    # Choose the satellite, on which the download will be based on (options: "S1A*", "S1B*")
+    # Choose the satellite, on which the download will be based on (options: "S1A*", "S1B*", "S2A*", "S2B*", etc.)
     satellite = "S1A*"
     # Choose the minimum overlap
     min_overlap = 0.1
@@ -54,11 +62,6 @@ def user_data():
     # download_dir = "/geonfs03_vol1/SALDI_EMS/S1_SLC/04_Augrabies/"
     download_dir = home_path + "GEO410_data/"
     # download_dir = home_path + "GAMMA_testdata_1/"
-
-    # text
-    shapefile_dir = home_path + "GEO410/Scripts/InSel/shapefiles/augrabies_extent.shp"
-    point_samples_dir = home_path + "GEO410/Scripts/InSel/shapefiles/points/"
-    orbit_file_dir = home_path + "GEO410_data/orbit_files/"
 
     return home_path, download_dir, shapefile_dir, point_samples_dir, orbit_file_dir, username, password, api_url, \
            start_date, end_date, satellite, min_overlap, product, download, processing_step, swath_flag, polarization, \
