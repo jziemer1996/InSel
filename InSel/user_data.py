@@ -37,7 +37,7 @@ def user_data():
     ############################## GAMMA processing parameters ##############################
     # Choose, if single-master or multi-master processing
     processing_step = "single"
-    # Choose 0 and processing will be based on only one swath (quicker) or 1: processing with all swaths (slower)
+    # Choose 0 and processing will be based on only all swaths or 1,2,3 (1 sub-swath only), 4 (1&2), 5 (2&3))
     swath_flag = 0
     # Choose, in which polarization you want to process
     polarization = "vv"
