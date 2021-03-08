@@ -14,7 +14,7 @@ def user_data():
     start_date = "2020-06-01"
     # Choose the end date of the download interval
     end_date = "2020-07-30"
-    # Choose the satellite, on which the download will be based on (options: "S1A*", "S1B*", "Sentinel-1")
+    # Choose the satellite, on which the download will be based on (options: "S1A*", "S1B*")
     satellite = "S1A*"
     # Choose the minimum overlap
     min_overlap = 0.1
