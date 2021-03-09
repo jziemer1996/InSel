@@ -71,7 +71,7 @@ class Paths(object):
 
     processing_dir = home_path + "GEO410_data/"
     list_dir = home_path + "GEO410_data/lists/"
-    slc_dir = home_path + "GEO410_data/slc/"
+    slc_dir = home_path + "GEO410_data/slc_processing/"
     dem_dir = home_path + "GEO410_data/DEM/"
 
     multilook_dir = slc_dir + "multilook/"
