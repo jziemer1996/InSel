@@ -360,10 +360,26 @@ def coreg(processing_step, clean_flag, bperp_max, delta_T_max, polarization=None
                 print("Check previous processing results and try it again!")
 
 
-def coherence_calc():
+def coherence_calc(bx=None, by=None, wflg=None):
     """
     Function to estimate interferometric correlation coefficient
+    :param bx: string
+        Estimation window size in columns (enter - for default: 5.0)
+    :param by: string
+        Estimation window size in lines (enter - for default: 5.0)
+    :param wflg: string
+        Estimation window (enter - for default):
+            0: rectangular (default)
+            1: triangular
+            2: Gaussian
+            3: normalized vector sum with rectangular window
     """
+    if bx is None:
+        bx = "5"
+    if by is None:
+        by = "5"
+    if wflg is None:
+        wflg = "0"
     # need to extract .diff files for further processing, but function finds .diff.bmp
     # thats why: append name of elements without datatype in diff_bmp_list to new list
     diff_bmp_list = extract_files_to_list(Paths.slc_dir, datatype=".diff.bmp", datascenes_file=None)
@@ -391,7 +407,8 @@ def coherence_calc():
 
     for diff in diff_list:
         try:
-            os.system("cc_wave " + diff + " - - " + diff[:len(diff) - 5] + ".cc " + range_samples)
+            os.system("cc_wave " + diff + " - - " + diff[:len(diff) - 5] + ".cc " + range_samples + " " + bx + " " + by
+                      + " " + wflg)
             print("############# Succesfully finished coherence estimation! #############")
         except:
             print("This error comes with coherence estimation! Check previous processing results and try it again!")

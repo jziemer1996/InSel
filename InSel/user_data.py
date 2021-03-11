@@ -52,6 +52,13 @@ def user_data():
     bperp_max = 136
     # Choose the maximum value of temporal baseline (in days) for SBAS processing
     delta_T_max = 48
+    # Estimation window size in columns (enter - for default: 5)
+    bx = "-"
+    # Estimation window size in lines (enter - for default: 5)
+    by = "-"
+    # Estimation window (enter - for default): 0: rectangular (default),  1: triangular, 2: Gaussian, 3: normalized
+    # vector sum with rectangular window
+    wflg = "0"
     # Do you want to create a raster stack of geocoded coherence scenes?
     create_rasterstack = False
     # Specify the name of the rasterscene
@@ -63,7 +70,8 @@ def user_data():
 
     return home_path, download_dir, shapefile_dir, point_samples_dir, orbit_file_dir, username, password, api_url, \
            start_date, end_date, satellite, min_overlap, product, download, processing_step, swath_flag, polarization, \
-           resolution, demType, buffer, clean_flag, bperp_max, delta_T_max, create_rasterstack, stackname, plot_bool
+           resolution, demType, buffer, clean_flag, bperp_max, delta_T_max, bx, by, wflg, create_rasterstack, \
+           stackname, plot_bool
 
 
 class Paths(object):
@@ -105,5 +113,5 @@ class DownloadParams(object):
 
 
 class Processing(object):
-    processing_step, swath_flag, polarization, resolution, demType, buffer, clean_flag, bperp_max, delta_T_max, \
-    create_rasterstack, stackname, plot_bool = user_data()[14:]
+    processing_step, swath_flag, polarization, resolution, demType, buffer, clean_flag, bperp_max, delta_T_max, bx, \
+    by, wflg, create_rasterstack, stackname, plot_bool = user_data()[14:]

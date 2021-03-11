@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
     ##### GAMMA functions for processing #####
     def processing(processing_step, swath_flag, polarization, resolution, demType, buffer, clean_flag, bperp_max,
-                   delta_T_max, create_rasterstack, stackname):
+                   delta_T_max, bx, by, wflg, create_rasterstack, stackname):
 
         SLC_import(polarization=[Processing.polarization], swath_flag=swath_flag)
 
@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
         coreg(processing_step, clean_flag, bperp_max, delta_T_max, polarization, resolution)
 
-        coherence_calc()
+        coherence_calc(bx, by, wflg)
 
         geocode_coherence(create_rasterstack, stackname)
 
@@ -41,8 +41,8 @@ if __name__ == '__main__':
     processing(processing_step=Processing.processing_step, swath_flag=Processing.swath_flag,
                polarization=Processing.polarization, resolution=Processing.resolution, demType=Processing.demType,
                buffer=Processing.buffer, clean_flag=Processing.clean_flag, bperp_max=Processing.bperp_max,
-               delta_T_max=Processing.delta_T_max, create_rasterstack=Processing.create_rasterstack,
-               stackname=Processing.stackname)
+               delta_T_max=Processing.delta_T_max, bx=Processing.bx, by=Processing.by, wflg=Processing.wflg,
+               create_rasterstack=Processing.create_rasterstack, stackname=Processing.stackname)
 
     ##### Plot function #####
     if Processing.plot_bool:
