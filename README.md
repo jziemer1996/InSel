@@ -26,8 +26,13 @@ Developed and tested using Python 3.6 using CentOS 7 (Linux 3.10)
 
 # Workflow of the InSel module:
 ![InSel_workflow](InSel/preview_files/Workflow.png)
-_GRASSINEL workflow_
 
-# Example Coherence Time Series (South Africa):
+_InSel workflow_
+
+# Example Coherence Time Series Animation (South Africa):
 ![S1_coherence_time_series](InSel/preview_files/Coherence_time_series.gif)
 _Sentinel-1 coherence time series from 2019-08-20 to 2019-12-18 close to Augrabies National Park, South Africa_
+
+# Time Series Plot for different land cover classes:
+![S1_coherence_time_series_plot](InSel/preview_files/time_series_plot.PNG)
+_Sentinel-1 coherence time series from 2019-08-20 to 2019-12-18 for 6 different land cover classes_
