@@ -454,12 +454,13 @@ def plot_time_series(processing_step, point_path, stack_dir, results_dir):
     # plot time series
     if processing_step == "single":
         for i, elem in enumerate(test_list):
-            plt.plot(date_list[0], elem, color=color_list[i], label=label_list[i])
+            plt.plot(date_list[0], elem, color=color_list[i], label=label_list[i], linewidth=2)
     if processing_step == "multi":
         for i, elem in enumerate(test_list):
-            plt.plot(elem, color=color_list[i], label=label_list[i])
+            plt.plot(elem, color=color_list[i], label=label_list[i], linewidth=2)
 
     plt.xlabel("Dates")
+    plt.xticks(rotation=45, ha='right')
     plt.ylabel("Coherence")
     plt.ylim(0, 1)
     plt.grid()
