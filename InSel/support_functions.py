@@ -455,14 +455,19 @@ def plot_time_series(processing_step, point_path, stack_dir, results_dir):
     if processing_step == "single":
         for i, elem in enumerate(test_list):
             plt.plot(date_list[0], elem, color=color_list[i], label=label_list[i], linewidth=2)
+        plt.xlabel("Interferogram Pair Slave Date (Reference Date: 2020-08-08)")
     if processing_step == "multi":
         for i, elem in enumerate(test_list):
             plt.plot(elem, color=color_list[i], label=label_list[i], linewidth=2)
 
-    plt.xlabel("Dates")
+        plt.xlabel("Interferogram Pair Index Number")
     plt.xticks(rotation=45, ha='right')
     plt.ylabel("Coherence")
     plt.ylim(0, 1)
-    plt.grid()
+    # Show the major grid lines with dark grey lines
+    plt.grid(b=True, which='major', color='#666666', linestyle='-')
+    # Show the minor grid lines with very faint and almost transparent grey lines
+    plt.minorticks_on()
+    plt.grid(b=True, which='minor', color='#999999', linestyle='-', alpha=0.5)
     plt.legend(loc="lower right", ncol=6, fancybox=True, shadow=True)
     plt.show()
