@@ -455,7 +455,7 @@ def plot_time_series(processing_step, point_path, stack_dir, results_dir):
     if processing_step == "single":
         for i, elem in enumerate(test_list):
             plt.plot(date_list[0], elem, color=color_list[i], label=label_list[i], linewidth=2)
-        plt.xlabel("Interferogram Pair Slave Date (Reference Date: 2020-08-08)")
+        plt.xlabel("Interferogram Pair Slave Date (Reference Date: 2019-08-08)")
     if processing_step == "multi":
         for i, elem in enumerate(test_list):
             plt.plot(elem, color=color_list[i], label=label_list[i], linewidth=2)
