@@ -391,7 +391,6 @@ def extract_time_series(results_dir, stack_dir, shapefile, buffer_size):
         for patch in patches:
             pixel_mean = []
             out_image, out_transform = rio.mask.mask(src1, [patch], all_touched=1, crop=True, nodata=np.nan)
-            # print(len(out_image[0]))
             # Calculate Mean for each patch:
             for pixel in out_image:
                 pixel_mean.append(np.nanmean(pixel))
