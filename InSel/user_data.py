@@ -5,7 +5,6 @@ def user_data():
     ###################################     INPUT    ########################################
     # Home directory path for processing
     home_path = "/home/ki73did/"
-    # home_path = "/home/ni82xoj/"
 
     # Path to the shapefile for the download and subsequent processing in GAMMA
     shapefile_dir = home_path + "GEO410/Scripts/InSel/shapefiles/augrabies_extent.shp"
