@@ -81,7 +81,7 @@ def multilook(processing_step, res=None):
         os.chdir(Paths.slc_dir)
         try:
             os.system("multi_look_ScanSAR " + tab_file_list[0] + " " + output_name + ".mli " + output_name + ".mli.par "
-                  + rlks_azlks_var + " " + str(default_burst_window_calc_flag))
+                      + rlks_azlks_var + " " + str(default_burst_window_calc_flag))
             print("############# Succesfully finished single multilooking! #############")
         except:
             print("This error comes with single multilooking! Check previous processing results and try it again!")
@@ -417,6 +417,10 @@ def coherence_calc(bx=None, by=None, wflg=None):
 def geocode_coherence(create_rasterstack, stackname):
     """
     Function to geocode back resulting files (.cc) of coherence_calc function for export preparation (.tif)
+    :param create_rasterstack: bool
+        Boolean to enable/disable creation of rasterstack
+    :param stackname: string
+        name of rasterstack
     """
     # get all .cc files from slc folder
     cc_list = extract_files_to_list(Paths.slc_dir, datatype=".cc", datascenes_file=None)

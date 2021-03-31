@@ -60,12 +60,11 @@ def user_data():
     # vector sum with rectangular window
     wflg = "0"
     # Do you want to create a raster stack of geocoded coherence scenes?
-    create_rasterstack = False
+    create_rasterstack = True
     # Specify the name of the rasterscene
     # NOTE: if name already exists, rename it, otherwise the creation of the stack will fail
     stackname = "coherence_stack.tif"
     # Do you want to plot the coherence of different land cover classes over time?
-    # TODO: if no rasterstack, plot cant be true oder so....
     plot_bool = True
 
     return home_path, download_dir, shapefile_dir, point_samples_dir, orbit_file_dir, username, password, api_url, \
