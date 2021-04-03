@@ -24,6 +24,11 @@ Notice, you need a full version of the _GAMMA remote sensing_ software and a hig
 
 Developed and tested using Python 3.6 using CentOS 7 (Linux 3.10)
 
+# Installation
+In case you have git installed you can install the package as follows:
+
+    pip install git+https://github.com/jziemer1996/InSel.git
+
 ### Example Coherence Time Series Animation (South Africa):
 ![S1_coherence_time_series](InSel/preview_files/Coherence_time_series.gif)
 _Fig.1: Sentinel-1 coherence time series from 2019-08-20 to 2019-12-18 close to Augrabies National Park, South Africa_
